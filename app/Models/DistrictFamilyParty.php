@@ -10,6 +10,14 @@ class DistrictFamilyParty extends Model
     protected $primaryKey = 'PID';
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'national_id'     => 'encrypted',
+            'passport_number' => 'encrypted',
+        ];
+    }
+
     public function familyCase()
     {
         return $this->belongsTo(DistrictFamilyRegistration::class, 'family_case_id', 'FCID');

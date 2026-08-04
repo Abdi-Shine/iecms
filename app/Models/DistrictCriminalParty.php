@@ -10,6 +10,14 @@ class DistrictCriminalParty extends Model
     protected $primaryKey = 'PID';
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'national_id'     => 'encrypted',
+            'passport_number' => 'encrypted',
+        ];
+    }
+
     public function criminalCase()
     {
         return $this->belongsTo(DistrictCriminalRegistration::class, 'criminal_case_id', 'CMID');

@@ -12,7 +12,9 @@ class AttorneyCaseAccused extends Model
     protected function casts(): array
     {
         return [
-            'date_of_birth' => 'date',
+            'date_of_birth'         => 'date',
+            'id_number'             => 'encrypted',
+            'custodian_id_number'   => 'encrypted',
         ];
     }
 

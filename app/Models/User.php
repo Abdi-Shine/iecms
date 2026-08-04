@@ -122,4 +122,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class, 'system_username', 'email');
     }
+
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
+    }
 }

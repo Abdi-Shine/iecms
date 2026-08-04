@@ -17,4 +17,9 @@ class Group extends Model
     {
         return $this->hasMany(User::class, 'group_id');
     }
+
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
+    }
 }

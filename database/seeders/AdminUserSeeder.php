@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder
 {
@@ -12,18 +12,29 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
+        $email = 'admin@director.gov.so';
+
+        if (\App\Models\User::where('email', $email)->exists()) {
+            $this->command?->info("Admin user $email already exists, skipping.");
+            return;
+        }
+
+        $password = Str::password(20);
+
         // Create the Admin User
-        $user = \App\Models\User::updateOrCreate(
-            ['email' => 'admin@director.gov.so'],
+        \App\Models\User::updateOrCreate(
+            ['email' => $email],
             [
                 'name'     => 'Super Administrator',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'password' => \Illuminate\Support\Facades\Hash::make($password),
                 'position' => 'System Administrator',
                 'sex'      => 'Male',
                 'phone'    => '1234567890',
                 'address'  => 'Mogadishu, Somalia'
             ]
         );
+
+        $this->command?->info("Admin user created: $email / $password");
 
         // Create the corresponding Employee record for permissions/sidebar visibility
         \App\Models\Employee::updateOrCreate(

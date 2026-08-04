@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToInstitution;
 use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
 {
-    use BelongsToInstitution;
+    use BelongsToInstitution, Auditable;
 
     protected $guarded = [];
 

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToInstitution;
 use Illuminate\Database\Eloquent\Model;
 
 class AppealCivilRegistration extends Model
 {
-    use BelongsToInstitution;
+    use BelongsToInstitution, Auditable;
 
     protected $table      = 'appeal_civil_registrations';
     protected $primaryKey = 'ACID';

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToInstitution;
 use Illuminate\Database\Eloquent\Model;
 
 class DistrictFamilyRegistration extends Model
 {
-    use BelongsToInstitution;
+    use BelongsToInstitution, Auditable;
 
     protected $table      = 'district_family_registrations';
     protected $primaryKey = 'FCID';

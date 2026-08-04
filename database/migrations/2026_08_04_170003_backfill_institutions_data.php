@@ -24,9 +24,14 @@ return new class extends Migration
             'created_at' => $now, 'updated_at' => $now,
         ]);
 
+        // "Attorney Dashboard" is a broadly-granted shared landing-page
+        // permission, not a signal of real AGO case-management access —
+        // several Court roles hold it too. Only substantive Attorney
+        // modules count toward AGO classification.
         $agoRoleIds = DB::table('role_permissions')
             ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
             ->where('permissions.module', 'like', 'Attorney%')
+            ->where('permissions.module', '!=', 'Attorney Dashboard')
             ->pluck('role_permissions.role_id')
             ->unique();
 

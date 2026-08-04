@@ -1,0 +1,535 @@
+/* ==========================================================
+   Official Court Documents — Shared Stylesheet
+   Used by: civilcase_handover_document, civilcase_hearing_document
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* ── A4 Shell — base styles shared by all document types ── */
+#hearing-doc,
+#handover-doc,
+#judgment-doc,
+#return-file-doc,
+#receipt-doc,
+#compliance-letter-doc {
+    position: relative;
+    width: 794px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.10);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 13px;
+    color: #111;
+}
+
+/*
+ * ── SINGLE-PAGE TEMPLATE ─────────────────────────────────────────
+ * Use for: handover, close-case, return-file, hearing
+ * Add class="doc-page-single" to the document root element.
+ * Footer is pinned absolutely to the bottom of the A4 page.
+ * Body content is clipped to prevent overflow to a second page.
+ */
+.doc-page-single {
+    height: 1123px;
+    overflow: hidden;
+}
+.doc-page-single .doc-body {
+    padding-bottom: 170px; /* clear the absolute footer */
+    overflow: hidden;
+}
+.doc-page-single .doc-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/*
+ * ── MULTI-PAGE TEMPLATE ──────────────────────────────────────────
+ * Use for: judgment, hearing-scripture
+ * Add class="doc-page-multi" to the document root element.
+ * Content flows naturally; footer follows content on the last page.
+ */
+.doc-page-multi {
+    min-height: 1123px;
+}
+.doc-page-multi .doc-body {
+    flex: 1; /* grows to fill page so footer sits at bottom for short content */
+}
+.doc-page-multi .doc-footer {
+    flex-shrink: 0;
+}
+
+/* ── Image Letterhead (replaces HTML header when uploaded) ── */
+.doc-letterhead-img {
+    width: 100%;
+    line-height: 0;
+    overflow: hidden;
+}
+.doc-letterhead-img img {
+    width: 100%;
+    max-height: 170px;
+    display: block;
+    object-fit: cover;
+    object-position: top center;
+}
+
+/* ── Letterhead Header ── */
+.doc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px 4px;
+    gap: 12px;
+}
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    text-align: left;
+}
+.header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    text-align: right;
+    direction: rtl;
+    font-family: 'Arabic Typesetting', 'Amiri', 'Traditional Arabic', serif;
+}
+.header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.header-logo   { width: 90px; height: 90px; object-fit: contain; }
+.org-somali    { font-size: 14px; font-weight: 800; color: #1a4a82; font-family: Arial, sans-serif; letter-spacing: .01em; }
+.court-somali  { font-size: 12px; font-weight: 600; color: #222; font-family: Arial, sans-serif; }
+.org-arabic    { font-size: 17px; font-weight: 700; color: #1a4a82; font-family: 'Arabic Typesetting', 'Amiri', 'Traditional Arabic', serif; }
+.court-arabic  { font-size: 14px; font-weight: 400; color: #222; font-family: 'Arabic Typesetting', 'Amiri', 'Traditional Arabic', serif; }
+
+/* ── English subtitle (centered below logo) ── */
+.header-english-sub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 2px 0 8px;
+}
+.org-english   { font-size: 13px; font-weight: 800; color: #111; font-family: Arial, sans-serif; }
+.court-english { font-size: 11px; font-weight: 600; color: #333; font-family: Arial, sans-serif; }
+
+/* ── Double Blue Line Divider (matches PDF) ── */
+.header-divider {
+    margin: 0 24px 0;
+    border: none;
+    border-top: 3px solid #1a4a82;
+    box-shadow: 0 5px 0 0 #528CBE;
+    height: 5px;
+}
+
+/* ── Watermark ── */
+.watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+}
+.watermark img {
+    width: 420px;
+    height: 420px;
+    object-fit: contain;
+    opacity: 0.07;
+}
+
+/* ── Document Body ── */
+.doc-body {
+    position: relative;
+    z-index: 1;
+    padding: 28px 48px 20px;
+    line-height: 1.85;
+}
+.ref-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    font-size: 13px;
+}
+.doc-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: underline;
+    margin-bottom: 16px;
+}
+.doc-para        { margin-bottom: 10px; text-align: justify; }
+.doc-para-mt     { margin-top: 18px; }
+.doc-para-italic { font-style: italic; color: #555; }
+.doc-fg          { margin-top: 12px; }
+.section-title   { font-weight: 700; margin-top: 8px; margin-bottom: 4px; }
+.party-line      { margin-bottom: 2px; padding-left: 8px; }
+.lawyer-line     { padding-left: 28px; color: #222; margin-bottom: 2px; }
+.empty-line      { padding-left: 20px; color: #888; font-style: italic; }
+.lid-separator   { text-align: center; font-weight: 700; letter-spacing: .4em; margin: 12px 0; }
+
+/* ── Signature Row ── */
+.sig-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 48px;
+    gap: 20px;
+}
+.sig-left        { flex: 1; text-align: center; }
+.sig-right       { flex: 0 0 110px; display: flex; align-items: center; justify-content: center; }
+.sig-col         { flex: 1; text-align: center; }
+.sig-col-right   { text-align: center; }
+.sig-stamp       { flex: 0 0 110px; display: flex; align-items: center; justify-content: center; }
+.sig-name        { font-weight: 700; font-size: 13px; margin-bottom: 2px; text-decoration: none; }
+.sig-position    { font-size: 12px; color: #222; margin-bottom: 1px; }
+.sig-court       { font-size: 11px; color: #555; margin-top: 2px; }
+.sig-clerk       { font-size: 11px; color: #333; margin-top: 4px; }
+.sig-clerk-label { font-weight: 700; }
+.stamp-img       { width: 100px; height: 100px; object-fit: contain; opacity: 0.85; }
+.stamp-placeholder {
+    width: 100px;
+    height: 100px;
+    border: 2px dashed #bbb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 11px;
+    letter-spacing: .05em;
+}
+
+/* ── Handover Document List Table ── */
+.doc-list          { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+.doc-list td       { font-size: 13px; padding: 3px 0; vertical-align: bottom; }
+.dl-num            { width: 24px; color: #555; }
+.dl-name           { width: 55%; font-weight: 700; white-space: nowrap; }
+.dl-dots           { border-bottom: 1.5px dotted #555; padding: 0 4px; }
+.dl-pages          { width: 70px; text-align: right; font-weight: 700; padding-left: 6px; white-space: nowrap; }
+.dl-total-row td   { padding-top: 8px; }
+.dl-total-label    { font-weight: 700; }
+
+/* ── Document Footer — base (positioning set by template class above) ── */
+.doc-footer {
+    position: relative;
+    z-index: 2;
+}
+
+/* Contact row: QR sits on the right — plain block layout (no flex/absolute/
+   transform), so it renders reliably both on-screen and in the
+   Dompdf-rendered PDF, which does not support CSS transforms and has
+   unreliable flexbox support. */
+.footer-contact-row {
+    text-align: right;
+    padding: 8px 24px 4px;
+}
+.footer-contact-text {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    color: #7a9db8;
+    font-family: Arial, sans-serif;
+    text-transform: uppercase;
+    line-height: 1.7;
+}
+.footer-contact-text p { margin: 0; }
+
+/* QR code — plain inline block, right-aligned by the row above */
+.footer-qr {
+    display: inline-block;
+    line-height: 0;
+}
+.footer-qr img,
+.footer-qr canvas {
+    width: 80px !important;
+    height: 80px !important;
+    display: block;
+}
+
+/* Gold divider */
+.footer-divider {
+    height: 4px;
+    background: linear-gradient(90deg, #F0B43C, #F8CC5E, #F0B43C);
+    margin: 0;
+}
+
+/* Blue address banner — symmetric padding (QR is in the row above, not here) */
+.footer-address-banner {
+    background: #6BA4BE;
+    color: #fff;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    font-family: Arial, sans-serif;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    line-height: 1.6;
+}
+
+/* Legacy QR id selectors — plain inline block (see .footer-qr above for why) */
+#hearing-qr,
+#return-file-qr,
+#scripture-qr,
+#judgment-qr {
+    display: inline-block;
+    line-height: 0;
+}
+#hearing-qr img,
+#return-file-qr img, #return-file-qr canvas,
+#scripture-qr img, #scripture-qr canvas,
+#judgment-qr img, #judgment-qr canvas {
+    width: 80px !important;
+    height: 80px !important;
+    display: block;
+}
+
+/* Handover QR — inline in signature row, not footer-positioned */
+#handover-qr {
+    position: static;
+    line-height: 0;
+}
+#handover-qr img, #handover-qr canvas {
+    width: 80px !important;
+    height: 80px !important;
+    display: block;
+}
+.footer-contact {
+    text-align: center;
+    font-size: 11px;
+    color: #444;
+    line-height: 1.7;
+    font-family: Arial, sans-serif;
+    padding-right: 90px;
+}
+.footer-contact p { margin: 0; }
+
+/* ── Toolbar (hidden on print) ── */
+.doc-toolbar {
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.doc-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.doc-toolbar-icon {
+    width: 48px; height: 48px;
+    background: rgba(82,140,190,0.1);
+    border-radius: .75rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.doc-toolbar-icon i { color: #528CBE; font-size: 1.25rem; }
+.doc-toolbar-title  { font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: -.025em; margin: 0; }
+.doc-toolbar-sub    { font-size: .875rem; color: #6b7280; margin: .125rem 0 0; }
+.doc-toolbar-sub span { font-weight: 600; color: #528CBE; }
+.doc-toolbar-actions { display: flex; gap: .75rem; }
+
+.btn-download {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .625rem 1.25rem; font-size: .875rem; font-weight: 600;
+    color: white; background: #528CBE; border: none; border-radius: .75rem;
+    cursor: pointer; box-shadow: 0 4px 14px rgba(82,140,190,.35);
+    transition: opacity .15s; text-decoration: none;
+}
+.btn-download:hover { opacity: .88; color: white; text-decoration: none; }
+.btn-download:disabled { opacity: .7; cursor: not-allowed; }
+
+.btn-doc-back {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .625rem 1rem; font-size: .875rem; font-weight: 600;
+    color: #4b5563; border: 1px solid #e5e7eb; border-radius: .75rem;
+    background: white; text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05); transition: background .15s;
+}
+.btn-doc-back:hover { background: #f9fafb; color: #4b5563; text-decoration: none; }
+
+.doc-wrapper { padding: 1rem 1.5rem; }
+
+/* ── Empty state ── */
+.doc-empty {
+    background: white; border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    border: 1px solid #f3f4f6;
+    padding: 6rem 1.5rem; text-align: center;
+}
+.doc-empty-icon {
+    width: 64px; height: 64px;
+    background: rgba(240,180,60,0.1); border-radius: 9999px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+}
+.doc-empty-icon i { font-size: 1.5rem; color: #F0B43C; }
+.doc-empty p { font-size: .875rem; font-weight: 600; color: #6b7280; margin: 0 0 1rem; }
+
+/* ── Scripture / Judgment QR size override ── */
+#scripture-qr img, #scripture-qr canvas,
+#judgment-qr img, #judgment-qr canvas {
+    width: 80px !important;
+    height: 80px !important;
+    display: block;
+}
+.doc-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #0A284D;
+    border-bottom: 1.5px solid #e5e7eb;
+    padding-bottom: 5px;
+    margin: 18px 0 10px;
+}
+.info-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 6px;
+}
+.info-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+.info-box {
+    background: rgba(82,140,190,0.05);
+    border: 1px solid rgba(82,140,190,0.12);
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+.info-box-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #9ca3af;
+    margin-bottom: 3px;
+}
+.info-box-value { font-size: 12px; font-weight: 700; color: #0A284D; }
+.status-seal {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+.parties-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 6px; }
+.parties-table th {
+    background: rgba(82,140,190,0.08);
+    padding: 5px 8px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6b7280;
+    text-align: left;
+}
+.parties-table td { padding: 5px 8px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+.role-pill   { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; }
+.role-plaintiff { background: rgba(82,140,190,0.12); color: #528CBE; }
+.role-defendant { background: rgba(239,68,68,0.1);  color: #b91c1c; }
+.scripture-content       { margin-bottom: 14px; }
+.scripture-content-value { font-size: 13px; color: #111; line-height: 1.7; min-height: 18px; white-space: pre-wrap; }
+
+/* ── Payment Receipt (compact single-column format) ── */
+.receipt-seal-header {
+    text-align: center;
+    padding: 26px 32px 4px;
+}
+.receipt-seal-header img {
+    width: 92px;
+    height: 92px;
+    object-fit: contain;
+    margin: 0 auto 10px;
+    display: block;
+}
+.receipt-org-line  { font-size: 14px; font-weight: 700; color: #111; line-height: 1.5; }
+.receipt-dept-line { font-size: 13px; font-weight: 700; color: #111; line-height: 1.5; }
+
+.receipt-meta {
+    text-align: center;
+    padding: 14px 32px 4px;
+}
+.receipt-doc-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-bottom: 8px;
+}
+.receipt-court-line { font-size: 12.5px; color: #222; margin-bottom: 3px; }
+.receipt-meta-line  { font-size: 12px; color: #333; margin-bottom: 2px; }
+
+.receipt-section-title {
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin: 22px 0 16px;
+}
+
+.receipt-fields { padding: 0 56px; }
+.receipt-row {
+    display: flex;
+    margin-bottom: 11px;
+    font-size: 12.5px;
+}
+.receipt-row-label { width: 160px; flex-shrink: 0; color: #222; }
+.receipt-row-value { color: #111; }
+.receipt-row-gap   { height: 10px; }
+
+.receipt-disclaimer {
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    line-height: 1.8;
+    margin: 26px 48px 20px;
+}
+
+.receipt-qr-block { text-align: center; margin-bottom: 6px; }
+.receipt-qr-block img { width: 110px; height: 110px; }
+.receipt-qr-caption { text-align: center; font-size: 10.5px; color: #555; margin-bottom: 22px; }
+
+/* ── Print ── */
+@media print {
+    .no-print { display: none !important; }
+    body, html { background: white !important; margin: 0; padding: 0; }
+    .doc-wrapper { padding: 0 !important; }
+    #hearing-doc,
+    #handover-doc,
+    #scripture-doc,
+    #judgment-doc,
+    #return-file-doc {
+        width: 100% !important;
+        height: 100vh !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-inside: avoid;
+    }
+    .doc-footer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
+    @page { margin: 0; size: A4; }
+}

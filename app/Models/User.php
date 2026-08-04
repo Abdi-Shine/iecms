@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+/**
+ * @property string|null $avatar
+ * @property string|null $name
+ * @property string|null $email
+ * @property string|null $phone
+ * @property string|null $position
+ * @property string|null $sex
+ * @property string|null $address
+ * @property string|null $timezone
+ * @property string|null $date_format
+ * @property int|null $items_per_page
+ * @property string|null $language
+ * @property string|null $theme
+ * @property string|null $font_size
+ * @property bool|null $collapse_sidebar
+ */
+class User extends Authenticatable
+{
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'avatar',
+        'phone',
+        'position',
+        'sex',
+        'address',
+        'group_id',
+        'timezone',
+        'date_format',
+        'items_per_page',
+        'language',
+        'theme',
+        'font_size',
+        'collapse_sidebar',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'collapse_sidebar' => 'boolean',
+        ];
+    }
+
+    private ?array $permissionCache = null;
+
+    private function loadPermissions(): array
+    {
+        if ($this->permissionCache !== null) return $this->permissionCache;
+        if (!$this->group_id) return $this->permissionCache = [];
+
+        $group = $this->group()->with('roles.permissions')->first();
+        if (!$group) return $this->permissionCache = [];
+
+        return $this->permissionCache = $group->roles
+            ->flatMap(fn($r) => $r->permissions)
+            ->map(fn($p) => strtolower($p->module) . '|' . $p->action)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Check if the user has a given permission via their group's roles.
+     * Users with no group assigned are treated as super-admins (full access).
+     */
+    public function hasPermission(string $module, string $action = 'view'): bool
+    {
+        if (!$this->group_id) return true;
+        return in_array(strtolower($module) . '|' . $action, $this->loadPermissions());
+    }
+
+    public function getRoleAttribute($value): string
+    {
+        return $value ?? 'Administrator';
+    }
+
+    /**
+     * Get the staff profile (employee) associated with this user.
+     */
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'group_id');
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'system_username', 'email');
+    }
+}

@@ -30,16 +30,18 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user->is_super_admin) {
-            return redirect()->intended(route('platform.dashboard', absolute: false));
+        if ($user->requiresTwoFactor() && $user->hasTwoFactorEnabled()) {
+            $intended = redirect()->intended(route($user->dashboardRoute(), absolute: false))->getTargetUrl();
+
+            Auth::logout();
+            $request->session()->put('2fa:user:id', $user->id);
+            $request->session()->put('2fa:intended', $intended);
+            $request->session()->regenerate();
+
+            return redirect()->route('two-factor.challenge');
         }
 
-        $dashboardRoute = match ($user->institution?->type) {
-            'ago' => 'attorney-dashboard.index',
-            default => 'dashboard',
-        };
-
-        return redirect()->intended(route($dashboardRoute, absolute: false));
+        return redirect()->intended(route($user->dashboardRoute(), absolute: false));
     }
 
     /**

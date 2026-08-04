@@ -63,6 +63,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**
@@ -77,6 +79,9 @@ class User extends Authenticatable
             'password' => 'hashed',
             'collapse_sidebar' => 'boolean',
             'is_super_admin' => 'boolean',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 
@@ -129,5 +134,39 @@ class User extends Authenticatable
     public function institution()
     {
         return $this->belongsTo(Institution::class);
+    }
+
+    public function isInstitutionAdmin(): bool
+    {
+        return $this->group?->roles->contains('name', 'Institution Admin') ?? false;
+    }
+
+    /**
+     * MFA is required for Super Admin and Institution Admin accounts
+     * only, to limit friction for regular staff.
+     */
+    public function requiresTwoFactor(): bool
+    {
+        return $this->is_super_admin || $this->isInstitutionAdmin();
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return $this->two_factor_confirmed_at !== null;
+    }
+
+    /**
+     * Where a successful login (or completed 2FA challenge) should land.
+     */
+    public function dashboardRoute(): string
+    {
+        if ($this->is_super_admin) {
+            return 'platform.dashboard';
+        }
+
+        return match ($this->institution?->type) {
+            'ago' => 'attorney-dashboard.index',
+            default => 'dashboard',
+        };
     }
 }

@@ -1197,6 +1197,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/system-preferences', [ProfileController::class, 'updateSystemPreferences'])->name('profile.system-preferences.update');
     Route::post('/profile/appearance', [ProfileController::class, 'updateAppearance'])->name('profile.appearance.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/security/two-factor', [\App\Http\Controllers\TwoFactorSettingsController::class, 'show'])->name('two-factor.show');
+    Route::post('/security/two-factor/confirm', [\App\Http\Controllers\TwoFactorSettingsController::class, 'confirm'])->name('two-factor.confirm');
+    Route::delete('/security/two-factor', [\App\Http\Controllers\TwoFactorSettingsController::class, 'destroy'])->name('two-factor.destroy');
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

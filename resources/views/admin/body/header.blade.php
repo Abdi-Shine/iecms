@@ -197,6 +197,10 @@
                             <i class="bi bi-person text-gray-400 text-base"></i>
                             <span>My Profile</span>
                         </a>
+                        <a href="{{ route('two-factor.show') }}" class="header-dropdown-item">
+                            <i class="bi bi-shield-lock text-gray-400 text-base"></i>
+                            <span>Two-Factor Authentication</span>
+                        </a>
                         <form method="POST" action="{{ route('lock-screen.lock') }}">
                             @csrf
                             <button type="submit" class="header-dropdown-item">

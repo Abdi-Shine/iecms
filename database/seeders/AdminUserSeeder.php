@@ -21,8 +21,9 @@ class AdminUserSeeder extends Seeder
 
         $password = Str::password(20);
 
-        // Create the Admin User
-        \App\Models\User::updateOrCreate(
+        // Create the Admin User. is_super_admin is deliberately not
+        // mass-assignable, so it's set separately via forceFill below.
+        $user = \App\Models\User::updateOrCreate(
             ['email' => $email],
             [
                 'name'     => 'Super Administrator',
@@ -33,6 +34,8 @@ class AdminUserSeeder extends Seeder
                 'address'  => 'Mogadishu, Somalia'
             ]
         );
+
+        $user->forceFill(['is_super_admin' => true])->save();
 
         $this->command?->info("Admin user created: $email / $password");
 

@@ -1267,4 +1267,22 @@ Route::middleware(['auth', 'permission:Attorney Departments,view'])->group(funct
     Route::resource('attorney-departments', \App\Http\Controllers\AttorneyDepartmentController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
+// ══════════════════════════════════════════════════════════════════════════════
+// Platform Administration (Super Admin only)
+// ══════════════════════════════════════════════════════════════════════════════
+
+Route::middleware(['auth', 'permission:Platform Administration,view'])->group(function () {
+    Route::get('institutions', [\App\Http\Controllers\InstitutionController::class, 'index'])->name('institutions.index');
+});
+
+Route::middleware(['auth', 'permission:Platform Administration,manage-institutions'])->group(function () {
+    Route::post('institutions', [\App\Http\Controllers\InstitutionController::class, 'store'])->name('institutions.store');
+    Route::put('institutions/{institution}', [\App\Http\Controllers\InstitutionController::class, 'update'])->name('institutions.update');
+});
+
+Route::middleware(['auth', 'permission:Platform Administration,manage-institution-admins'])->group(function () {
+    Route::get('institutions/{institution}/admin/create', [\App\Http\Controllers\InstitutionController::class, 'createAdmin'])->name('institutions.admin.create');
+    Route::post('institutions/{institution}/admin', [\App\Http\Controllers\InstitutionController::class, 'storeAdmin'])->name('institutions.admin.store');
+});
+
 require __DIR__.'/auth.php';

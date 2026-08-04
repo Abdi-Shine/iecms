@@ -133,6 +133,8 @@
         $canAttorneyCaseReviews = $u->hasPermission('Attorney Case Reviews');
         $canAttorneyProsecutorAssignments = $u->hasPermission('Attorney Prosecutor Assignments');
 
+        $canPlatformAdmin = $u->hasPermission('Platform Administration');
+
         $canFinance = $u->hasPermission('Finance');
         $canLawyer = $u->hasPermission('Lawyer Registry');
         $canarchive = $u->hasPermission('Archive');
@@ -945,6 +947,11 @@
                         <a href="{{ route('groups.index') }}"
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('groups.index') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Group Role</a>
+                    @endif
+                    @if($canPlatformAdmin)
+                        <a href="{{ route('institutions.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('institutions.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Institution Management</a>
                     @endif
                     @if($canBackup)
                         <a href="{{ route('backup.index') }}"

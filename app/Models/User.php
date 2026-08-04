@@ -44,6 +44,7 @@ class User extends Authenticatable
         'sex',
         'address',
         'group_id',
+        'institution_id',
         'timezone',
         'date_format',
         'items_per_page',
@@ -74,6 +75,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'collapse_sidebar' => 'boolean',
+            'is_super_admin' => 'boolean',
         ];
     }
 
@@ -97,11 +99,11 @@ class User extends Authenticatable
 
     /**
      * Check if the user has a given permission via their group's roles.
-     * Users with no group assigned are treated as super-admins (full access).
+     * Super admins bypass this entirely and have full access.
      */
     public function hasPermission(string $module, string $action = 'view'): bool
     {
-        if (!$this->group_id) return true;
+        if ($this->is_super_admin) return true;
         return in_array(strtolower($module) . '|' . $action, $this->loadPermissions());
     }
 

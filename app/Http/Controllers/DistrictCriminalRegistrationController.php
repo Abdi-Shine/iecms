@@ -207,6 +207,7 @@ class DistrictCriminalRegistrationController extends Controller
         \App\Models\DistrictCriminalRegistration::create(array_merge(
             $request->only('RegisterNo','FileNo','GradeCourt','CaseType','SubCase','OpenDate','NumberLetter','LegalBasis','Orders_Requested','Remarks','Status'),
             [
+                'institution_id' => auth()->user()->institution_id,
                 'addedBy'   => auth()->user()->name ?? 'Admin',
                 'addedDate' => now()->format('Y-m-d'),
             ]

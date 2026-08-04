@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToInstitution;
 use Illuminate\Database\Eloquent\Model;
 
 class DistrictExecutionRegistration extends Model
 {
+    use BelongsToInstitution;
+
     protected $table      = 'district_execution_registrations';
     protected $primaryKey = 'ECID';
     protected $guarded    = [];

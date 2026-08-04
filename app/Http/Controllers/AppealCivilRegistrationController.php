@@ -122,6 +122,7 @@ class AppealCivilRegistrationController extends Controller
         \App\Models\AppealCivilRegistration::create(array_merge(
             $request->only('RegisterNo','FileNo','GradeCourt','CaseType','SubCase','OpenDate','NumberLetter','LegalBasis','Orders_Requested','Remarks','Status','lower_court','lower_case_no'),
             [
+                'institution_id' => auth()->user()->institution_id,
                 'addedBy'   => auth()->user()->name ?? 'Admin',
                 'addedDate' => now()->format('Y-m-d'),
             ]

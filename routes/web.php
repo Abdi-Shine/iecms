@@ -1230,7 +1230,12 @@ Route::middleware(['auth', 'permission:Attorney Case Registration,view'])->group
 
     Route::get('attorney-cases/{id}/workflow', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'show'])->name('attorney-cases.workflow');
     Route::get('attorney-cases/{id}/workflow/investigation-decision', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'investigationDecision'])->name('attorney-cases.workflow.investigation-decision');
+    Route::get('attorney-cases/{id}/workflow/investigation-decision/form', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'investigationDecisionForm'])->name('attorney-cases.workflow.investigation-decision.form');
     Route::post('attorney-cases/{id}/workflow/investigation-decision', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'storeInvestigationDecision'])->name('attorney-cases.workflow.investigation-decision.store');
+    Route::get('attorney-cases/{id}/workflow/investigation', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'investigation'])->name('attorney-cases.workflow.investigation');
+    Route::get('attorney-cases/{id}/workflow/investigation/form', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'investigationForm'])->name('attorney-cases.workflow.investigation.form');
+    Route::post('attorney-cases/{id}/workflow/investigation', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'storeInvestigation'])->name('attorney-cases.workflow.investigation.store');
+    Route::post('attorney-cases/{id}/workflow/investigation/updates', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'storeInvestigationUpdate'])->name('attorney-cases.workflow.investigation.updates.store');
     Route::post('attorney-cases/{id}/workflow/send-to-court', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'sendToCourt'])->name('attorney-cases.workflow.send-to-court');
 
     Route::get('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'create'])->name('attorney-cases.compliance.create');

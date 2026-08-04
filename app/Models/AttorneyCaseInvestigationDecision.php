@@ -11,7 +11,11 @@ class AttorneyCaseInvestigationDecision extends Model
     protected function casts(): array
     {
         return [
-            'decision_date' => 'date',
+            'decision_date'                   => 'date',
+            'recommended_date'                => 'date',
+            'approved_date'                   => 'date',
+            'additional_investigation_needed' => 'boolean',
+            'risk_factors'                    => 'array',
         ];
     }
 

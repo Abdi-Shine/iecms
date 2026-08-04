@@ -10,9 +10,28 @@ class AttorneyCaseWorkflowController extends Controller
 {
     public const INVESTIGATION_DECISIONS = ['Baaritaan Loo Baahan Yahay', 'Baaritaan Looma Baahna'];
 
+    public const EVIDENCE_QUALITY_OPTIONS      = ['Adag', 'Dhexdhexaad', 'Daciif', 'Aan Ku Filnayn'];
+    public const EVIDENCE_COMPLETENESS_OPTIONS = ['Dhammaystiran', 'Qayb Ahaan Dhammaystiran', 'Aan Dhammaysnayn'];
+    public const LEGAL_SUFFICIENCY_OPTIONS     = ['Ku Filan', 'Aan Ku Filnayn', 'U Baahan Dib U Eegis'];
+    public const LEGAL_BASIS_OPTIONS           = ['Haa', 'Maya', 'Qayb Ahaan'];
+    public const RISK_LEVEL_OPTIONS            = ['Hooseeya', 'Dhexdhexaad', 'Sarreeya', 'Halis Weyn'];
+    public const RISK_FACTOR_OPTIONS           = [
+        'Markhaati Faragelin',
+        'Baabi\'inta Caddaynta',
+        'Halista Carar',
+        'Ammaanka Dadweynaha',
+        'Kale',
+    ];
+
+    public const INVESTIGATION_STATUSES = ['Ongoing', 'Completed', 'Referred to CID', 'Suspended'];
+
+    public const INVESTIGATION_EVIDENCE_TYPE_OPTIONS = ['Dukumeenti', 'Jireed', 'Dhijitaal', 'Markhaati', 'Sawir', 'Fiidiyow', 'Kale'];
+    public const SEX_OPTIONS                          = ['Male' => 'Lab', 'Female' => 'Dheddig'];
+    public const VICTIM_TYPE_OPTIONS                  = ['Shakhsi' => 'Shakhsi (Individual)', 'Qaranka' => 'Qaranka (State)'];
+
     public function show(Request $request, $id)
     {
-        $case = AttorneyCase::with(['investigationDecision', 'complianceForms.employee', 'complainants'])->findOrFail($id);
+        $case = AttorneyCase::with(['investigationDecision', 'investigation', 'complianceForms.employee', 'complainants'])->findOrFail($id);
 
         $steps = [
             [
@@ -29,7 +48,9 @@ class AttorneyCaseWorkflowController extends Controller
                 'title'       => 'Investigation',
                 'description' => 'AGO conducts investigation or refers to CID',
                 'formsCount'  => 1,
-                'enabled'     => false,
+                'enabled'     => true,
+                'route'       => route('attorney-cases.workflow.investigation', $case->ACID),
+                'complete'    => (bool) $case->investigation,
             ],
             [
                 'key'         => 'arrest-decision',
@@ -125,6 +146,165 @@ class AttorneyCaseWorkflowController extends Controller
         ]);
     }
 
+    public function investigation(Request $request, $id)
+    {
+        $case = AttorneyCase::with('investigation.updates')->findOrFail($id);
+
+        return view('attorney.Conclusion.direct_complaint_investigation', [
+            'case' => $case,
+        ]);
+    }
+
+    public function storeInvestigationUpdate(Request $request, $id)
+    {
+        $case = AttorneyCase::with('investigation')->findOrFail($id);
+
+        if (!$case->investigation) {
+            return back()->withErrors(['note' => 'Fadlan marka hore bilow baaritaanka ka hor intaadan isbeddel darin.']);
+        }
+
+        $data = $request->validate([
+            'note' => 'required|string',
+        ]);
+
+        $case->investigation->updates()->create([
+            'note'     => $data['note'],
+            'added_by' => $request->user()->name,
+        ]);
+
+        return redirect()->route('attorney-cases.workflow.investigation', $case->ACID)
+            ->with('success', 'Isbeddelka waa la daray.');
+    }
+
+    public function investigationForm(Request $request, $id)
+    {
+        $case = AttorneyCase::with(['investigation', 'accused', 'evidenceItems', 'legalProvisions'])->findOrFail($id);
+
+        return view('attorney.Conclusion.direct_complaint_investigation_form', [
+            'case'                 => $case,
+            'offenceCategories'    => \App\Models\CaseCategory::where('case_name', 'Ciqaabta')
+                ->whereNotNull('sub_case')->distinct()->orderBy('sub_case')->pluck('sub_case'),
+            'legalProvisionOptions' => \App\Models\CaseCategory::where('case_name', 'Ciqaabta')
+                ->whereNotNull('rule')->orderByRaw('CAST(SUBSTRING_INDEX(rule, " ", -1) AS UNSIGNED)')->get(),
+            'evidenceTypeOptions'  => self::INVESTIGATION_EVIDENCE_TYPE_OPTIONS,
+            'sexOptions'           => self::SEX_OPTIONS,
+            'victimTypeOptions'    => self::VICTIM_TYPE_OPTIONS,
+        ]);
+    }
+
+    public function storeInvestigation(Request $request, $id)
+    {
+        $case = AttorneyCase::findOrFail($id);
+
+        $data = $request->validate([
+            'commencement_date'   => 'required|date',
+
+            'accused'                      => 'nullable|array',
+            'accused.*.full_name'          => 'required_with:accused|string|max:150',
+            'accused.*.mother_name'        => 'nullable|string|max:150',
+            'accused.*.gender'             => 'nullable|string|max:20',
+            'accused.*.address'            => 'nullable|string',
+            'accused.*.id_number'          => 'nullable|string|max:50',
+
+            'offence_category'    => 'required|string|max:255',
+            'specific_offence'    => 'nullable|string|max:255',
+            'legal_provisions'                 => 'nullable|array',
+            'legal_provisions.*.provision'     => 'nullable|string|max:255',
+
+            'victim_type'         => 'required|in:' . implode(',', array_keys(self::VICTIM_TYPE_OPTIONS)),
+
+            'evidence'                      => 'nullable|array',
+            'evidence.*.existing_id'        => 'nullable|integer',
+            'evidence.*.evidence_type'      => 'nullable|string|max:50',
+            'evidence.*.description'        => 'nullable|string',
+
+            'case_description'           => 'nullable|string',
+            'location_of_offence'        => 'nullable|string|max:255',
+            'approximate_time_of_offence' => 'nullable|string|max:100',
+
+            'prosecutor_name'       => 'required|string|max:150',
+            'prosecutor_department' => 'nullable|string|max:150',
+            'prosecutor_signature'  => 'required|string|max:150',
+            'signature_date'        => 'required|date',
+
+            'initial_evidence_file'      => 'nullable|file|max:10240',
+            'supporting_documents_file'  => 'nullable|file|max:10240',
+        ]);
+
+        $case->update([
+            'offense_type'      => $data['offence_category'],
+            'summary'           => $data['case_description'] ?? $case->summary,
+            'incident_location' => $data['location_of_offence'] ?? $case->incident_location,
+            'incident_time'     => $data['approximate_time_of_offence'] ?? $case->incident_time,
+        ]);
+
+        $case->accused()->delete();
+        foreach ($data['accused'] ?? [] as $row) {
+            \App\Models\AttorneyCaseAccused::create(array_merge(['attorney_case_id' => $case->ACID], $row));
+        }
+
+        $case->legalProvisions()->delete();
+        foreach ($data['legal_provisions'] ?? [] as $row) {
+            if (empty($row['provision'])) {
+                continue;
+            }
+            \App\Models\AttorneyCaseLegalProvision::create([
+                'attorney_case_id' => $case->ACID,
+                'provision'        => $row['provision'],
+            ]);
+        }
+
+        $keptEvidenceIds = [];
+        foreach ($request->input('evidence', []) as $index => $row) {
+            $existingId = $row['existing_id'] ?? null;
+            $item       = $existingId ? $case->evidenceItems()->find($existingId) : null;
+
+            $attributes = [
+                'evidence_type' => $row['evidence_type'] ?? 'Kale',
+                'description'   => $row['description'] ?? null,
+            ];
+
+            $item = $item ? tap($item)->update($attributes)
+                : \App\Models\AttorneyCaseEvidenceItem::create(array_merge(['attorney_case_id' => $case->ACID], $attributes));
+
+            $keptEvidenceIds[] = $item->id;
+        }
+        $case->evidenceItems()->whereNotIn('id', $keptEvidenceIds ?: [0])->delete();
+
+        $investigationData = [
+            'start_date'             => $data['commencement_date'],
+            'specific_offence'       => $data['specific_offence'] ?? null,
+            'victim_type'            => $data['victim_type'],
+            'prosecutor_name'        => $data['prosecutor_name'],
+            'prosecutor_department'  => $data['prosecutor_department'] ?? null,
+            'prosecutor_signature'   => $data['prosecutor_signature'],
+            'signature_date'         => $data['signature_date'],
+            'created_by'             => $request->user()->name,
+        ];
+
+        if ($request->hasFile('initial_evidence_file')) {
+            $investigationData['initial_evidence_file'] = $request->file('initial_evidence_file')->store(
+                'uploads/attorney/investigations/' . $case->ACID,
+                'public'
+            );
+        }
+
+        if ($request->hasFile('supporting_documents_file')) {
+            $investigationData['supporting_documents_file'] = $request->file('supporting_documents_file')->store(
+                'uploads/attorney/investigations/' . $case->ACID,
+                'public'
+            );
+        }
+
+        \App\Models\AttorneyInvestigation::updateOrCreate(
+            ['attorney_case_id' => $case->ACID],
+            $investigationData
+        );
+
+        return redirect()->route('attorney-cases.workflow', $case->ACID)
+            ->with('success', 'Baaritaanka waa la bilaabay.');
+    }
+
     public function sendToCourt(Request $request, $id)
     {
         $case = AttorneyCase::findOrFail($id);
@@ -149,17 +329,89 @@ class AttorneyCaseWorkflowController extends Controller
         ]);
     }
 
+    public function investigationDecisionForm(Request $request, $id)
+    {
+        $case = AttorneyCase::with('investigationDecision')->findOrFail($id);
+
+        return view('attorney.Conclusion.direct_complaint_investigation_decision_form', [
+            'case'                     => $case,
+            'decisions'                => self::INVESTIGATION_DECISIONS,
+            'evidenceQualityOptions'   => self::EVIDENCE_QUALITY_OPTIONS,
+            'evidenceCompletenessOptions' => self::EVIDENCE_COMPLETENESS_OPTIONS,
+            'legalSufficiencyOptions'  => self::LEGAL_SUFFICIENCY_OPTIONS,
+            'legalBasisOptions'        => self::LEGAL_BASIS_OPTIONS,
+            'riskLevelOptions'         => self::RISK_LEVEL_OPTIONS,
+            'riskFactorOptions'        => self::RISK_FACTOR_OPTIONS,
+        ]);
+    }
+
     public function storeInvestigationDecision(Request $request, $id)
     {
         $case = AttorneyCase::findOrFail($id);
 
         $data = $request->validate([
-            'decision'      => 'required|in:' . implode(',', self::INVESTIGATION_DECISIONS),
-            'reasoning'     => 'nullable|string',
-            'decision_date' => 'required|date',
+            // CID Investigation Summary
+            'investigation_summary'           => 'required|string',
+
+            // Evidence Assessment
+            'evidence_quality'                => 'nullable|in:' . implode(',', self::EVIDENCE_QUALITY_OPTIONS),
+            'evidence_completeness'            => 'nullable|in:' . implode(',', self::EVIDENCE_COMPLETENESS_OPTIONS),
+            'evidence_assessment_notes'        => 'nullable|string',
+
+            // Witness Interviews
+            'witnesses_interviewed'            => 'nullable|string|max:50',
+            'witness_interview_notes'          => 'nullable|string',
+
+            // Legal Assessment
+            'legal_sufficiency'                => 'nullable|in:' . implode(',', self::LEGAL_SUFFICIENCY_OPTIONS),
+            'legal_basis_identified'           => 'nullable|in:' . implode(',', self::LEGAL_BASIS_OPTIONS),
+            'legal_assessment_notes'           => 'nullable|string',
+
+            // Investigation Decision
+            'decision'                         => 'required|in:' . implode(',', self::INVESTIGATION_DECISIONS),
+            'reasoning'                         => 'nullable|string',
+            'decision_date'                     => 'required|date',
+            'next_steps'                        => 'nullable|string',
+
+            // Resource Requirements
+            'additional_investigation_needed'   => 'nullable|boolean',
+            'estimated_completion_time'         => 'nullable|string|max:100',
+            'resource_requirements'             => 'nullable|string',
+
+            // Risk Assessment
+            'overall_risk_level'                => 'nullable|in:' . implode(',', self::RISK_LEVEL_OPTIONS),
+            'risk_factors'                       => 'nullable|array',
+            'risk_factors.*'                     => 'in:' . implode(',', self::RISK_FACTOR_OPTIONS),
+            'risk_mitigation_strategies'         => 'nullable|string',
+
+            // Supporting Documentation
+            'cid_investigation_report'          => 'nullable|file|max:10240',
+            'evidence_photographs'              => 'nullable|file|max:10240',
+            'witness_statements'                => 'nullable|file|max:10240',
+            'other_documents'                   => 'nullable|file|max:10240',
+
+            // Approval
+            'recommended_by'                    => 'nullable|string|max:255',
+            'recommended_date'                  => 'nullable|date',
+            'approved_by'                        => 'nullable|string|max:255',
+            'approved_date'                      => 'nullable|date',
         ]);
 
-        $data['decided_by'] = $request->user()->name;
+        $data['decided_by']                       = $request->user()->name;
+        $data['additional_investigation_needed']  = $request->boolean('additional_investigation_needed');
+
+        $uploadDir = 'uploads/attorney/investigation-decisions/' . $case->ACID;
+        foreach ([
+            'cid_investigation_report' => 'cid_investigation_report_path',
+            'evidence_photographs'     => 'evidence_photographs_path',
+            'witness_statements'       => 'witness_statements_path',
+            'other_documents'          => 'other_documents_path',
+        ] as $fileField => $pathColumn) {
+            if ($request->hasFile($fileField)) {
+                $data[$pathColumn] = $request->file($fileField)->store($uploadDir, 'public');
+            }
+            unset($data[$fileField]);
+        }
 
         AttorneyCaseInvestigationDecision::updateOrCreate(
             ['attorney_case_id' => $case->ACID],

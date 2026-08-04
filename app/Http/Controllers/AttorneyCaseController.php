@@ -471,6 +471,7 @@ class AttorneyCaseController extends Controller
         }
 
         $case = AttorneyCase::create([
+            'institution_id'        => $user->institution_id,
             'title'                 => $data['title'] ?? $data['offense_type'],
             'offense_type'          => $data['offense_type'],
             'date_reported'         => now()->toDateString(),

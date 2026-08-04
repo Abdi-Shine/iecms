@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToInstitution;
 use Illuminate\Database\Eloquent\Model;
 
 class AttorneyCase extends Model
 {
+    use BelongsToInstitution;
+
     protected $table      = 'attorney_cases';
     protected $primaryKey = 'ACID';
     protected $guarded    = [];
@@ -48,7 +51,10 @@ class AttorneyCase extends Model
         $prefix   = static::CASE_NUMBER_PREFIX . '/' . $group;
         $currYear = date('Y');
 
-        $last = static::where('case_number', 'like', "{$prefix}/%/{$currYear}")
+        // Case numbers must stay globally unique across institutions, not
+        // just within the current user's institution.
+        $last = static::withoutGlobalScopes()
+            ->where('case_number', 'like', "{$prefix}/%/{$currYear}")
             ->orderByDesc('ACID')
             ->value('case_number');
 

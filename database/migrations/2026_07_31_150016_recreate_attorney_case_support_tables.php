@@ -7,27 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Supporting tables for the rebuilt case registration pages: parties
-     * involved in a case, supporting documents, and the activity/audit log.
-     * Investigation, prosecutor, proceedings, and evidence management stay
-     * removed per the earlier cleanup — this only restores case registration.
+     * Supporting tables for case registration: documents and the
+     * activity/audit log. attorney_case_parties is created by
+     * 2026_07_31_150002_create_attorney_case_parties_table.
      */
     public function up(): void
     {
-        Schema::create('attorney_case_parties', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('attorney_case_id');
-            $table->string('party_role', 50);
-            $table->string('full_name', 150);
-            $table->string('contact_number', 30)->nullable();
-            $table->string('national_id', 50)->nullable();
-            $table->text('address')->nullable();
-            $table->timestamps();
-
-            $table->foreign('attorney_case_id', 'ag_parties_case_id_fk')
-                ->references('ACID')->on('attorney_cases')->onDelete('cascade');
-        });
-
         Schema::create('attorney_case_documents', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('attorney_case_id');
@@ -60,6 +45,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('attorney_case_activities');
         Schema::dropIfExists('attorney_case_documents');
-        Schema::dropIfExists('attorney_case_parties');
     }
 };

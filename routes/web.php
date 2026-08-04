@@ -582,7 +582,7 @@ Route::middleware(['auth', 'permission:Family Case Registration,view'])->group(f
     Route::get('family-registration/next-fileno/{courtcode}', [\App\Http\Controllers\DistrictFamilyRegistrationController::class, 'nextFileNo']);
     Route::get('family-case-tracking', [\App\Http\Controllers\DistrictFamilyRegistrationController::class, 'tracking'])->name('family-case-tracking.index');
     Route::get('family-registration/{id}/supporting', [\App\Http\Controllers\DistrictFamilyRegistrationController::class, 'supporting'])->name('family-registration.supporting');
-    Route::resource('family-registration', \App\Http\Controllers\DistrictFamilyRegistrationController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('family-registration', \App\Http\Controllers\DistrictFamilyRegistrationController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });
 
 // Shown from either "Family Case Registration" or "Family Hearings" (case detail page

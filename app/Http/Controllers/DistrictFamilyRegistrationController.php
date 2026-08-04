@@ -168,6 +168,27 @@ class DistrictFamilyRegistrationController extends Controller
         return view('Courts.District_family.registration.district_family_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'familySubCases'));
     }
 
+    public function create()
+    {
+        $courts       = \App\Models\Court::orderBy('longName')->get();
+        $userCourtID  = (auth()->check() && auth()->user()->position !== 'admin')
+                        ? (auth()->user()->employee->courtID ?? null)
+                        : null;
+
+        return view('Courts.District_family.registration.district_family_registration_form', compact('courts', 'userCourtID'));
+    }
+
+    public function edit($id)
+    {
+        $record      = \App\Models\DistrictFamilyRegistration::findOrFail($id);
+        $courts      = \App\Models\Court::orderBy('longName')->get();
+        $userCourtID = (auth()->check() && auth()->user()->position !== 'admin')
+                        ? (auth()->user()->employee->courtID ?? null)
+                        : null;
+
+        return view('Courts.District_family.registration.district_family_registration_form', compact('record', 'courts', 'userCourtID'));
+    }
+
     public function show($id)
     {
         $case        = \App\Models\DistrictFamilyRegistration::with(['court', 'parties', 'documents', 'lawyers.lawyer', 'lawyers.party', 'legalRepresentatives.party', 'assignments.employee', 'hearings', 'payments.tariff'])->findOrFail($id);
@@ -212,7 +233,8 @@ class DistrictFamilyRegistrationController extends Controller
             ]
         ));
 
-        return response()->json(['success' => true, 'message' => 'Family case registered successfully.']);
+        return redirect()->route('family-registration.index')
+            ->with('success', 'Family case registered successfully.');
     }
 
     public function update(Request $request, $id)
@@ -240,7 +262,8 @@ class DistrictFamilyRegistrationController extends Controller
             ]
         ));
 
-        return response()->json(['success' => true, 'message' => 'Family case updated successfully.']);
+        return redirect()->route('family-registration.index')
+            ->with('success', 'Family case updated successfully.');
     }
 
     public function destroy($id)

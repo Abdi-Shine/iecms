@@ -1272,6 +1272,7 @@ Route::middleware(['auth', 'permission:Attorney Departments,view'])->group(funct
 // ══════════════════════════════════════════════════════════════════════════════
 
 Route::middleware(['auth', 'permission:Platform Administration,view'])->group(function () {
+    Route::get('platform/dashboard', [\App\Http\Controllers\PlatformDashboardController::class, 'index'])->name('platform.dashboard');
     Route::get('institutions', [\App\Http\Controllers\InstitutionController::class, 'index'])->name('institutions.index');
 });
 

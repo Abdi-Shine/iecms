@@ -949,6 +949,9 @@
                             <i class="bi bi-plus text-lg"></i> Group Role</a>
                     @endif
                     @if($canPlatformAdmin)
+                        <a href="{{ route('platform.dashboard') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('platform.dashboard') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Global Dashboard</a>
                         <a href="{{ route('institutions.index') }}"
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('institutions.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Institution Management</a>

@@ -29,11 +29,17 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        if ($user->group_id && $user->hasPermission('Attorney Dashboard', 'view')) {
-            return redirect()->intended(route('attorney-dashboard.index', absolute: false));
+
+        if ($user->is_super_admin) {
+            return redirect()->intended(route('platform.dashboard', absolute: false));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $dashboardRoute = match ($user->institution?->type) {
+            'ago' => 'attorney-dashboard.index',
+            default => 'dashboard',
+        };
+
+        return redirect()->intended(route($dashboardRoute, absolute: false));
     }
 
     /**

@@ -97,7 +97,7 @@
                         <tr class="bg-neutral-50">
                             <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Nooca Foomka</th>
                             <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Taariikhda Gudbinta</th>
-                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Taariikhda Cusub</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Muddada La Codsanayo</th>
                             <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Xaalada</th>
                             <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Sababta Ansixinta</th>
                             <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Kii Ansixiyay</th>
@@ -117,7 +117,9 @@
                             <tr>
                                 <td class="px-4 py-3 font-semibold text-neutral-800">Kordhinta Baaritaanka</td>
                                 <td class="px-4 py-3 text-neutral-600">{{ $e->created_at?->format('d/m/Y H:i') ?? '—' }}</td>
-                                <td class="px-4 py-3 text-neutral-600">{{ $e->new_deadline?->format('d/m/Y') ?? '—' }}</td>
+                                <td class="px-4 py-3 text-neutral-600">
+                                    {{ $e->extension_period === 'Other' ? ($e->extension_period_other ?: 'Other') : ($e->extension_period ?? '—') }}
+                                </td>
                                 <td class="px-4 py-3">
                                     <span class="text-xs font-bold px-2.5 py-1 rounded-full {{ $statusStyles[$e->status] ?? 'bg-neutral-100 text-neutral-600' }}">
                                         {{ $e->status }}

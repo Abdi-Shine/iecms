@@ -32,6 +32,8 @@ class AttorneyCaseWorkflowController extends Controller
 
     public const APPROVAL_STATUS_OPTIONS = ['Sugaya', 'La Ansixiyay', 'La Diiday'];
 
+    public const EXTENSION_PERIOD_OPTIONS = ['07 days', '15 days', '30 days', '60 days', '90 days', 'Other'];
+
     public function show(Request $request, $id)
     {
         $case = AttorneyCase::with([
@@ -447,7 +449,7 @@ class AttorneyCaseWorkflowController extends Controller
     // ── Investigation Extension ─────────────────────────────────────
     public function investigationExtension(Request $request, $id)
     {
-        $case = AttorneyCase::with('investigationExtension')->findOrFail($id);
+        $case = AttorneyCase::with('investigationExtension.accused')->findOrFail($id);
 
         return view('attorney.Conclusion.direct_complaint_investigation_extension', [
             'case' => $case,
@@ -456,10 +458,13 @@ class AttorneyCaseWorkflowController extends Controller
 
     public function investigationExtensionForm(Request $request, $id)
     {
-        $case = AttorneyCase::with('investigationExtension')->findOrFail($id);
+        $case = AttorneyCase::with(['investigationExtension.accused', 'accused'])->findOrFail($id);
 
         return view('attorney.Conclusion.direct_complaint_investigation_extension_form', [
-            'case' => $case,
+            'case'                   => $case,
+            'courts'                 => \App\Models\Court::orderBy('longName')->get(),
+            'extensionPeriodOptions' => self::EXTENSION_PERIOD_OPTIONS,
+            'sexOptions'             => self::SEX_OPTIONS,
         ]);
     }
 
@@ -468,24 +473,51 @@ class AttorneyCaseWorkflowController extends Controller
         $case = AttorneyCase::findOrFail($id);
 
         $data = $request->validate([
-            'current_deadline'       => 'nullable|date',
-            'requested_days'         => 'nullable|string|max:50',
-            'new_deadline'           => 'required|date',
-            'justification'          => 'nullable|string',
-            'requesting_prosecutor'  => 'nullable|string|max:150',
-            'request_date'           => 'required|date',
-            'supporting_document'    => 'nullable|file|max:10240',
+            'date_registered_investigation'         => 'required|date',
+            'incident_type'                          => 'required|string|max:255',
+            'legal_articles'                          => 'required|string',
+            'date_offence_occurred'                   => 'required|date',
+            'offence_location'                        => 'required|string|max:255',
+            'date_investigation_commenced'             => 'required|date',
+            'court_name'                               => 'required|string|max:150',
+            'court_case_reference'                     => 'required|string|max:100',
+
+            'accused'                      => 'required|array|min:1',
+            'accused.*.full_name'          => 'required|string|max:150',
+            'accused.*.mother_name'        => 'required|string|max:150',
+            'accused.*.sex'                => 'required|string|max:20',
+            'accused.*.residence'          => 'required|string|max:255',
+
+            'reason_ongoing_investigation'              => 'nullable|boolean',
+            'reason_awaiting_scan_results'               => 'nullable|boolean',
+            'reason_awaiting_institutional_experts'      => 'nullable|boolean',
+            'reason_awaiting_witness_statements'         => 'nullable|boolean',
+            'reason_other'                                => 'nullable|boolean',
+            'reason_other_specify'                        => 'nullable|string',
+
+            'extension_period'       => 'required|in:' . implode(',', self::EXTENSION_PERIOD_OPTIONS),
+            'extension_period_other' => 'nullable|string|max:100',
+
+            'prosecutor_name'  => 'required|string|max:150',
+            'prosecutor_title' => 'required|string|max:255',
         ]);
 
-        if ($request->hasFile('supporting_document')) {
-            $data['supporting_document_path'] = $request->file('supporting_document')->store(
-                'uploads/attorney/investigation-extensions/' . $case->ACID,
-                'public'
-            );
-        }
-        unset($data['supporting_document']);
+        $accused = $data['accused'];
+        unset($data['accused']);
 
-        AttorneyCaseInvestigationExtension::updateOrCreate(['attorney_case_id' => $case->ACID], $data);
+        foreach (['reason_ongoing_investigation', 'reason_awaiting_scan_results', 'reason_awaiting_institutional_experts', 'reason_awaiting_witness_statements', 'reason_other'] as $flag) {
+            $data[$flag] = $request->boolean($flag);
+        }
+
+        $extension = AttorneyCaseInvestigationExtension::updateOrCreate(
+            ['attorney_case_id' => $case->ACID],
+            $data
+        );
+
+        $extension->accused()->delete();
+        foreach ($accused as $row) {
+            $extension->accused()->create($row);
+        }
 
         return redirect()->route('attorney-cases.workflow.investigation-extension', $case->ACID)
             ->with('success', 'Codsiga kordhinta baaritaanka waa la keydiyay.');

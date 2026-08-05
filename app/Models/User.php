@@ -166,6 +166,7 @@ class User extends Authenticatable
 
         return match ($this->institution?->type) {
             'ago' => 'attorney-dashboard.index',
+            'cid' => 'cid-dashboard.index',
             default => 'dashboard',
         };
     }

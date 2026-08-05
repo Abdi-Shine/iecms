@@ -133,6 +133,14 @@
         $canAttorneyCaseReviews = $u->hasPermission('Attorney Case Reviews');
         $canAttorneyProsecutorAssignments = $u->hasPermission('Attorney Prosecutor Assignments');
 
+        $canCidDashboard = $u->hasPermission('CID Dashboard');
+        $canCidInvestigation = $u->hasPermission('CID Investigation Workflow');
+        $canCidCaseManagement = $u->hasPermission('CID Case Management');
+        $canCidEvidence = $u->hasPermission('CID Evidence & Documentation');
+        $canCidLegalProcess = $u->hasPermission('CID Legal Process');
+        $canCidDetention = $u->hasPermission('CID Detention Center');
+        $canCidSettings = $u->hasPermission('CID Settings');
+
         $canPlatformAdmin = $u->hasPermission('Platform Administration');
 
         $canFinance = $u->hasPermission('Finance');
@@ -307,6 +315,35 @@
                 </div>
             </div>
         @endif
+
+        <!-- CID: Criminal Investigation Department -->
+        @if($canCidDashboard)
+            <a href="{{ route('cid-dashboard.index') }}"
+                class="flex items-center gap-3 px-4 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] transition-all duration-200 w-full {{ Route::is('cid-dashboard.*') ? 'bg-white/5 text-white' : '' }}">
+                <i class="bi bi-speedometer2 text-lg"></i>
+                <span>CID Dashboard</span>
+            </a>
+        @endif
+
+        @php
+            $cidComingSoonMenus = [
+                ['can' => $canCidInvestigation, 'icon' => 'bi-search',                   'label' => 'Investigation Workflow'],
+                ['can' => $canCidCaseManagement, 'icon' => 'bi-folder2-open',             'label' => 'Case Management'],
+                ['can' => $canCidEvidence,       'icon' => 'bi-archive-fill',             'label' => 'Evidence & Documentation'],
+                ['can' => $canCidLegalProcess,   'icon' => 'bi-file-earmark-lock2-fill',  'label' => 'Legal Process'],
+                ['can' => $canCidDetention,      'icon' => 'bi-shield-lock-fill',         'label' => 'Detention Center'],
+                ['can' => $canCidSettings,       'icon' => 'bi-gear-fill',                'label' => 'CID Settings'],
+            ];
+        @endphp
+        @foreach($cidComingSoonMenus as $menu)
+            @if($menu['can'])
+                <div class="flex items-center gap-3 px-4 py-3 text-white/30 rounded-xl font-semibold text-[14px] w-full cursor-not-allowed">
+                    <i class="bi {{ $menu['icon'] }} text-lg"></i>
+                    <span class="flex-1 text-left leading-tight">{{ $menu['label'] }}</span>
+                    <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 text-white/40">Soon</span>
+                </div>
+            @endif
+        @endforeach
 
         <!-- 2. Civil Cases for District and Regional Court-->
         @if($hasDistrictAndRegionalCivilSection)

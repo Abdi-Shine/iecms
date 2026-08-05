@@ -1312,6 +1312,15 @@ Route::middleware(['auth', 'permission:Attorney Departments,view'])->group(funct
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
+// Criminal Investigation Department (CID)
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── CID Dashboard ────────────────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:CID Dashboard,view'])->group(function () {
+    Route::get('cid-dashboard', [\App\Http\Controllers\CidDashboardController::class, 'index'])->name('cid-dashboard.index');
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
 // Platform Administration (Super Admin only)
 // ══════════════════════════════════════════════════════════════════════════════
 

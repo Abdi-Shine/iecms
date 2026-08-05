@@ -34,6 +34,7 @@ class AttorneyCaseWorkflowController extends Controller
         $case = AttorneyCase::with([
             'investigationDecision', 'investigation', 'complianceForms.employee', 'complainants',
             'arrestDecision', 'arrestWithoutWarrant', 'warrantOfArrest', 'searchAndSeizure', 'assetRecovery',
+            'suspectInterview', 'witnessInterview', 'expertInterview', 'victimInterview', 'evidenceManagement',
         ])->findOrFail($id);
 
         $steps = [
@@ -73,7 +74,13 @@ class AttorneyCaseWorkflowController extends Controller
                 'title'       => 'Evidence & Interviews',
                 'description' => 'Conduct interviews and manage evidence',
                 'formsCount'  => 5,
-                'enabled'     => false,
+                'enabled'     => true,
+                'route'       => route('attorney-cases.workflow.evidence-interviews', $case->ACID),
+                'complete'    => (bool) $case->suspectInterview
+                    && (bool) $case->witnessInterview
+                    && (bool) $case->expertInterview
+                    && (bool) $case->victimInterview
+                    && (bool) $case->evidenceManagement,
             ],
             [
                 'key'         => 'investigation-extension',

@@ -123,6 +123,31 @@ class AttorneyCase extends Model
         return $this->hasOne(AttorneyCaseAssetRecovery::class, 'attorney_case_id', 'ACID');
     }
 
+    public function suspectInterview()
+    {
+        return $this->hasOne(AttorneyCaseSuspectInterview::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function witnessInterview()
+    {
+        return $this->hasOne(AttorneyCaseWitnessInterview::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function expertInterview()
+    {
+        return $this->hasOne(AttorneyCaseExpertInterview::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function victimInterview()
+    {
+        return $this->hasOne(AttorneyCaseVictimInterview::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function evidenceManagement()
+    {
+        return $this->hasOne(AttorneyCaseEvidenceManagement::class, 'attorney_case_id', 'ACID');
+    }
+
     public function complianceForms()
     {
         return $this->hasMany(AttorneyComplianceForm::class, 'attorney_case_id', 'ACID');

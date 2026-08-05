@@ -1260,6 +1260,23 @@ Route::middleware(['auth', 'permission:Attorney Case Registration,view'])->group
     Route::get('attorney-cases/{id}/workflow/arrest-decision/asset-recovery/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'assetRecoveryForm'])->name('attorney-cases.workflow.arrest-decision.asset-recovery.form');
     Route::post('attorney-cases/{id}/workflow/arrest-decision/asset-recovery', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeAssetRecovery'])->name('attorney-cases.workflow.arrest-decision.asset-recovery.store');
 
+    Route::get('attorney-cases/{id}/workflow/evidence-interviews', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'show'])->name('attorney-cases.workflow.evidence-interviews');
+
+    Route::get('attorney-cases/{id}/workflow/evidence-interviews/suspect-interviews/form', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'suspectInterviewsForm'])->name('attorney-cases.workflow.evidence-interviews.suspect-interviews.form');
+    Route::post('attorney-cases/{id}/workflow/evidence-interviews/suspect-interviews', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'storeSuspectInterviews'])->name('attorney-cases.workflow.evidence-interviews.suspect-interviews.store');
+
+    Route::get('attorney-cases/{id}/workflow/evidence-interviews/witness-interviews/form', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'witnessInterviewsForm'])->name('attorney-cases.workflow.evidence-interviews.witness-interviews.form');
+    Route::post('attorney-cases/{id}/workflow/evidence-interviews/witness-interviews', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'storeWitnessInterviews'])->name('attorney-cases.workflow.evidence-interviews.witness-interviews.store');
+
+    Route::get('attorney-cases/{id}/workflow/evidence-interviews/expert-interviews/form', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'expertInterviewsForm'])->name('attorney-cases.workflow.evidence-interviews.expert-interviews.form');
+    Route::post('attorney-cases/{id}/workflow/evidence-interviews/expert-interviews', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'storeExpertInterviews'])->name('attorney-cases.workflow.evidence-interviews.expert-interviews.store');
+
+    Route::get('attorney-cases/{id}/workflow/evidence-interviews/victim-interviews/form', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'victimInterviewsForm'])->name('attorney-cases.workflow.evidence-interviews.victim-interviews.form');
+    Route::post('attorney-cases/{id}/workflow/evidence-interviews/victim-interviews', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'storeVictimInterviews'])->name('attorney-cases.workflow.evidence-interviews.victim-interviews.store');
+
+    Route::get('attorney-cases/{id}/workflow/evidence-interviews/evidence-management/form', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'evidenceManagementForm'])->name('attorney-cases.workflow.evidence-interviews.evidence-management.form');
+    Route::post('attorney-cases/{id}/workflow/evidence-interviews/evidence-management', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'storeEvidenceManagement'])->name('attorney-cases.workflow.evidence-interviews.evidence-management.store');
+
     Route::get('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'create'])->name('attorney-cases.compliance.create');
     Route::post('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'store'])->name('attorney-cases.compliance.store');
     Route::get('attorney-cases/compliance/{record}/letter', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'letter'])->name('attorney-cases.compliance.letter');

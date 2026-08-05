@@ -1399,6 +1399,26 @@ Route::middleware(['auth', 'permission:CID Evidence & Documentation,view'])->gro
     Route::get('cid-conclusion-reports', [\App\Http\Controllers\CriminalConclusionReportController::class, 'index'])->name('cid-conclusion-reports.index');
 });
 
+// ── CID Detention Center ──────────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:CID Detention Center,view'])->group(function () {
+    Route::get('cid-detainees', [\App\Http\Controllers\CriminalDetaineeController::class, 'index'])->name('cid-detainees.index');
+    Route::get('cid-detainees/{id}', [\App\Http\Controllers\CriminalDetaineeController::class, 'show'])->name('cid-detainees.show');
+    Route::post('cid-detainees/{id}/status', [\App\Http\Controllers\CriminalDetaineeController::class, 'updateStatus'])->name('cid-detainees.status');
+    Route::post('cid-detainees/{id}/transfer', [\App\Http\Controllers\CriminalDetaineeController::class, 'storeTransfer'])->name('cid-detainees.transfer');
+    Route::post('cid-detainees/{id}/release', [\App\Http\Controllers\CriminalDetaineeController::class, 'storeRelease'])->name('cid-detainees.release');
+    Route::get('criminal-cases/{id}/admission', [\App\Http\Controllers\CriminalDetaineeController::class, 'admissionForm'])->name('cid-detainees.admission-form');
+    Route::post('criminal-cases/{id}/admission', [\App\Http\Controllers\CriminalDetaineeController::class, 'admit'])->name('cid-detainees.admit');
+    Route::post('cid-detainees/{id}/remand', [\App\Http\Controllers\CriminalDetaineeController::class, 'storeRemandOrder'])->name('cid-detainees.remand');
+    Route::get('cid-detainees/{id}/medical', [\App\Http\Controllers\CriminalDetaineeController::class, 'medicalRecords'])->name('cid-detainees.medical');
+    Route::post('cid-detainees/{id}/medical', [\App\Http\Controllers\CriminalDetaineeController::class, 'storeMedicalRecord'])->name('cid-detainees.medical.store');
+
+    Route::get('cid-remand-management', [\App\Http\Controllers\CriminalRemandController::class, 'index'])->name('cid-remand-management.index');
+
+    Route::get('criminal-cases/{id}/exhibits', [\App\Http\Controllers\CriminalExhibitController::class, 'index'])->name('criminal-cases.exhibits.index');
+    Route::post('criminal-cases/{id}/exhibits', [\App\Http\Controllers\CriminalExhibitController::class, 'store'])->name('criminal-cases.exhibits.store');
+    Route::post('criminal-cases/{id}/exhibits/{exhibitId}/status', [\App\Http\Controllers\CriminalExhibitController::class, 'updateStatus'])->name('criminal-cases.exhibits.status');
+});
+
 // ── CID Legal Process ────────────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:CID Legal Process,view'])->group(function () {
     Route::get('cid-legal-process/{slug}', [\App\Http\Controllers\CriminalLegalProcessController::class, 'index'])->name('cid-legal-process.index');

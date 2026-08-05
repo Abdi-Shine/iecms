@@ -21,7 +21,7 @@ class CriminalCaseWorkflowController extends Controller
 
     public function show(Request $request, $id)
     {
-        $case = CriminalCase::with(['arrest', 'occurrenceBook', 'assignment', 'custody', 'finalReport'])->findOrFail($id);
+        $case = CriminalCase::with(['arrest', 'occurrenceBook', 'assignment', 'custody', 'finalReport', 'detainee'])->findOrFail($id);
 
         $obComplete = $case->occurrenceBook?->isComplete() ?? false;
         $assignmentComplete = (bool) $case->assignment;

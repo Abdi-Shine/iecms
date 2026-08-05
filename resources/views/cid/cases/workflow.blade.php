@@ -26,6 +26,13 @@
                     <a href="{{ route('criminal-cases.investigation-reports.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-file-earmark-text"></i> Investigation Reports</a>
                     <a href="{{ route('criminal-cases.court-forms.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-file-earmark-check"></i> Court Forms</a>
                     <div class="border-t border-neutral-100 my-1"></div>
+                    @if($case->detainee)
+                        <a href="{{ route('cid-detainees.show', $case->detainee->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-shield-lock"></i> Detention Record</a>
+                    @else
+                        <a href="{{ route('cid-detainees.admission-form', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-shield-lock"></i> New Detention Admission</a>
+                    @endif
+                    <a href="{{ route('criminal-cases.exhibits.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-box-seam"></i> Exhibits</a>
+                    <div class="border-t border-neutral-100 my-1"></div>
                     <a href="{{ route('cid-legal-process.form', [$case->id, 'arrest-without-warrant-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Arrest Without Warrant (AGO)</a>
                     <a href="{{ route('cid-legal-process.form', [$case->id, 'warrant-of-arrest-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Warrant of Arrest (AGO)</a>
                     <a href="{{ route('cid-legal-process.form', [$case->id, 'search-seizure-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Search &amp; Seizure (AGO)</a>

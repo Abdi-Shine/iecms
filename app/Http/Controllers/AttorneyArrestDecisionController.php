@@ -22,6 +22,27 @@ class AttorneyArrestDecisionController extends Controller
     public const SEIZURE_STATUS_OPTIONS = ['Sugaya', 'La Qabtay', 'La Diiday'];
 
     /**
+     * Which model + which column holds the approval status, per form type.
+     * warrant-of-arrest/search-and-seizure/asset-recovery already track this via
+     * their own domain status column, so we reuse it instead of duplicating it.
+     */
+    public const APPROVAL_MODEL = [
+        'arrest-decision'        => AttorneyCaseArrestDecision::class,
+        'arrest-without-warrant' => AttorneyCaseArrestWithoutWarrant::class,
+        'warrant-of-arrest'      => AttorneyCaseWarrantOfArrest::class,
+        'search-and-seizure'     => AttorneyCaseSearchAndSeizure::class,
+        'asset-recovery'         => AttorneyCaseAssetRecovery::class,
+    ];
+
+    public const APPROVAL_STATUS_FIELD = [
+        'arrest-decision'        => 'status',
+        'arrest-without-warrant' => 'status',
+        'warrant-of-arrest'      => 'warrant_status',
+        'search-and-seizure'     => 'warrant_status',
+        'asset-recovery'         => 'seizure_status',
+    ];
+
+    /**
      * Landing page listing the 5 forms required for this step.
      */
     public function show(Request $request, $id)
@@ -68,10 +89,78 @@ class AttorneyArrestDecisionController extends Controller
             ],
         ];
 
+        $formMeta = [
+            'arrest-decision'        => ['label' => 'Go\'aanka Xidhitaanka',       'record' => $case->arrestDecision],
+            'arrest-without-warrant' => ['label' => 'Xidhitaan Aan Waaran Lahayn', 'record' => $case->arrestWithoutWarrant],
+            'warrant-of-arrest'      => ['label' => 'Waaran Xidhitaan',           'record' => $case->warrantOfArrest],
+            'search-and-seizure'     => ['label' => 'Baaritaan Iyo Qabashada',    'record' => $case->searchAndSeizure],
+            'asset-recovery'         => ['label' => 'Soo Celinta Hantida',        'record' => $case->assetRecovery],
+        ];
+
+        $progressRows = [];
+        foreach ($formMeta as $key => $meta) {
+            if (!$meta['record']) {
+                continue;
+            }
+            $statusField    = self::APPROVAL_STATUS_FIELD[$key];
+            $progressRows[] = [
+                'form_type'        => $key,
+                'label'            => $meta['label'],
+                'submission_date'  => $meta['record']->created_at,
+                'ob_reference'     => $meta['record']->ob_reference,
+                'status'           => $meta['record']->{$statusField},
+                'approval_reason'  => $meta['record']->approval_reason,
+                'approved_by'      => $meta['record']->approved_by,
+                'approved_date'    => $meta['record']->approved_date,
+            ];
+        }
+
+        // 48hr presentation deadline — anchored to the warrantless arrest time,
+        // falling back to the arrest decision date if no warrantless arrest was recorded.
+        $presentationDeadline = null;
+        if ($case->arrestWithoutWarrant && $case->arrestWithoutWarrant->arrest_date) {
+            $timePart = $case->arrestWithoutWarrant->arrest_time ?: '00:00:00';
+            $presentationDeadline = \Carbon\Carbon::parse(
+                $case->arrestWithoutWarrant->arrest_date->format('Y-m-d') . ' ' . $timePart
+            )->addHours(48);
+        } elseif ($case->arrestDecision && $case->arrestDecision->decision_date) {
+            $presentationDeadline = \Carbon\Carbon::parse($case->arrestDecision->decision_date)->addHours(48);
+        }
+
         return view('attorney.Conclusion.direct_complaint_arrest_decision', [
-            'case'  => $case,
-            'forms' => $forms,
+            'case'                 => $case,
+            'forms'                => $forms,
+            'progressRows'         => $progressRows,
+            'presentationDeadline' => $presentationDeadline,
         ]);
+    }
+
+    /**
+     * Approve or reject a submitted arrest-decision-step form.
+     */
+    public function approve(Request $request, $id)
+    {
+        $case = AttorneyCase::findOrFail($id);
+
+        $data = $request->validate([
+            'form_type' => 'required|in:' . implode(',', array_keys(self::APPROVAL_MODEL)),
+            'decision'  => 'required|in:La Ansixiyay,La Diiday',
+            'reason'    => 'nullable|string',
+        ]);
+
+        $modelClass  = self::APPROVAL_MODEL[$data['form_type']];
+        $statusField = self::APPROVAL_STATUS_FIELD[$data['form_type']];
+
+        $record = $modelClass::where('attorney_case_id', $case->ACID)->firstOrFail();
+        $record->update([
+            $statusField      => $data['decision'],
+            'approval_reason' => $data['reason'] ?? null,
+            'approved_by'     => $request->user()->name,
+            'approved_date'   => now()->format('Y-m-d'),
+        ]);
+
+        return redirect()->route('attorney-cases.workflow.arrest-decision', $case->ACID)
+            ->with('success', 'Foomka waa la ' . ($data['decision'] === 'La Ansixiyay' ? 'ansixiyay' : 'diiday') . '.');
     }
 
     // ── 1. Arrest Decision ──────────────────────────────────────────
@@ -101,6 +190,7 @@ class AttorneyArrestDecisionController extends Controller
             'reasoning'           => 'nullable|string',
             'next_action'         => 'nullable|in:' . implode(',', self::NEXT_ACTION_OPTIONS),
             'decision_date'       => 'required|date',
+            'ob_reference'        => 'nullable|string|max:100',
         ]);
 
         $data['flight_risk']        = $request->boolean('flight_risk');
@@ -182,6 +272,7 @@ class AttorneyArrestDecisionController extends Controller
             'judge_name'                   => 'nullable|string|max:150',
             'warrant_status'               => 'nullable|in:' . implode(',', self::WARRANT_STATUS_OPTIONS),
             'warrant_number'               => 'nullable|string|max:100',
+            'ob_reference'                 => 'nullable|string|max:100',
             'issue_date'                   => 'nullable|date',
             'expiry_date'                  => 'nullable|date',
             'special_conditions'           => 'nullable|string',
@@ -225,6 +316,7 @@ class AttorneyArrestDecisionController extends Controller
             'applying_officer'          => 'nullable|string|max:150',
             'warrant_status'            => 'nullable|in:' . implode(',', self::WARRANT_STATUS_OPTIONS),
             'warrant_number'            => 'nullable|string|max:100',
+            'ob_reference'              => 'nullable|string|max:100',
             'search_conducted_date'     => 'nullable|date',
             'items_seized'              => 'nullable|string',
             'search_conducted_by'       => 'nullable|string|max:150',
@@ -273,6 +365,7 @@ class AttorneyArrestDecisionController extends Controller
             'application_date'          => 'required|date',
             'requesting_officer'        => 'nullable|string|max:150',
             'court_order_reference'     => 'nullable|string|max:100',
+            'ob_reference'              => 'nullable|string|max:100',
             'seizure_status'            => 'nullable|in:' . implode(',', self::SEIZURE_STATUS_OPTIONS),
             'seizure_date'              => 'nullable|date',
             'custody_location'          => 'nullable|string|max:255',

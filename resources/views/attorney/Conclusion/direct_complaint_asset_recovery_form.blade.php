@@ -96,10 +96,16 @@
                             value="{{ old('requesting_officer', $d->requesting_officer ?? '') }}"
                             class="w-full px-4 py-2.5 text-sm border border-neutral-200 rounded-xl bg-white focus:outline-none focus:border-primary-400 transition-all">
                     </div>
-                    <div class="md:col-span-2">
+                    <div>
                         <label class="text-[10px] font-black text-neutral-500 uppercase tracking-wider mb-2 block">Lambarka Amarka Maxkamadda</label>
                         <input type="text" name="court_order_reference"
                             value="{{ old('court_order_reference', $d->court_order_reference ?? '') }}"
+                            class="w-full px-4 py-2.5 text-sm border border-neutral-200 rounded-xl bg-white focus:outline-none focus:border-primary-400 transition-all">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-neutral-500 uppercase tracking-wider mb-2 block">Lambarka Diiwaanka (OB Reference)</label>
+                        <input type="text" name="ob_reference" placeholder="tusaale: OB/045/2026"
+                            value="{{ old('ob_reference', $d->ob_reference ?? '') }}"
                             class="w-full px-4 py-2.5 text-sm border border-neutral-200 rounded-xl bg-white focus:outline-none focus:border-primary-400 transition-all">
                     </div>
                 </div>

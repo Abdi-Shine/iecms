@@ -88,6 +88,103 @@
             </div>
         </div>
 
+        {{-- Form Submission Progress --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-neutral-100">
+                <p class="text-sm font-bold text-neutral-800 flex items-center gap-2">
+                    <i class="bi bi-list-check text-primary-400"></i> Horumarka Gudbinta Foomamka
+                </p>
+                <p class="text-xs text-neutral-500 mt-0.5">La soco xaalada foomamka la gudbiyay</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-neutral-50">
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Nooca Foomka</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Taariikhda Gudbinta</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">OB Reference</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Xaalada</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Muddada 48 Saac</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Sababta Ansixinta</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Kii Ansixiyay</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Taariikhda Ansixinta</th>
+                            <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Ficilada</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-100">
+                        @forelse($progressRows as $row)
+                            @php
+                                $statusStyles = [
+                                    'Sugaya'       => 'bg-neutral-100 text-neutral-600',
+                                    'La Ansixiyay' => 'bg-success-50 text-success-700',
+                                    'La Qabtay'    => 'bg-success-50 text-success-700',
+                                    'La Diiday'    => 'bg-danger-50 text-danger-600',
+                                ];
+                            @endphp
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-neutral-800">{{ $row['label'] }}</td>
+                                <td class="px-4 py-3 text-neutral-600">{{ $row['submission_date']?->format('d/m/Y H:i') ?? '—' }}</td>
+                                <td class="px-4 py-3 text-neutral-600">{{ $row['ob_reference'] ?: '—' }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-xs font-bold px-2.5 py-1 rounded-full {{ $statusStyles[$row['status']] ?? 'bg-neutral-100 text-neutral-600' }}">
+                                        {{ $row['status'] }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if($presentationDeadline)
+                                        @if($presentationDeadline->isPast())
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-danger-50 text-danger-600">
+                                                Way Dhaafay ({{ $presentationDeadline->diffForHumans(null, true) }} kahor)
+                                            </span>
+                                        @else
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-full {{ now()->diffInHours($presentationDeadline) < 12 ? 'bg-amber-50 text-amber-600' : 'bg-success-50 text-success-700' }}">
+                                                {{ $presentationDeadline->diffForHumans(null, true) }} haray
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="text-xs text-neutral-400">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-neutral-500">{{ Str::limit($row['approval_reason'] ?? '—', 30) }}</td>
+                                <td class="px-4 py-3 text-neutral-600">{{ $row['approved_by'] ?: '—' }}</td>
+                                <td class="px-4 py-3 text-neutral-600">{{ $row['approved_date']?->format('d/m/Y') ?? '—' }}</td>
+                                <td class="px-4 py-3">
+                                    @if($row['status'] === 'Sugaya')
+                                        <form action="{{ route('attorney-cases.workflow.arrest-decision.approve', $case->ACID) }}" method="POST"
+                                            class="flex items-center gap-1 justify-center">
+                                            @csrf
+                                            <input type="hidden" name="form_type" value="{{ $row['form_type'] }}">
+                                            <input type="text" name="reason" placeholder="Sababta..."
+                                                class="text-xs px-2 py-1 border border-neutral-200 rounded-lg w-24 focus:outline-none focus:border-primary-400">
+                                            <button type="submit" name="decision" value="La Ansixiyay"
+                                                class="text-xs px-2 py-1 rounded-lg bg-success-600 text-white font-bold hover:opacity-90" title="Ansixi">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                            <button type="submit" name="decision" value="La Diiday"
+                                                class="text-xs px-2 py-1 rounded-lg bg-danger-600 text-white font-bold hover:opacity-90" title="Diid">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="text-xs text-neutral-400 flex items-center justify-center gap-1">
+                                            <i class="bi bi-check-circle"></i> La Fuliyay
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="px-4 py-10 text-center text-neutral-400">
+                                    <i class="bi bi-info-circle"></i> Foom weli lama gudbin.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         {{-- Generated Letters --}}
         <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between flex-wrap gap-3">

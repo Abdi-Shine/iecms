@@ -13,6 +13,7 @@ class AttorneyCaseAssetRecovery extends Model
         return [
             'application_date' => 'date',
             'seizure_date'     => 'date',
+            'approved_date'    => 'date',
         ];
     }
 

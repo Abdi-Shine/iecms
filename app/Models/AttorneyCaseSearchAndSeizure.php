@@ -14,6 +14,7 @@ class AttorneyCaseSearchAndSeizure extends Model
             'application_date'       => 'date',
             'search_conducted_date'  => 'date',
             'property_receipt_issued' => 'boolean',
+            'approved_date'          => 'date',
         ];
     }
 

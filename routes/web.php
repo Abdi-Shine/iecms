@@ -1243,6 +1243,7 @@ Route::middleware(['auth', 'permission:Attorney Case Registration,view'])->group
     Route::post('attorney-cases/{id}/workflow/send-to-court', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'sendToCourt'])->name('attorney-cases.workflow.send-to-court');
 
     Route::get('attorney-cases/{id}/workflow/arrest-decision', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'show'])->name('attorney-cases.workflow.arrest-decision');
+    Route::post('attorney-cases/{id}/workflow/arrest-decision/approve', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'approve'])->name('attorney-cases.workflow.arrest-decision.approve');
 
     Route::get('attorney-cases/{id}/workflow/arrest-decision/arrest-decision/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'arrestDecisionForm'])->name('attorney-cases.workflow.arrest-decision.arrest-decision.form');
     Route::post('attorney-cases/{id}/workflow/arrest-decision/arrest-decision', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeArrestDecision'])->name('attorney-cases.workflow.arrest-decision.arrest-decision.store');

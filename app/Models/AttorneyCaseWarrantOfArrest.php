@@ -14,6 +14,7 @@ class AttorneyCaseWarrantOfArrest extends Model
             'application_date' => 'date',
             'issue_date'       => 'date',
             'expiry_date'      => 'date',
+            'approved_date'    => 'date',
         ];
     }
 

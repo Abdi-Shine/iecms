@@ -15,6 +15,7 @@ class AttorneyCaseArrestWithoutWarrant extends Model
             'report_date'     => 'date',
             'force_used'      => 'boolean',
             'rights_informed' => 'boolean',
+            'approved_date'   => 'date',
         ];
     }
 

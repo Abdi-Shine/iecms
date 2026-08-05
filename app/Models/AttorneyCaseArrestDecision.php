@@ -14,6 +14,7 @@ class AttorneyCaseArrestDecision extends Model
             'decision_date'      => 'date',
             'flight_risk'        => 'boolean',
             'public_safety_risk' => 'boolean',
+            'approved_date'      => 'date',
         ];
     }
 

@@ -366,9 +366,32 @@
             </div>
         @endif
 
+        @if($canCidEvidence)
+            <div class="space-y-1">
+                <button @click="toggleMenu('cid-evidence')"
+                    class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full">
+                    <i class="bi bi-archive-fill text-lg"></i>
+                    <span class="text-left leading-tight">Evidence &amp; Documentation</span>
+                    <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
+                        :class="isOpen('cid-evidence') ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="isOpen('cid-evidence')" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[500px]"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 max-h-[500px]" x-transition:leave-end="opacity-0 max-h-0"
+                    class="space-y-1 overflow-hidden transition-all duration-300">
+                    <a href="{{ route('cid-evidence-registry.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-evidence-registry.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-box-seam text-lg"></i> Evidence</a>
+                    <a href="{{ route('cid-conclusion-reports.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-conclusion-reports.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-file-earmark-check text-lg"></i> Conclusion Reports</a>
+                </div>
+            </div>
+        @endif
+
         @php
             $cidComingSoonMenus = [
-                ['can' => $canCidEvidence,       'icon' => 'bi-archive-fill',             'label' => 'Evidence & Documentation'],
                 ['can' => $canCidLegalProcess,   'icon' => 'bi-file-earmark-lock2-fill',  'label' => 'Legal Process'],
                 ['can' => $canCidDetention,      'icon' => 'bi-shield-lock-fill',         'label' => 'Detention Center'],
                 ['can' => $canCidSettings,       'icon' => 'bi-gear-fill',                'label' => 'CID Settings'],

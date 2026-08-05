@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">{{ $case->case_number }}</h1>
             <p class="text-sm text-neutral-500 mt-0.5">Investigation Workflow &mdash; {{ $case->priority }} priority</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap justify-end">
             <a href="{{ route('criminal-cases.diary', $case->id) }}"
                 class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
                 <i class="bi bi-journal-text"></i> Diary
@@ -17,6 +17,18 @@
             <a href="{{ route('criminal-cases.takeovers', $case->id) }}"
                 class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
                 <i class="bi bi-arrow-left-right"></i> Takeovers
+            </a>
+            <a href="{{ route('criminal-cases.biometrics.index', $case->id) }}"
+                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                <i class="bi bi-fingerprint"></i> Biometrics
+            </a>
+            <a href="{{ route('criminal-cases.interviews.index', $case->id) }}"
+                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                <i class="bi bi-mic-fill"></i> Interviews
+            </a>
+            <a href="{{ route('criminal-cases.investigation-reports.index', $case->id) }}"
+                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                <i class="bi bi-file-earmark-text"></i> Reports
             </a>
             <a href="{{ route('criminal-cases.index') }}"
                 class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">

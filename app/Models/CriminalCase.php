@@ -103,4 +103,19 @@ class CriminalCase extends Model
     {
         return $this->hasMany(CriminalCaseTakeover::class)->orderByDesc('created_at');
     }
+
+    public function biometrics()
+    {
+        return $this->hasMany(CriminalCaseBiometric::class);
+    }
+
+    public function interviews()
+    {
+        return $this->hasMany(CriminalCaseInterview::class)->orderByDesc('interview_date');
+    }
+
+    public function investigationReports()
+    {
+        return $this->hasMany(CriminalCaseInvestigationReport::class)->orderByDesc('created_at');
+    }
 }

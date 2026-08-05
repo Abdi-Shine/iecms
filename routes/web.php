@@ -1320,6 +1320,28 @@ Route::middleware(['auth', 'permission:CID Dashboard,view'])->group(function () 
     Route::get('cid-dashboard', [\App\Http\Controllers\CidDashboardController::class, 'index'])->name('cid-dashboard.index');
 });
 
+// ── CID Investigation Workflow ───────────────────────────────────────────────
+Route::middleware(['auth', 'permission:CID Investigation Workflow,view'])->group(function () {
+    Route::get('criminal-cases', [\App\Http\Controllers\CriminalCaseController::class, 'index'])->name('criminal-cases.index');
+    Route::post('criminal-cases', [\App\Http\Controllers\CriminalCaseController::class, 'store'])->name('criminal-cases.store');
+
+    Route::get('criminal-cases/{id}/workflow', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'show'])->name('criminal-cases.workflow');
+    Route::get('criminal-cases/{id}/workflow/arrest', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'arrestForm'])->name('criminal-cases.workflow.arrest.form');
+    Route::post('criminal-cases/{id}/workflow/arrest', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeArrest'])->name('criminal-cases.workflow.arrest.store');
+
+    Route::get('criminal-cases/{id}/workflow/occurrence-book', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'obForm'])->name('criminal-cases.workflow.ob.form');
+    Route::post('criminal-cases/{id}/workflow/occurrence-book', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeOb'])->name('criminal-cases.workflow.ob.store');
+    Route::post('criminal-cases/{id}/workflow/occurrence-book/acknowledge', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'acknowledgeOb'])->name('criminal-cases.workflow.ob.acknowledge');
+
+    Route::get('criminal-cases/{id}/workflow/assignment', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'assignmentForm'])->name('criminal-cases.workflow.assignment.form');
+    Route::post('criminal-cases/{id}/workflow/assignment', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeAssignment'])->name('criminal-cases.workflow.assignment.store');
+
+    Route::get('criminal-cases/{id}/workflow/evidence', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'evidenceIndex'])->name('criminal-cases.workflow.evidence.index');
+    Route::post('criminal-cases/{id}/workflow/evidence', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeEvidenceItem'])->name('criminal-cases.workflow.evidence.store');
+    Route::post('criminal-cases/{id}/workflow/evidence/{itemId}/status', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'updateEvidenceStatus'])->name('criminal-cases.workflow.evidence.status');
+    Route::post('criminal-cases/{id}/workflow/evidence/{itemId}/custody', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'transferEvidenceCustody'])->name('criminal-cases.workflow.evidence.custody');
+});
+
 // ══════════════════════════════════════════════════════════════════════════════
 // Platform Administration (Super Admin only)
 // ══════════════════════════════════════════════════════════════════════════════

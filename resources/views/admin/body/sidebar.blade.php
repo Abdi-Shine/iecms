@@ -325,9 +325,16 @@
             </a>
         @endif
 
+        @if($canCidInvestigation)
+            <a href="{{ route('criminal-cases.index') }}"
+                class="flex items-center gap-3 px-4 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] transition-all duration-200 w-full {{ Route::is('criminal-cases.*') ? 'bg-white/5 text-white' : '' }}">
+                <i class="bi bi-search text-lg"></i>
+                <span>Investigation Workflow</span>
+            </a>
+        @endif
+
         @php
             $cidComingSoonMenus = [
-                ['can' => $canCidInvestigation, 'icon' => 'bi-search',                   'label' => 'Investigation Workflow'],
                 ['can' => $canCidCaseManagement, 'icon' => 'bi-folder2-open',             'label' => 'Case Management'],
                 ['can' => $canCidEvidence,       'icon' => 'bi-archive-fill',             'label' => 'Evidence & Documentation'],
                 ['can' => $canCidLegalProcess,   'icon' => 'bi-file-earmark-lock2-fill',  'label' => 'Legal Process'],

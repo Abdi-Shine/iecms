@@ -1094,7 +1094,7 @@ Route::middleware(['auth', 'permission:Execution Case Registration,view'])->grou
     Route::get('execution-registration/next-fileno/{courtcode}', [\App\Http\Controllers\DistrictExecutionRegistrationController::class, 'nextFileNo']);
     Route::get('execution-case-tracking', [\App\Http\Controllers\DistrictExecutionRegistrationController::class, 'tracking'])->name('execution-case-tracking.index');
     Route::get('execution-registration/{id}/supporting', [\App\Http\Controllers\DistrictExecutionRegistrationController::class, 'supporting'])->name('execution-registration.supporting');
-    Route::resource('execution-registration', \App\Http\Controllers\DistrictExecutionRegistrationController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('execution-registration', \App\Http\Controllers\DistrictExecutionRegistrationController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });
 
 // Shown from either "Execution Case Registration" or "Execution Hearings" (case detail page

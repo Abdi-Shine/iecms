@@ -168,6 +168,29 @@ class DistrictExecutionRegistrationController extends Controller
         return view('Courts.District_execution.registration.district_execution_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'executionSubCases'));
     }
 
+    public function create()
+    {
+        $courts             = \App\Models\Court::orderBy('longName')->get();
+        $executionSubCases  = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
+        $userCourtID        = (auth()->check() && auth()->user()->position !== 'admin')
+                        ? (auth()->user()->employee->courtID ?? null)
+                        : null;
+
+        return view('Courts.District_execution.registration.district_execution_registration_form', compact('courts', 'executionSubCases', 'userCourtID'));
+    }
+
+    public function edit($id)
+    {
+        $record             = \App\Models\DistrictExecutionRegistration::findOrFail($id);
+        $courts             = \App\Models\Court::orderBy('longName')->get();
+        $executionSubCases  = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
+        $userCourtID        = (auth()->check() && auth()->user()->position !== 'admin')
+                        ? (auth()->user()->employee->courtID ?? null)
+                        : null;
+
+        return view('Courts.District_execution.registration.district_execution_registration_form', compact('record', 'courts', 'executionSubCases', 'userCourtID'));
+    }
+
     public function show($id)
     {
         $case        = \App\Models\DistrictExecutionRegistration::with(['court', 'parties', 'documents', 'lawyers.lawyer', 'lawyers.party', 'legalRepresentatives.party', 'assignments.employee', 'hearings', 'payments.tariff'])->findOrFail($id);
@@ -213,7 +236,8 @@ class DistrictExecutionRegistrationController extends Controller
             ]
         ));
 
-        return response()->json(['success' => true, 'message' => 'Execution case registered successfully.']);
+        return redirect()->route('execution-registration.index')
+            ->with('success', 'Execution case registered successfully.');
     }
 
     public function update(Request $request, $id)
@@ -241,7 +265,8 @@ class DistrictExecutionRegistrationController extends Controller
             ]
         ));
 
-        return response()->json(['success' => true, 'message' => 'Execution case updated successfully.']);
+        return redirect()->route('execution-registration.index')
+            ->with('success', 'Execution case updated successfully.');
     }
 
     public function destroy($id)

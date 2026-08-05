@@ -390,9 +390,53 @@
             </div>
         @endif
 
+        @if($canCidLegalProcess)
+            <div class="space-y-1">
+                <button @click="toggleMenu('cid-legal-process')"
+                    class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full">
+                    <i class="bi bi-file-earmark-lock2-fill text-lg"></i>
+                    <span class="text-left leading-tight">Legal Process</span>
+                    <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
+                        :class="isOpen('cid-legal-process') ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="isOpen('cid-legal-process')" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[700px]"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 max-h-[700px]" x-transition:leave-end="opacity-0 max-h-0"
+                    class="space-y-1 overflow-hidden transition-all duration-300">
+                    <a href="{{ route('cid-legal-process.index', 'arrest-without-warrant-ago') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ request()->is('cid-legal-process/arrest-without-warrant-ago') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-send text-lg"></i> Arrest Without Warrant (AGO)</a>
+                    <a href="{{ route('cid-legal-process.index', 'warrant-of-arrest-ago') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ request()->is('cid-legal-process/warrant-of-arrest-ago') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-send text-lg"></i> Warrant of Arrest (AGO)</a>
+                    <a href="{{ route('cid-legal-process.index', 'search-seizure-ago') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ request()->is('cid-legal-process/search-seizure-ago') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-send text-lg"></i> Search &amp; Seizure (AGO)</a>
+                    <a href="{{ route('cid-legal-process.index', 'asset-recovery-ago') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ request()->is('cid-legal-process/asset-recovery-ago') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-send text-lg"></i> Asset Recovery (AGO)</a>
+                    <a href="{{ route('cid-legal-process.index', 'search-warrants') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ request()->is('cid-legal-process/search-warrants') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-file-earmark-text text-lg"></i> Search Warrants</a>
+                    <a href="{{ route('cid-arrest-warrants.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-arrest-warrants.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-shield-lock text-lg"></i> Arrest Warrants</a>
+                    <a href="{{ route('cid-arrests-without-warrant.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-arrests-without-warrant.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-shield-exclamation text-lg"></i> Arrests Without Warrant</a>
+                    <a href="{{ route('cid-received-warrants.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-received-warrants.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-inbox text-lg"></i> Received Arrest Warrants</a>
+                    <a href="{{ route('cid-bulk-arrests.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-bulk-arrests.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-people text-lg"></i> Bulk Arrest Management</a>
+                </div>
+            </div>
+        @endif
+
         @php
             $cidComingSoonMenus = [
-                ['can' => $canCidLegalProcess,   'icon' => 'bi-file-earmark-lock2-fill',  'label' => 'Legal Process'],
                 ['can' => $canCidDetention,      'icon' => 'bi-shield-lock-fill',         'label' => 'Detention Center'],
                 ['can' => $canCidSettings,       'icon' => 'bi-gear-fill',                'label' => 'CID Settings'],
             ];

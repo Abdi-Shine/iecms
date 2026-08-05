@@ -1399,6 +1399,34 @@ Route::middleware(['auth', 'permission:CID Evidence & Documentation,view'])->gro
     Route::get('cid-conclusion-reports', [\App\Http\Controllers\CriminalConclusionReportController::class, 'index'])->name('cid-conclusion-reports.index');
 });
 
+// ── CID Legal Process ────────────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:CID Legal Process,view'])->group(function () {
+    Route::get('cid-legal-process/{slug}', [\App\Http\Controllers\CriminalLegalProcessController::class, 'index'])->name('cid-legal-process.index');
+    Route::get('criminal-cases/{id}/legal-process/{slug}', [\App\Http\Controllers\CriminalLegalProcessController::class, 'form'])->name('cid-legal-process.form');
+    Route::post('criminal-cases/{id}/legal-process/{slug}', [\App\Http\Controllers\CriminalLegalProcessController::class, 'store'])->name('cid-legal-process.store');
+    Route::post('criminal-cases/{id}/legal-process/{slug}/{requestId}/status', [\App\Http\Controllers\CriminalLegalProcessController::class, 'updateStatus'])->name('cid-legal-process.status');
+    Route::post('criminal-cases/{id}/legal-process/{slug}/{requestId}/execution', [\App\Http\Controllers\CriminalLegalProcessController::class, 'recordExecution'])->name('cid-legal-process.execution');
+
+    Route::get('cid-arrest-warrants', [\App\Http\Controllers\CriminalArrestRegistryController::class, 'warrants'])->name('cid-arrest-warrants.index');
+    Route::get('cid-arrests-without-warrant', [\App\Http\Controllers\CriminalArrestRegistryController::class, 'withoutWarrant'])->name('cid-arrests-without-warrant.index');
+
+    Route::get('cid-received-warrants', [\App\Http\Controllers\CriminalReceivedWarrantController::class, 'index'])->name('cid-received-warrants.index');
+    Route::post('cid-received-warrants', [\App\Http\Controllers\CriminalReceivedWarrantController::class, 'store'])->name('cid-received-warrants.store');
+    Route::post('cid-received-warrants/{id}/assign', [\App\Http\Controllers\CriminalReceivedWarrantController::class, 'assign'])->name('cid-received-warrants.assign');
+    Route::post('cid-received-warrants/{id}/status', [\App\Http\Controllers\CriminalReceivedWarrantController::class, 'updateStatus'])->name('cid-received-warrants.status');
+
+    Route::get('criminal-cases/{id}/court-forms', [\App\Http\Controllers\CriminalCourtFormController::class, 'index'])->name('criminal-cases.court-forms.index');
+    Route::post('criminal-cases/{id}/court-forms', [\App\Http\Controllers\CriminalCourtFormController::class, 'store'])->name('criminal-cases.court-forms.store');
+    Route::post('criminal-cases/{id}/court-forms/{formId}/status', [\App\Http\Controllers\CriminalCourtFormController::class, 'updateStatus'])->name('criminal-cases.court-forms.status');
+
+    Route::get('cid-bulk-arrests', [\App\Http\Controllers\CriminalBulkArrestController::class, 'index'])->name('cid-bulk-arrests.index');
+    Route::post('cid-bulk-arrests', [\App\Http\Controllers\CriminalBulkArrestController::class, 'store'])->name('cid-bulk-arrests.store');
+    Route::get('cid-bulk-arrests/{id}', [\App\Http\Controllers\CriminalBulkArrestController::class, 'show'])->name('cid-bulk-arrests.show');
+    Route::post('cid-bulk-arrests/{id}/members', [\App\Http\Controllers\CriminalBulkArrestController::class, 'addMember'])->name('cid-bulk-arrests.members.store');
+    Route::post('cid-bulk-arrests/{id}/assign', [\App\Http\Controllers\CriminalBulkArrestController::class, 'assignInvestigator'])->name('cid-bulk-arrests.assign');
+    Route::post('cid-bulk-arrests/{id}/members/{memberId}/generate-case', [\App\Http\Controllers\CriminalBulkArrestController::class, 'generateCase'])->name('cid-bulk-arrests.generate-case');
+});
+
 // ══════════════════════════════════════════════════════════════════════════════
 // Platform Administration (Super Admin only)
 // ══════════════════════════════════════════════════════════════════════════════

@@ -118,4 +118,14 @@ class CriminalCase extends Model
     {
         return $this->hasMany(CriminalCaseInvestigationReport::class)->orderByDesc('created_at');
     }
+
+    public function legalProcessRequests()
+    {
+        return $this->hasMany(CriminalLegalProcessRequest::class)->orderByDesc('created_at');
+    }
+
+    public function courtAppearanceForms()
+    {
+        return $this->hasMany(CriminalCourtAppearanceForm::class)->orderByDesc('created_at');
+    }
 }

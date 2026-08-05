@@ -9,27 +9,30 @@
             <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">{{ $case->case_number }}</h1>
             <p class="text-sm text-neutral-500 mt-0.5">Investigation Workflow &mdash; {{ $case->priority }} priority</p>
         </div>
-        <div class="flex gap-2 flex-wrap justify-end">
+        <div class="flex gap-2 flex-wrap justify-end" x-data="{ moreOpen: false }">
             <a href="{{ route('criminal-cases.diary', $case->id) }}"
                 class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
                 <i class="bi bi-journal-text"></i> Diary
             </a>
-            <a href="{{ route('criminal-cases.takeovers', $case->id) }}"
-                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
-                <i class="bi bi-arrow-left-right"></i> Takeovers
-            </a>
-            <a href="{{ route('criminal-cases.biometrics.index', $case->id) }}"
-                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
-                <i class="bi bi-fingerprint"></i> Biometrics
-            </a>
-            <a href="{{ route('criminal-cases.interviews.index', $case->id) }}"
-                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
-                <i class="bi bi-mic-fill"></i> Interviews
-            </a>
-            <a href="{{ route('criminal-cases.investigation-reports.index', $case->id) }}"
-                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
-                <i class="bi bi-file-earmark-text"></i> Reports
-            </a>
+            <div class="relative">
+                <button @click="moreOpen = !moreOpen" @click.outside="moreOpen = false"
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                    <i class="bi bi-three-dots"></i> More
+                </button>
+                <div x-show="moreOpen" x-transition style="display:none" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-neutral-100 py-2 z-20">
+                    <a href="{{ route('criminal-cases.takeovers', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-arrow-left-right"></i> Takeovers</a>
+                    <a href="{{ route('criminal-cases.biometrics.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-fingerprint"></i> Biometrics</a>
+                    <a href="{{ route('criminal-cases.interviews.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-mic-fill"></i> Interviews</a>
+                    <a href="{{ route('criminal-cases.investigation-reports.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-file-earmark-text"></i> Investigation Reports</a>
+                    <a href="{{ route('criminal-cases.court-forms.index', $case->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-file-earmark-check"></i> Court Forms</a>
+                    <div class="border-t border-neutral-100 my-1"></div>
+                    <a href="{{ route('cid-legal-process.form', [$case->id, 'arrest-without-warrant-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Arrest Without Warrant (AGO)</a>
+                    <a href="{{ route('cid-legal-process.form', [$case->id, 'warrant-of-arrest-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Warrant of Arrest (AGO)</a>
+                    <a href="{{ route('cid-legal-process.form', [$case->id, 'search-seizure-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Search &amp; Seizure (AGO)</a>
+                    <a href="{{ route('cid-legal-process.form', [$case->id, 'asset-recovery-ago']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-send"></i> Asset Recovery (AGO)</a>
+                    <a href="{{ route('cid-legal-process.form', [$case->id, 'search-warrants']) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-50"><i class="bi bi-file-earmark-text"></i> Search Warrant (Court)</a>
+                </div>
+            </div>
             <a href="{{ route('criminal-cases.index') }}"
                 class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
                 <i class="bi bi-arrow-left"></i> Back to Cases

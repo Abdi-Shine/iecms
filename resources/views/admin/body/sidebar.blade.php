@@ -955,6 +955,9 @@
                         <a href="{{ route('institutions.index') }}"
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('institutions.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Institution Management</a>
+                        <a href="{{ route('platform.users.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('platform.users.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Platform Users</a>
                         <a href="{{ route('audit-logs.index') }}"
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('audit-logs.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Audit Logs</a>

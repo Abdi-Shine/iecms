@@ -1277,6 +1277,7 @@ Route::middleware(['auth', 'permission:Attorney Departments,view'])->group(funct
 
 Route::middleware(['auth', 'permission:Platform Administration,view'])->group(function () {
     Route::get('platform/dashboard', [\App\Http\Controllers\PlatformDashboardController::class, 'index'])->name('platform.dashboard');
+    Route::get('platform/users', [\App\Http\Controllers\PlatformUserController::class, 'index'])->name('platform.users.index');
     Route::get('institutions', [\App\Http\Controllers\InstitutionController::class, 'index'])->name('institutions.index');
     Route::get('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'index'])->name('audit-logs.index');
 });

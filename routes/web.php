@@ -282,9 +282,11 @@ Route::middleware(['auth', 'permission:Access Login,view'])->group(function () {
 // ── Role & Permission ─────────────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:Role & Permission,view'])->group(function () {
     Route::get('/roles',          [RolePermissionController::class, 'rolesIndex']) ->name('roles.index');
+    Route::get('/roles/create',   [RolePermissionController::class, 'createRole']) ->name('roles.create');
     Route::get('/roles/export',   [RolePermissionController::class, 'exportRoles'])->name('roles.export');
     Route::post('/roles/import',  [RolePermissionController::class, 'importRoles'])->name('roles.import');
     Route::post('/roles',         [RolePermissionController::class, 'storeRole'])  ->name('roles.store');
+    Route::get('/roles/{id}/edit', [RolePermissionController::class, 'editRole'])  ->name('roles.edit');
     Route::put('/roles/{id}',     [RolePermissionController::class, 'updateRole']) ->name('roles.update');
     Route::delete('/roles/{id}',  [RolePermissionController::class, 'destroyRole'])->name('roles.destroy');
     Route::get('/role-permission',  [RolePermissionController::class, 'index']) ->name('role-permission.index');

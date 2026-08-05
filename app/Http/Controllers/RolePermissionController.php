@@ -30,9 +30,8 @@ class RolePermissionController extends Controller
         $perPage = $this->resolvePerPage($request);
 
         $roles = $query->orderBy('id')->paginate($perPage)->withQueryString();
-        $nextRoleId = $this->generateNextRoleId();
 
-        return view('Courts.setting.role_view', compact('roles', 'stats', 'nextRoleId'));
+        return view('Courts.setting.role_view', compact('roles', 'stats'));
     }
 
     /**
@@ -49,6 +48,21 @@ class RolePermissionController extends Controller
             ->max();
 
         return $prefix . str_pad(($lastNumber ?? 0) + 1, 4, '0', STR_PAD_LEFT);
+    }
+
+    // ── Create/edit role forms ──────────────────────────────────────
+    public function createRole()
+    {
+        $nextRoleId = $this->generateNextRoleId();
+
+        return view('Courts.setting.role_form', compact('nextRoleId'));
+    }
+
+    public function editRole(string $id)
+    {
+        $role = Role::findOrFail($id);
+
+        return view('Courts.setting.role_form', compact('role'));
     }
 
     // ── Create role ─────────────────────────────────────────────────

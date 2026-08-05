@@ -98,6 +98,31 @@ class AttorneyCase extends Model
         return $this->hasOne(AttorneyCaseInvestigationDecision::class, 'attorney_case_id', 'ACID');
     }
 
+    public function arrestDecision()
+    {
+        return $this->hasOne(AttorneyCaseArrestDecision::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function arrestWithoutWarrant()
+    {
+        return $this->hasOne(AttorneyCaseArrestWithoutWarrant::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function warrantOfArrest()
+    {
+        return $this->hasOne(AttorneyCaseWarrantOfArrest::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function searchAndSeizure()
+    {
+        return $this->hasOne(AttorneyCaseSearchAndSeizure::class, 'attorney_case_id', 'ACID');
+    }
+
+    public function assetRecovery()
+    {
+        return $this->hasOne(AttorneyCaseAssetRecovery::class, 'attorney_case_id', 'ACID');
+    }
+
     public function complianceForms()
     {
         return $this->hasMany(AttorneyComplianceForm::class, 'attorney_case_id', 'ACID');

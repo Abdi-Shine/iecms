@@ -282,11 +282,9 @@ Route::middleware(['auth', 'permission:Access Login,view'])->group(function () {
 // ── Role & Permission ─────────────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:Role & Permission,view'])->group(function () {
     Route::get('/roles',          [RolePermissionController::class, 'rolesIndex']) ->name('roles.index');
-    Route::get('/roles/create',   [RolePermissionController::class, 'createRole']) ->name('roles.create');
     Route::get('/roles/export',   [RolePermissionController::class, 'exportRoles'])->name('roles.export');
     Route::post('/roles/import',  [RolePermissionController::class, 'importRoles'])->name('roles.import');
     Route::post('/roles',         [RolePermissionController::class, 'storeRole'])  ->name('roles.store');
-    Route::get('/roles/{id}/edit', [RolePermissionController::class, 'editRole'])  ->name('roles.edit');
     Route::put('/roles/{id}',     [RolePermissionController::class, 'updateRole']) ->name('roles.update');
     Route::delete('/roles/{id}',  [RolePermissionController::class, 'destroyRole'])->name('roles.destroy');
     Route::get('/role-permission',  [RolePermissionController::class, 'index']) ->name('role-permission.index');
@@ -1243,6 +1241,23 @@ Route::middleware(['auth', 'permission:Attorney Case Registration,view'])->group
     Route::post('attorney-cases/{id}/workflow/investigation', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'storeInvestigation'])->name('attorney-cases.workflow.investigation.store');
     Route::post('attorney-cases/{id}/workflow/investigation/updates', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'storeInvestigationUpdate'])->name('attorney-cases.workflow.investigation.updates.store');
     Route::post('attorney-cases/{id}/workflow/send-to-court', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'sendToCourt'])->name('attorney-cases.workflow.send-to-court');
+
+    Route::get('attorney-cases/{id}/workflow/arrest-decision', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'show'])->name('attorney-cases.workflow.arrest-decision');
+
+    Route::get('attorney-cases/{id}/workflow/arrest-decision/arrest-decision/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'arrestDecisionForm'])->name('attorney-cases.workflow.arrest-decision.arrest-decision.form');
+    Route::post('attorney-cases/{id}/workflow/arrest-decision/arrest-decision', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeArrestDecision'])->name('attorney-cases.workflow.arrest-decision.arrest-decision.store');
+
+    Route::get('attorney-cases/{id}/workflow/arrest-decision/arrest-without-warrant/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'arrestWithoutWarrantForm'])->name('attorney-cases.workflow.arrest-decision.arrest-without-warrant.form');
+    Route::post('attorney-cases/{id}/workflow/arrest-decision/arrest-without-warrant', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeArrestWithoutWarrant'])->name('attorney-cases.workflow.arrest-decision.arrest-without-warrant.store');
+
+    Route::get('attorney-cases/{id}/workflow/arrest-decision/warrant-of-arrest/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'warrantOfArrestForm'])->name('attorney-cases.workflow.arrest-decision.warrant-of-arrest.form');
+    Route::post('attorney-cases/{id}/workflow/arrest-decision/warrant-of-arrest', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeWarrantOfArrest'])->name('attorney-cases.workflow.arrest-decision.warrant-of-arrest.store');
+
+    Route::get('attorney-cases/{id}/workflow/arrest-decision/search-and-seizure/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'searchAndSeizureForm'])->name('attorney-cases.workflow.arrest-decision.search-and-seizure.form');
+    Route::post('attorney-cases/{id}/workflow/arrest-decision/search-and-seizure', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeSearchAndSeizure'])->name('attorney-cases.workflow.arrest-decision.search-and-seizure.store');
+
+    Route::get('attorney-cases/{id}/workflow/arrest-decision/asset-recovery/form', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'assetRecoveryForm'])->name('attorney-cases.workflow.arrest-decision.asset-recovery.form');
+    Route::post('attorney-cases/{id}/workflow/arrest-decision/asset-recovery', [\App\Http\Controllers\AttorneyArrestDecisionController::class, 'storeAssetRecovery'])->name('attorney-cases.workflow.arrest-decision.asset-recovery.store');
 
     Route::get('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'create'])->name('attorney-cases.compliance.create');
     Route::post('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'store'])->name('attorney-cases.compliance.store');

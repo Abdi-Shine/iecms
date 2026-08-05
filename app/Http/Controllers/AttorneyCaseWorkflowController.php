@@ -31,7 +31,10 @@ class AttorneyCaseWorkflowController extends Controller
 
     public function show(Request $request, $id)
     {
-        $case = AttorneyCase::with(['investigationDecision', 'investigation', 'complianceForms.employee', 'complainants'])->findOrFail($id);
+        $case = AttorneyCase::with([
+            'investigationDecision', 'investigation', 'complianceForms.employee', 'complainants',
+            'arrestDecision', 'arrestWithoutWarrant', 'warrantOfArrest', 'searchAndSeizure', 'assetRecovery',
+        ])->findOrFail($id);
 
         $steps = [
             [
@@ -57,7 +60,13 @@ class AttorneyCaseWorkflowController extends Controller
                 'title'       => 'Arrest Decision',
                 'description' => 'Decide if arrest is required',
                 'formsCount'  => 5,
-                'enabled'     => false,
+                'enabled'     => true,
+                'route'       => route('attorney-cases.workflow.arrest-decision', $case->ACID),
+                'complete'    => (bool) $case->arrestDecision
+                    && (bool) $case->arrestWithoutWarrant
+                    && (bool) $case->warrantOfArrest
+                    && (bool) $case->searchAndSeizure
+                    && (bool) $case->assetRecovery,
             ],
             [
                 'key'         => 'evidence-interviews',

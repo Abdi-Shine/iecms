@@ -63,12 +63,11 @@
                                 Employee ID <span style="color:#ef4444">*</span>
                             </label>
                             <div style="position:relative">
-                                <input type="text" name="EmpID" required placeholder="e.g. EMP-001"
-                                       style="width:100%;padding:.75rem 2.5rem .75rem 1rem;font-size:.875rem;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s"
-                                       onfocus="this.style.borderColor='#528CBE';this.style.boxShadow='0 0 0 3px rgba(82,140,190,.15)'"
-                                       onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
+                                <input type="text" name="EmpID" value="{{ $nextEmpId }}" readonly tabindex="-1"
+                                       style="width:100%;padding:.75rem 2.5rem .75rem 1rem;font-size:.875rem;border:1.5px solid #d1d5db;border-radius:.625rem;background:#f3f4f6;color:#6b7280;outline:none;box-sizing:border-box;cursor:not-allowed">
                                 <i class="bi bi-hash" style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);font-size:.85rem;color:#9ca3af;pointer-events:none"></i>
                             </div>
+                            <p style="font-size:.7rem;color:#9ca3af;margin:.4rem 0 0">Auto-generated, sequential</p>
                         </div>
                         <div>
                             <label style="display:block;font-size:.7rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.55rem">

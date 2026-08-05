@@ -57,7 +57,24 @@ class EmployeeController extends Controller
         $regions = \App\Models\StateRegion::with(['cities' => function ($q) {
             $q->orderBy('city_name');
         }])->orderBy('state_name')->get();
-        return view('Courts.setting.employee_add', compact('roles', 'courts', 'regions'));
+        $nextEmpId = $this->generateNextEmpId();
+        return view('Courts.setting.employee_add', compact('roles', 'courts', 'regions', 'nextEmpId'));
+    }
+
+    /**
+     * Generate the next sequential Employee ID (e.g. EMID0001).
+     */
+    private function generateNextEmpId(): string
+    {
+        $prefix = 'EMID';
+
+        $lastNumber = Employee::where('EmpID', 'like', $prefix . '%')
+            ->lockForUpdate()
+            ->pluck('EmpID')
+            ->map(fn ($empId) => (int) substr($empId, strlen($prefix)))
+            ->max();
+
+        return $prefix . str_pad(($lastNumber ?? 0) + 1, 4, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -65,8 +82,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'EmpID' => 'required|unique:employees,EmpID',
+        $request->validate([
             'EmpName' => 'required',
             'email' => 'required|email|unique:employees,email',
             'phone' => 'required',
@@ -75,7 +91,7 @@ class EmployeeController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $data = $request->all();
+        $data = $request->except('EmpID');
 
         // Handle Photo Upload
         if ($request->hasFile('photo')) {
@@ -94,7 +110,10 @@ class EmployeeController extends Controller
         $data['updatedDate'] = '';
         $data['Dates'] = $data['Dates'] ?? date('Y-m-d');
 
-        Employee::create($data);
+        \DB::transaction(function () use ($data) {
+            $data['EmpID'] = $this->generateNextEmpId();
+            Employee::create($data);
+        });
 
         return redirect()->route('employee.index')->with('success', 'Employee registered successfully.');
     }

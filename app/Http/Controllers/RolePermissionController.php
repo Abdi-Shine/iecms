@@ -30,21 +30,42 @@ class RolePermissionController extends Controller
         $perPage = $this->resolvePerPage($request);
 
         $roles = $query->orderBy('id')->paginate($perPage)->withQueryString();
+        $nextRoleId = $this->generateNextRoleId();
 
-        return view('Courts.setting.role_view', compact('roles', 'stats'));
+        return view('Courts.setting.role_view', compact('roles', 'stats', 'nextRoleId'));
+    }
+
+    /**
+     * Generate the next sequential Role ID (e.g. RID-0001).
+     */
+    private function generateNextRoleId(): string
+    {
+        $prefix = 'RID-';
+
+        $lastNumber = Role::where('role_id', 'like', $prefix . '%')
+            ->lockForUpdate()
+            ->pluck('role_id')
+            ->map(fn ($roleId) => (int) substr($roleId, strlen($prefix)))
+            ->max();
+
+        return $prefix . str_pad(($lastNumber ?? 0) + 1, 4, '0', STR_PAD_LEFT);
     }
 
     // ── Create role ─────────────────────────────────────────────────
     public function storeRole(Request $request)
     {
         $request->validate([
-            'role_id'      => 'nullable|max:30|unique:roles,role_id',
             'display_name' => 'required|max:100',
             'name'         => 'required|alpha_dash|max:50|unique:roles,name',
             'color'        => 'required',
         ]);
 
-        Role::create($request->only('role_id', 'name', 'display_name', 'color'));
+        \DB::transaction(function () use ($request) {
+            Role::create(array_merge(
+                $request->only('name', 'display_name', 'color'),
+                ['role_id' => $this->generateNextRoleId()]
+            ));
+        });
 
         return redirect()->route('roles.index')
             ->with('success', 'Role "' . $request->display_name . '" created successfully.');
@@ -56,12 +77,11 @@ class RolePermissionController extends Controller
         $role = Role::findOrFail($id);
 
         $request->validate([
-            'role_id'      => 'nullable|max:30|unique:roles,role_id,' . $id,
             'display_name' => 'required|max:100',
             'color'        => 'required',
         ]);
 
-        $role->update($request->only('role_id', 'display_name', 'color'));
+        $role->update($request->only('display_name', 'color'));
 
         return redirect()->route('roles.index')
             ->with('success', 'Role "' . $role->display_name . '" updated successfully.');

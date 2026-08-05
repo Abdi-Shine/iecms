@@ -271,14 +271,11 @@
                         <div>
                             <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role ID</label>
                             <div style="position:relative">
-                                <input type="text" name="role_id" maxlength="30"
-                                       placeholder="e.g. ROL-001"
-                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s"
-                                       onfocus="this.style.borderColor='#528CBE';this.style.boxShadow='0 0 0 3px rgba(82,140,190,.15)'"
-                                       onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
-                                <i class="bi bi-fingerprint" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
+                                <input type="text" value="{{ $nextRoleId }}" readonly tabindex="-1"
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #d1d5db;border-radius:.625rem;background:#f3f4f6;color:#6b7280;outline:none;box-sizing:border-box;cursor:not-allowed">
+                                <i class="bi bi-lock" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
                             </div>
-                            <p style="font-size:.68rem;color:#9ca3af;margin:.3rem 0 0">Optional unique identifier, e.g. ROL-001.</p>
+                            <p style="font-size:.68rem;color:#9ca3af;margin:.3rem 0 0">Auto-generated, sequential.</p>
                         </div>
                         <div>
                             <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Display Name <span style="color:#ef4444">*</span></label>
@@ -366,15 +363,11 @@
                     @csrf @method('PUT')
                     <div style="display:grid;gap:1rem;margin-bottom:1.25rem">
                         <div>
-                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role ID</label>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role ID <span style="font-size:.55rem;color:#9ca3af;background:#f3f4f6;padding:.1rem .35rem;border-radius:.2rem;margin-left:.2rem;font-weight:700">LOCKED</span></label>
                             <div style="position:relative">
-                                <input type="text" name="role_id" maxlength="30"
-                                       :value="editRole.role_id || ''"
-                                       placeholder="e.g. ROL-001"
-                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s"
-                                       onfocus="this.style.borderColor='#528CBE';this.style.boxShadow='0 0 0 3px rgba(82,140,190,.15)'"
-                                       onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
-                                <i class="bi bi-fingerprint" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
+                                <input type="text" :value="editRole.role_id || '—'" disabled
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #e5e7eb;border-radius:.625rem;background:#f9fafb;color:#9ca3af;outline:none;box-sizing:border-box;cursor:not-allowed">
+                                <i class="bi bi-lock" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#d1d5db;pointer-events:none"></i>
                             </div>
                         </div>
                         <div>

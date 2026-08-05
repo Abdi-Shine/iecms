@@ -78,4 +78,19 @@ class CriminalCase extends Model
     {
         return $this->hasMany(CriminalCaseEvidenceItem::class)->orderByDesc('created_at');
     }
+
+    public function custody()
+    {
+        return $this->hasOne(CriminalCaseCustody::class);
+    }
+
+    public function courtAppearances()
+    {
+        return $this->hasMany(CriminalCaseCourtAppearance::class)->orderByDesc('appearance_date');
+    }
+
+    public function finalReport()
+    {
+        return $this->hasOne(CriminalCaseFinalReport::class);
+    }
 }

@@ -11,10 +11,12 @@ class CriminalCaseWorkflowController extends Controller
 
     public function show(Request $request, $id)
     {
-        $case = CriminalCase::with(['arrest', 'occurrenceBook', 'assignment'])->findOrFail($id);
+        $case = CriminalCase::with(['arrest', 'occurrenceBook', 'assignment', 'custody', 'finalReport'])->findOrFail($id);
 
         $obComplete = $case->occurrenceBook?->isComplete() ?? false;
         $assignmentComplete = (bool) $case->assignment;
+        $custodyComplete = (bool) $case->custody;
+        $reportSubmitted = $case->finalReport?->isSubmitted() ?? false;
 
         $steps = [
             [
@@ -46,16 +48,16 @@ class CriminalCaseWorkflowController extends Controller
                 'title'       => 'Custody & Court Scheduling',
                 'description' => 'Detention status and court appearances',
                 'enabled'     => $assignmentComplete,
-                'route'       => null,
-                'complete'    => false,
+                'route'       => $assignmentComplete ? route('criminal-cases.workflow.custody.form', $case->id) : null,
+                'complete'    => $custodyComplete,
             ],
             [
                 'key'         => 'final_report_ago_submission',
                 'title'       => 'Final Report & AGO Submission',
                 'description' => 'Compile file and submit for prosecution decision',
-                'enabled'     => false,
-                'route'       => null,
-                'complete'    => false,
+                'enabled'     => $custodyComplete,
+                'route'       => $custodyComplete ? route('criminal-cases.workflow.report.form', $case->id) : null,
+                'complete'    => $reportSubmitted,
             ],
         ];
 
@@ -333,5 +335,205 @@ class CriminalCaseWorkflowController extends Controller
 
         return redirect()->route('criminal-cases.workflow.evidence.index', $case->id)
             ->with('success', 'Custody transfer logged.');
+    }
+
+    public function custodyForm(Request $request, $id)
+    {
+        $case = CriminalCase::with(['assignment', 'custody', 'courtAppearances'])->findOrFail($id);
+
+        if (!$case->assignment) {
+            return redirect()->route('criminal-cases.workflow.assignment.form', $case->id)
+                ->with('error', 'Complete Case Assignment before Custody & Court Scheduling.');
+        }
+
+        return view('cid.cases.custody_form', compact('case'));
+    }
+
+    public function storeCustody(Request $request, $id)
+    {
+        $case = CriminalCase::with('assignment')->findOrFail($id);
+
+        if (!$case->assignment) {
+            abort(422, 'Complete Case Assignment before Custody & Court Scheduling.');
+        }
+
+        $data = $request->validate([
+            'custody_status'        => 'required|in:' . implode(',', \App\Models\CriminalCaseCustody::STATUSES),
+            'custody_location'      => 'nullable|string|max:150',
+            'cell_unit_reference'   => 'nullable|string|max:100',
+            'custody_start_date'    => 'required|date',
+            'legal_deadline'        => 'nullable|date|after_or_equal:custody_start_date',
+            'bail_conditions'       => 'nullable|string',
+            'custody_review_date'   => 'nullable|date',
+            'custody_review_officer'=> 'nullable|string|max:150',
+            'medical_check_status'  => 'nullable|string|max:50',
+            'welfare_notes'         => 'nullable|string',
+        ]);
+
+        $data['added_by'] = $request->user()->name ?? 'Staff';
+
+        if ($case->custody) {
+            $case->custody->update($data);
+        } else {
+            $case->custody()->create($data);
+        }
+
+        $case->advanceStageTo('final_report_ago_submission');
+
+        return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
+            ->with('success', 'Custody record saved.');
+    }
+
+    public function storeCourtAppearance(Request $request, $id)
+    {
+        $case = CriminalCase::findOrFail($id);
+
+        $data = $request->validate([
+            'appearance_date'        => 'required|date',
+            'appearance_time'        => 'nullable',
+            'court_name'             => 'required|string|max:150',
+            'room_number'            => 'nullable|string|max:50',
+            'presiding_judge'        => 'nullable|string|max:150',
+            'hearing_type'           => 'required|in:' . implode(',', \App\Models\CriminalCaseCourtAppearance::HEARING_TYPES),
+            'responsible_officer'    => 'nullable|string|max:150',
+        ]);
+
+        $data['added_by'] = $request->user()->name ?? 'Staff';
+        $data['file_readiness_status'] = 'Preparing';
+
+        $case->courtAppearances()->create($data);
+
+        return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
+            ->with('success', 'Court appearance scheduled.');
+    }
+
+    public function recordCourtOutcome(Request $request, $id, $appearanceId)
+    {
+        $case = CriminalCase::findOrFail($id);
+        $appearance = $case->courtAppearances()->findOrFail($appearanceId);
+
+        $data = $request->validate([
+            'outcome'           => 'required|string',
+            'next_hearing_date' => 'nullable|date',
+            'file_readiness_status' => 'nullable|string|max:30',
+        ]);
+
+        $appearance->update($data);
+
+        return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
+            ->with('success', 'Hearing outcome recorded.');
+    }
+
+    public function reportForm(Request $request, $id)
+    {
+        $case = CriminalCase::with(['custody', 'finalReport.supervisor', 'finalReport.agoReceivingOfficer', 'arrest', 'occurrenceBook', 'evidenceItems'])
+            ->findOrFail($id);
+
+        if (!$case->custody) {
+            return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
+                ->with('error', 'Complete Custody & Court Scheduling before the Final Report.');
+        }
+
+        $agoOfficers = \App\Models\User::whereHas('institution', fn ($q) => $q->where('type', 'ago'))
+            ->orderBy('name')->get();
+
+        return view('cid.cases.report_form', compact('case', 'agoOfficers'));
+    }
+
+    public function storeReport(Request $request, $id)
+    {
+        $case = CriminalCase::with('finalReport')->findOrFail($id);
+
+        if ($case->finalReport?->isSubmitted()) {
+            abort(422, 'This report has already been submitted to AGO and is locked.');
+        }
+
+        $data = $request->validate([
+            'case_summary'             => 'required|string',
+            'suspect_profile_summary'  => 'nullable|string',
+            'witness_summary'          => 'nullable|string',
+            'applicable_law'           => 'nullable|string',
+            'recommendation'           => 'required|in:' . implode(',', \App\Models\CriminalCaseFinalReport::RECOMMENDATIONS),
+        ]);
+
+        $data['added_by'] = $request->user()->name ?? 'Staff';
+
+        if ($case->finalReport) {
+            $case->finalReport->update($data);
+        } else {
+            $case->finalReport()->create($data);
+        }
+
+        return redirect()->route('criminal-cases.workflow.report.form', $case->id)
+            ->with('success', 'Final report saved.');
+    }
+
+    public function endorseReport(Request $request, $id)
+    {
+        $case = CriminalCase::with('finalReport')->findOrFail($id);
+        $report = $case->finalReport;
+
+        if (!$report) {
+            abort(404);
+        }
+
+        $roleNames = $request->user()->group?->roles->pluck('name') ?? collect();
+        if (!$roleNames->intersect(['CID Institution Admin', 'Investigator'])->count()) {
+            abort(403, 'Only an Investigator or Institution Admin can endorse a Final Report.');
+        }
+
+        $report->update([
+            'supervisor_endorsed_by' => $request->user()->id,
+            'supervisor_endorsed_at' => now(),
+        ]);
+
+        return redirect()->route('criminal-cases.workflow.report.form', $case->id)
+            ->with('success', 'Final report endorsed. Ready for AGO submission.');
+    }
+
+    public function submitToAgo(Request $request, $id)
+    {
+        $case = CriminalCase::with(['finalReport', 'arrest', 'occurrenceBook', 'evidenceItems'])->findOrFail($id);
+        $report = $case->finalReport;
+
+        if (!$report || !$report->supervisor_endorsed_at) {
+            return back()->withErrors(['report' => 'The final report must be endorsed before submitting to AGO.']);
+        }
+
+        if ($report->isSubmitted()) {
+            return back()->withErrors(['report' => 'This case has already been submitted to AGO.']);
+        }
+
+        if (!$case->arrest || !$case->occurrenceBook?->isComplete() || $case->evidenceItems->isEmpty()) {
+            return back()->withErrors(['report' => 'Submission package must include the arrest record, an acknowledged Occurrence Book, and at least one evidence item.']);
+        }
+
+        $data = $request->validate([
+            'ago_receiving_officer_id' => 'nullable|exists:users,id',
+        ]);
+
+        $agoInstitutionId = \App\Models\Institution::where('type', 'ago')->value('id');
+
+        $attorneyCase = \App\Models\AttorneyCase::create([
+            'institution_id'    => $agoInstitutionId,
+            'title'             => 'CID Referral - ' . $case->case_number,
+            'offense_type'      => $case->arrest->alleged_offence,
+            'date_reported'     => now()->toDateString(),
+            'reporting_agency'  => 'CID - ' . $case->case_number,
+            'priority'          => $case->priority,
+            'summary'           => $report->case_summary,
+            'added_by'          => $request->user()->name ?? 'CID',
+        ]);
+
+        $report->update([
+            'submitted_to_ago_at'       => now(),
+            'ago_receiving_officer_id'  => $data['ago_receiving_officer_id'] ?? null,
+            'attorney_case_id'          => $attorneyCase->ACID,
+        ]);
+
+        $case->update(['status' => 'Pending AGO']);
+
+        return redirect()->route('criminal-cases.workflow', $case->id)
+            ->with('success', 'Case submitted to AGO as ' . $attorneyCase->case_number . '.');
     }
 }

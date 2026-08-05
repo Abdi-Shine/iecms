@@ -1340,6 +1340,16 @@ Route::middleware(['auth', 'permission:CID Investigation Workflow,view'])->group
     Route::post('criminal-cases/{id}/workflow/evidence', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeEvidenceItem'])->name('criminal-cases.workflow.evidence.store');
     Route::post('criminal-cases/{id}/workflow/evidence/{itemId}/status', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'updateEvidenceStatus'])->name('criminal-cases.workflow.evidence.status');
     Route::post('criminal-cases/{id}/workflow/evidence/{itemId}/custody', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'transferEvidenceCustody'])->name('criminal-cases.workflow.evidence.custody');
+
+    Route::get('criminal-cases/{id}/workflow/custody', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'custodyForm'])->name('criminal-cases.workflow.custody.form');
+    Route::post('criminal-cases/{id}/workflow/custody', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeCustody'])->name('criminal-cases.workflow.custody.store');
+    Route::post('criminal-cases/{id}/workflow/court-appearances', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeCourtAppearance'])->name('criminal-cases.workflow.court-appearances.store');
+    Route::post('criminal-cases/{id}/workflow/court-appearances/{appearanceId}/outcome', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'recordCourtOutcome'])->name('criminal-cases.workflow.court-appearances.outcome');
+
+    Route::get('criminal-cases/{id}/workflow/report', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'reportForm'])->name('criminal-cases.workflow.report.form');
+    Route::post('criminal-cases/{id}/workflow/report', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'storeReport'])->name('criminal-cases.workflow.report.store');
+    Route::post('criminal-cases/{id}/workflow/report/endorse', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'endorseReport'])->name('criminal-cases.workflow.report.endorse');
+    Route::post('criminal-cases/{id}/workflow/report/submit-to-ago', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'submitToAgo'])->name('criminal-cases.workflow.report.submit-to-ago');
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

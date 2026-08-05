@@ -1277,6 +1277,11 @@ Route::middleware(['auth', 'permission:Attorney Case Registration,view'])->group
     Route::get('attorney-cases/{id}/workflow/evidence-interviews/evidence-management/form', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'evidenceManagementForm'])->name('attorney-cases.workflow.evidence-interviews.evidence-management.form');
     Route::post('attorney-cases/{id}/workflow/evidence-interviews/evidence-management', [\App\Http\Controllers\AttorneyEvidenceInterviewsController::class, 'storeEvidenceManagement'])->name('attorney-cases.workflow.evidence-interviews.evidence-management.store');
 
+    Route::get('attorney-cases/{id}/workflow/investigation-extension', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'investigationExtension'])->name('attorney-cases.workflow.investigation-extension');
+    Route::get('attorney-cases/{id}/workflow/investigation-extension/form', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'investigationExtensionForm'])->name('attorney-cases.workflow.investigation-extension.form');
+    Route::post('attorney-cases/{id}/workflow/investigation-extension', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'storeInvestigationExtension'])->name('attorney-cases.workflow.investigation-extension.store');
+    Route::post('attorney-cases/{id}/workflow/investigation-extension/approve', [\App\Http\Controllers\AttorneyCaseWorkflowController::class, 'approveInvestigationExtension'])->name('attorney-cases.workflow.investigation-extension.approve');
+
     Route::get('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'create'])->name('attorney-cases.compliance.create');
     Route::post('attorney-cases/{id}/compliance/{type}', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'store'])->name('attorney-cases.compliance.store');
     Route::get('attorney-cases/compliance/{record}/letter', [\App\Http\Controllers\AttorneyComplianceFormController::class, 'letter'])->name('attorney-cases.compliance.letter');

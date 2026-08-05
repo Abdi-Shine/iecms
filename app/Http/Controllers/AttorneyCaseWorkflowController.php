@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AttorneyCase;
 use App\Models\AttorneyCaseInvestigationDecision;
+use App\Models\AttorneyCaseInvestigationExtension;
 use Illuminate\Http\Request;
 
 class AttorneyCaseWorkflowController extends Controller
@@ -29,12 +30,15 @@ class AttorneyCaseWorkflowController extends Controller
     public const SEX_OPTIONS                          = ['Male' => 'Lab', 'Female' => 'Dheddig'];
     public const VICTIM_TYPE_OPTIONS                  = ['Shakhsi' => 'Shakhsi (Individual)', 'Qaranka' => 'Qaranka (State)'];
 
+    public const APPROVAL_STATUS_OPTIONS = ['Sugaya', 'La Ansixiyay', 'La Diiday'];
+
     public function show(Request $request, $id)
     {
         $case = AttorneyCase::with([
             'investigationDecision', 'investigation', 'complianceForms.employee', 'complainants',
             'arrestDecision', 'arrestWithoutWarrant', 'warrantOfArrest', 'searchAndSeizure', 'assetRecovery',
             'suspectInterview', 'witnessInterview', 'expertInterview', 'victimInterview', 'evidenceManagement',
+            'investigationExtension',
         ])->findOrFail($id);
 
         $steps = [
@@ -87,7 +91,9 @@ class AttorneyCaseWorkflowController extends Controller
                 'title'       => 'Investigation Extension',
                 'description' => 'Request extension if investigation time expires',
                 'formsCount'  => 1,
-                'enabled'     => false,
+                'enabled'     => true,
+                'route'       => route('attorney-cases.workflow.investigation-extension', $case->ACID),
+                'complete'    => (bool) $case->investigationExtension,
             ],
             [
                 'key'         => 'investigation-report',
@@ -436,5 +442,72 @@ class AttorneyCaseWorkflowController extends Controller
 
         return redirect()->route('attorney-cases.workflow', $case->ACID)
             ->with('success', 'Go\'aanka baaritaanka waa la keydiyay.');
+    }
+
+    // ── Investigation Extension ─────────────────────────────────────
+    public function investigationExtension(Request $request, $id)
+    {
+        $case = AttorneyCase::with('investigationExtension')->findOrFail($id);
+
+        return view('attorney.Conclusion.direct_complaint_investigation_extension', [
+            'case' => $case,
+        ]);
+    }
+
+    public function investigationExtensionForm(Request $request, $id)
+    {
+        $case = AttorneyCase::with('investigationExtension')->findOrFail($id);
+
+        return view('attorney.Conclusion.direct_complaint_investigation_extension_form', [
+            'case' => $case,
+        ]);
+    }
+
+    public function storeInvestigationExtension(Request $request, $id)
+    {
+        $case = AttorneyCase::findOrFail($id);
+
+        $data = $request->validate([
+            'current_deadline'       => 'nullable|date',
+            'requested_days'         => 'nullable|string|max:50',
+            'new_deadline'           => 'required|date',
+            'justification'          => 'nullable|string',
+            'requesting_prosecutor'  => 'nullable|string|max:150',
+            'request_date'           => 'required|date',
+            'supporting_document'    => 'nullable|file|max:10240',
+        ]);
+
+        if ($request->hasFile('supporting_document')) {
+            $data['supporting_document_path'] = $request->file('supporting_document')->store(
+                'uploads/attorney/investigation-extensions/' . $case->ACID,
+                'public'
+            );
+        }
+        unset($data['supporting_document']);
+
+        AttorneyCaseInvestigationExtension::updateOrCreate(['attorney_case_id' => $case->ACID], $data);
+
+        return redirect()->route('attorney-cases.workflow.investigation-extension', $case->ACID)
+            ->with('success', 'Codsiga kordhinta baaritaanka waa la keydiyay.');
+    }
+
+    public function approveInvestigationExtension(Request $request, $id)
+    {
+        $case = AttorneyCase::with('investigationExtension')->findOrFail($id);
+
+        $data = $request->validate([
+            'decision' => 'required|in:La Ansixiyay,La Diiday',
+            'reason'   => 'nullable|string',
+        ]);
+
+        $case->investigationExtension()->firstOrFail()->update([
+            'status'           => $data['decision'],
+            'approval_reason'  => $data['reason'] ?? null,
+            'approved_by'      => $request->user()->name,
+            'approved_date'    => now()->format('Y-m-d'),
+        ]);
+
+        return redirect()->route('attorney-cases.workflow.investigation-extension', $case->ACID)
+            ->with('success', 'Codsiga waa la ' . ($data['decision'] === 'La Ansixiyay' ? 'ansixiyay' : 'diiday') . '.');
     }
 }

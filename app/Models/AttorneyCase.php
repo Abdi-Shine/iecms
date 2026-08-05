@@ -148,6 +148,11 @@ class AttorneyCase extends Model
         return $this->hasOne(AttorneyCaseEvidenceManagement::class, 'attorney_case_id', 'ACID');
     }
 
+    public function investigationExtension()
+    {
+        return $this->hasOne(AttorneyCaseInvestigationExtension::class, 'attorney_case_id', 'ACID');
+    }
+
     public function complianceForms()
     {
         return $this->hasMany(AttorneyComplianceForm::class, 'attorney_case_id', 'ACID');

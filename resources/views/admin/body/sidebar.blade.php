@@ -333,9 +333,41 @@
             </a>
         @endif
 
+        @if($canCidCaseManagement)
+            <div class="space-y-1">
+                <button @click="toggleMenu('cid-case-management')"
+                    class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full">
+                    <i class="bi bi-folder2-open text-lg"></i>
+                    <span class="text-left leading-tight">Case Management</span>
+                    <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
+                        :class="isOpen('cid-case-management') ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="isOpen('cid-case-management')" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[500px]"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 max-h-[500px]" x-transition:leave-end="opacity-0 max-h-0"
+                    class="space-y-1 overflow-hidden transition-all duration-300">
+                    <a href="{{ route('cid-occurrence-books.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-occurrence-books.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-journal-bookmark text-lg"></i> Occurrence Books</a>
+                    <a href="{{ route('cid-internal-ob.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-internal-ob.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-journal-lock text-lg"></i> Internal OB</a>
+                    <a href="{{ route('cid-ob-archive.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-ob-archive.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-archive text-lg"></i> OB Archive</a>
+                    <a href="{{ route('cid-court-calendar.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-court-calendar.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-calendar-event text-lg"></i> Court Appearance</a>
+                    <a href="{{ route('cid-period-alerts.index') }}"
+                        class="flex items-center gap-3 pl-4 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('cid-period-alerts.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-bell text-lg"></i> Period Alerts</a>
+                </div>
+            </div>
+        @endif
+
         @php
             $cidComingSoonMenus = [
-                ['can' => $canCidCaseManagement, 'icon' => 'bi-folder2-open',             'label' => 'Case Management'],
                 ['can' => $canCidEvidence,       'icon' => 'bi-archive-fill',             'label' => 'Evidence & Documentation'],
                 ['can' => $canCidLegalProcess,   'icon' => 'bi-file-earmark-lock2-fill',  'label' => 'Legal Process'],
                 ['can' => $canCidDetention,      'icon' => 'bi-shield-lock-fill',         'label' => 'Detention Center'],

@@ -165,6 +165,11 @@
                         </div>
                     </div>
 
+                    <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:#374151">
+                        <input type="checkbox" name="is_internal" value="1" {{ old('is_internal', $ob->is_internal ?? false) ? 'checked' : '' }}>
+                        Internal OB (station-level incident, not from a public/external complaint)
+                    </label>
+
                 </div>
 
                 <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end">

@@ -93,4 +93,14 @@ class CriminalCase extends Model
     {
         return $this->hasOne(CriminalCaseFinalReport::class);
     }
+
+    public function diaryEntries()
+    {
+        return $this->hasMany(CriminalCaseDiaryEntry::class)->orderByDesc('created_at');
+    }
+
+    public function takeovers()
+    {
+        return $this->hasMany(CriminalCaseTakeover::class)->orderByDesc('created_at');
+    }
 }

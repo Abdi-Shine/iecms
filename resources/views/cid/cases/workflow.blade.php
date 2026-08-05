@@ -9,10 +9,20 @@
             <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">{{ $case->case_number }}</h1>
             <p class="text-sm text-neutral-500 mt-0.5">Investigation Workflow &mdash; {{ $case->priority }} priority</p>
         </div>
-        <a href="{{ route('criminal-cases.index') }}"
-            class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
-            <i class="bi bi-arrow-left"></i> Back to Cases
-        </a>
+        <div class="flex gap-2">
+            <a href="{{ route('criminal-cases.diary', $case->id) }}"
+                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                <i class="bi bi-journal-text"></i> Diary
+            </a>
+            <a href="{{ route('criminal-cases.takeovers', $case->id) }}"
+                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                <i class="bi bi-arrow-left-right"></i> Takeovers
+            </a>
+            <a href="{{ route('criminal-cases.index') }}"
+                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
+                <i class="bi bi-arrow-left"></i> Back to Cases
+            </a>
+        </div>
     </div>
 
     <div class="space-y-3">

@@ -65,4 +65,22 @@ class CriminalCaseOccurrenceBook extends Model
             && $this->assigned_investigator_id !== null
             && $this->supervisor_acknowledged_at !== null;
     }
+
+    /**
+     * Derived, not stored — avoids a status column drifting out of sync
+     * with the case/assignment/acknowledgment state it's computed from.
+     */
+    public function statusLabel(): string
+    {
+        if ($this->criminalCase?->status === 'Closed') {
+            return 'Closed';
+        }
+        if ($this->isComplete()) {
+            return 'Active';
+        }
+        if ($this->assigned_investigator_id !== null) {
+            return 'Assigned';
+        }
+        return 'Draft';
+    }
 }

@@ -9,6 +9,16 @@ class CriminalCaseWorkflowController extends Controller
 {
     public const ARREST_TYPES = ['with_warrant', 'without_warrant'];
 
+    private function logDiary(CriminalCase $case, Request $request, string $actionType, ?string $description = null): void
+    {
+        $case->diaryEntries()->create([
+            'entry_type'  => 'system',
+            'action_type' => $actionType,
+            'description' => $description,
+            'user_id'     => $request->user()->id,
+        ]);
+    }
+
     public function show(Request $request, $id)
     {
         $case = CriminalCase::with(['arrest', 'occurrenceBook', 'assignment', 'custody', 'finalReport'])->findOrFail($id);
@@ -123,6 +133,7 @@ class CriminalCaseWorkflowController extends Controller
             $case->arrest()->create($data);
         }
 
+        $this->logDiary($case, $request, 'Arrest Recorded', $data['arrestee_name'] . ' — ' . $data['alleged_offence']);
         $case->advanceStageTo('occurrence_book');
 
         return redirect()->route('criminal-cases.workflow', $case->id)
@@ -171,7 +182,10 @@ class CriminalCaseWorkflowController extends Controller
             'priority'                  => 'required|in:Routine,Urgent,Critical',
             'assigned_investigator_id'  => 'nullable|exists:users,id',
             'assigned_unit'             => 'nullable|string|max:100',
+            'is_internal'               => 'nullable|boolean',
         ]);
+
+        $data['is_internal'] = $request->boolean('is_internal');
 
         $obData = collect($data)->except(['priority'])->all();
         $obData['added_by'] = $request->user()->name ?? 'Staff';
@@ -211,6 +225,7 @@ class CriminalCaseWorkflowController extends Controller
             'supervisor_acknowledged_at' => now(),
         ]);
 
+        $this->logDiary($case, $request, 'Occurrence Book Acknowledged', $ob->ob_number);
         $case->advanceStageTo('case_assignment_evidence');
 
         return redirect()->route('criminal-cases.workflow', $case->id)
@@ -258,6 +273,7 @@ class CriminalCaseWorkflowController extends Controller
             $case->assignment()->create($data);
         }
 
+        $this->logDiary($case, $request, 'Case Assigned', \App\Models\User::find($data['assigned_investigator_id'])?->name);
         $case->advanceStageTo('custody_court_scheduling');
 
         return redirect()->route('criminal-cases.workflow', $case->id)
@@ -294,6 +310,8 @@ class CriminalCaseWorkflowController extends Controller
             'transferred_at' => now(),
             'reason'         => 'Initial collection',
         ]);
+
+        $this->logDiary($case, $request, 'Evidence Logged', $data['description']);
 
         return redirect()->route('criminal-cases.workflow.evidence.index', $case->id)
             ->with('success', 'Evidence item logged.');
@@ -378,6 +396,7 @@ class CriminalCaseWorkflowController extends Controller
             $case->custody()->create($data);
         }
 
+        $this->logDiary($case, $request, 'Custody Recorded', $data['custody_status']);
         $case->advanceStageTo('final_report_ago_submission');
 
         return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
@@ -403,6 +422,8 @@ class CriminalCaseWorkflowController extends Controller
 
         $case->courtAppearances()->create($data);
 
+        $this->logDiary($case, $request, 'Court Appearance Scheduled', $data['hearing_type'] . ' — ' . $data['court_name'] . ' on ' . $data['appearance_date']);
+
         return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
             ->with('success', 'Court appearance scheduled.');
     }
@@ -419,6 +440,8 @@ class CriminalCaseWorkflowController extends Controller
         ]);
 
         $appearance->update($data);
+
+        $this->logDiary($case, $request, 'Court Outcome Recorded', $data['outcome']);
 
         return redirect()->route('criminal-cases.workflow.custody.form', $case->id)
             ->with('success', 'Hearing outcome recorded.');
@@ -487,6 +510,8 @@ class CriminalCaseWorkflowController extends Controller
             'supervisor_endorsed_at' => now(),
         ]);
 
+        $this->logDiary($case, $request, 'Final Report Endorsed', $report->report_number);
+
         return redirect()->route('criminal-cases.workflow.report.form', $case->id)
             ->with('success', 'Final report endorsed. Ready for AGO submission.');
     }
@@ -532,6 +557,8 @@ class CriminalCaseWorkflowController extends Controller
         ]);
 
         $case->update(['status' => 'Pending AGO']);
+
+        $this->logDiary($case, $request, 'Submitted to AGO', $attorneyCase->case_number);
 
         return redirect()->route('criminal-cases.workflow', $case->id)
             ->with('success', 'Case submitted to AGO as ' . $attorneyCase->case_number . '.');

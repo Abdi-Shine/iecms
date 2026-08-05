@@ -1324,6 +1324,25 @@ Route::middleware(['auth', 'permission:CID Dashboard,view'])->group(function () 
 Route::middleware(['auth', 'permission:CID Investigation Workflow,view'])->group(function () {
     Route::get('criminal-cases', [\App\Http\Controllers\CriminalCaseController::class, 'index'])->name('criminal-cases.index');
     Route::post('criminal-cases', [\App\Http\Controllers\CriminalCaseController::class, 'store'])->name('criminal-cases.store');
+    Route::get('criminal-cases/export', [\App\Http\Controllers\CriminalCaseController::class, 'export'])->name('criminal-cases.export');
+    Route::post('criminal-cases/bulk-reassign', [\App\Http\Controllers\CriminalCaseController::class, 'bulkReassign'])->name('criminal-cases.bulk-reassign');
+    Route::post('criminal-cases/bulk-close', [\App\Http\Controllers\CriminalCaseController::class, 'bulkClose'])->name('criminal-cases.bulk-close');
+    Route::get('criminal-cases/{id}/diary', [\App\Http\Controllers\CriminalCaseController::class, 'diaryIndex'])->name('criminal-cases.diary');
+    Route::post('criminal-cases/{id}/diary', [\App\Http\Controllers\CriminalCaseController::class, 'storeDiaryEntry'])->name('criminal-cases.diary.store');
+
+    Route::get('cid-occurrence-books', [\App\Http\Controllers\CriminalObController::class, 'index'])->name('cid-occurrence-books.index');
+    Route::get('cid-internal-ob', [\App\Http\Controllers\CriminalObController::class, 'internal'])->name('cid-internal-ob.index');
+    Route::get('cid-ob-archive', [\App\Http\Controllers\CriminalObController::class, 'archive'])->name('cid-ob-archive.index');
+
+    Route::get('criminal-cases/{id}/takeovers', [\App\Http\Controllers\CriminalCaseTakeoverController::class, 'index'])->name('criminal-cases.takeovers');
+    Route::post('criminal-cases/{id}/takeovers', [\App\Http\Controllers\CriminalCaseTakeoverController::class, 'store'])->name('criminal-cases.takeovers.store');
+    Route::post('criminal-cases/{id}/takeovers/{takeoverId}/acknowledge-outgoing', [\App\Http\Controllers\CriminalCaseTakeoverController::class, 'acknowledgeOutgoing'])->name('criminal-cases.takeovers.acknowledge-outgoing');
+    Route::post('criminal-cases/{id}/takeovers/{takeoverId}/accept-incoming', [\App\Http\Controllers\CriminalCaseTakeoverController::class, 'acceptIncoming'])->name('criminal-cases.takeovers.accept-incoming');
+    Route::post('criminal-cases/{id}/takeovers/{takeoverId}/approve', [\App\Http\Controllers\CriminalCaseTakeoverController::class, 'approve'])->name('criminal-cases.takeovers.approve');
+    Route::post('criminal-cases/{id}/takeovers/{takeoverId}/reject', [\App\Http\Controllers\CriminalCaseTakeoverController::class, 'reject'])->name('criminal-cases.takeovers.reject');
+
+    Route::get('cid-court-calendar', [\App\Http\Controllers\CriminalCourtCalendarController::class, 'index'])->name('cid-court-calendar.index');
+    Route::get('cid-period-alerts', [\App\Http\Controllers\CriminalPeriodAlertsController::class, 'index'])->name('cid-period-alerts.index');
 
     Route::get('criminal-cases/{id}/workflow', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'show'])->name('criminal-cases.workflow');
     Route::get('criminal-cases/{id}/workflow/arrest', [\App\Http\Controllers\CriminalCaseWorkflowController::class, 'arrestForm'])->name('criminal-cases.workflow.arrest.form');

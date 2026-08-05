@@ -133,7 +133,6 @@
                 <thead>
                     <tr style="background:rgba(82,140,190,0.06)">
                         <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 w-10">No#</th>
-                        <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Role ID</th>
                         <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Role</th>
                         <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Slug</th>
                         <th class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Color</th>
@@ -148,14 +147,6 @@
                     <tr class="hover:bg-neutral-50 transition-colors">
                         <td class="px-4 py-4">
                             <span class="text-xs font-bold text-neutral-400">{{ str_pad($roles->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}</span>
-                        </td>
-                        <td class="px-4 py-4">
-                            @if($role->role_id)
-                                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg"
-                                      style="background:rgba(82,140,190,0.1);color:#3D78AB">{{ $role->role_id }}</span>
-                            @else
-                                <span class="text-xs text-neutral-400">—</span>
-                            @endif
                         </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center gap-2.5">
@@ -215,7 +206,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-20 text-center">
+                        <td colspan="7" class="px-6 py-20 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background:rgba(82,140,190,0.1)">
                                     <i class="bi bi-shield text-2xl" style="color:#528CBE"></i>

@@ -55,13 +55,14 @@ class AppealFamilyRegistrationController extends Controller
 
     public function show($id)
     {
-        // Assignment/Hearing/Judgment/Handover/Close/Enforcement/further-Appeal
-        // are not built yet for Appeal Family — those sections are left out
-        // of appeal_family_information.blade.php rather than wired to
+        // Hearing/Judgment/Handover/Close/Enforcement/further-Appeal are not
+        // built yet for Appeal Family — those sections are left out of
+        // appeal_family_information.blade.php rather than wired to
         // routes/models that don't exist. The lower (District Family) case
         // is fully built already, so its full history is shown here.
         $case = \App\Models\AppealFamilyRegistration::with([
             'court', 'parties', 'documents', 'legalRepresentatives.party', 'lawyers.lawyer', 'lawyers.party',
+            'assignments.employee',
         ])->findOrFail($id);
 
         $lowerCase        = null;
@@ -191,7 +192,7 @@ class AppealFamilyRegistrationController extends Controller
         $allStatuses = (clone $baseQuery)->whereNotNull('Status')->distinct()->orderBy('Status')->pluck('Status');
 
         $query = (clone $baseQuery)->with([
-            'court', 'parties', 'documents',
+            'court', 'parties', 'documents', 'assignments.employee',
         ])->orderByDesc('AFCID');
 
         if ($request->filled('search')) {

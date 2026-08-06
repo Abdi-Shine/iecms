@@ -761,6 +761,11 @@
                     <a href="{{ route('appeal-family-registration.index') }}"
                         class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-registration.*') ? 'text-white bg-white/5' : '' }}">
                         <i class="bi bi-plus text-lg"></i> Diiwaanka Dacwada </a>
+                    @if($canAppealAssignment)
+                        <a href="{{ route('appeal-family-assign.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-assign.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Gal Ku Qoris Qoyska</a>
+                    @endif
                 </div>
             </div>
         @endif

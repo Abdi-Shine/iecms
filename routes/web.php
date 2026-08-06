@@ -734,8 +734,9 @@ Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(fun
 
 // ══════════════════════════════════════════════════════════════════════════════
 // APPEAL FAMILY CASE ROUTES (Banadir Regional Appeal Court)
-// Registration stage only for now — mirrors Appeal Civil's structure and the
-// family-domain fields already established by District Family.
+// Registration and Assignment are done. Hearing/Conclusion/Transfer remain —
+// mirrors Appeal Civil's structure and the family-domain fields already
+// established by District Family.
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── Appeal Family Registration ──────────────────────────────────────────────
@@ -775,6 +776,16 @@ Route::middleware(['auth', 'permission:Appeal Case Lawyers,view'])->group(functi
     Route::put('appeal-family-lawyers/{id}', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'update'])->name('appeal-family-lawyers.update');
     Route::delete('appeal-family-lawyers/{id}', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'destroy'])->name('appeal-family-lawyers.destroy');
     Route::get('appeal-family-lawyers/case/{caseId}', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'getAssignmentsByCase'])->name('appeal-family-lawyers.by-case');
+});
+
+// ── Appeal Family Case Assignment (Panel of Judges) ─────────────────────────
+// Reuses the "Appeal Case Assignment" module shared across all Appeal case types.
+Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(function () {
+    Route::get('/appeal-family-assign', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'index'])->name('appeal-family-assign.index');
+    Route::get('/appeal-family-assign/add/{id}', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'addJudges'])->name('appeal-family-assign.add');
+    Route::post('/appeal-family-assign', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'store'])->name('appeal-family-assign.store');
+    Route::put('/appeal-family-assign/{id}', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'update'])->name('appeal-family-assign.update');
+    Route::delete('/appeal-family-assign/{id}', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'destroy'])->name('appeal-family-assign.destroy');
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

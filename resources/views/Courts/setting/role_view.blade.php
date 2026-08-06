@@ -3,7 +3,7 @@
 @section('admin_main_content')
 
 
-<div x-data="{ showImport: false, importFile: 'No file chosen' }" class="p-4 sm:p-6 w-full">
+<div x-data="{ showAdd: false, showEdit: false, editRole: {}, showImport: false, importFile: 'No file chosen' }" class="p-4 sm:p-6 w-full">
 
     {{-- Flash --}}
     @if(session('success'))
@@ -37,11 +37,11 @@
                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition">
                 <i class="bi bi-grid-3x3-gap"></i> Permission Matrix
             </a>
-            <a href="{{ route('roles.create') }}"
+            <button @click="showAdd = true"
                 class="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow transition hover:opacity-90"
                 style="background:#528CBE">
                 <i class="bi bi-plus-circle"></i> Add New Role
-            </a>
+            </button>
         </div>
     </div>
 
@@ -184,12 +184,13 @@
                         </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('roles.edit', $role->id) }}" title="Edit"
+                                <button
+                                    @click="editRole = {{ json_encode(['id' => $role->id, 'role_id' => $role->role_id, 'name' => $role->name, 'display_name' => $role->display_name, 'color' => $role->color]) }}; showEdit = true"
                                     class="w-8 h-8 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 transition-all"
                                     onmouseover="this.style.background='#528CBE';this.style.borderColor='#528CBE';this.style.color='white'"
                                     onmouseout="this.style.background='';this.style.borderColor='';this.style.color=''">
                                     <i class="bi bi-pencil-square text-xs"></i>
-                                </a>
+                                </button>
                                 <form action="{{ route('roles.destroy', $role->id) }}" method="POST"
                                       onsubmit="confirmDelete(event, this)">
                                     @csrf @method('DELETE')
@@ -211,9 +212,9 @@
                                     <i class="bi bi-shield text-2xl" style="color:#528CBE"></i>
                                 </div>
                                 <p class="text-neutral-400 font-medium text-sm">No roles found.</p>
-                                <a href="{{ route('roles.create') }}"
+                                <button @click="showAdd = true"
                                     class="mt-1 px-4 py-2 text-xs font-semibold text-white rounded-lg transition hover:opacity-90"
-                                    style="background:#528CBE">Add First Role</a>
+                                    style="background:#528CBE">Add First Role</button>
                             </div>
                         </td>
                     </tr>
@@ -224,6 +225,187 @@
 
         <div class="px-6 py-4 border-t border-neutral-100">
             {{ $roles->links() }}
+        </div>
+    </div>
+
+    {{-- ── ADD MODAL ── --}}
+    <div x-show="showAdd"
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[70] flex items-center justify-center p-4"
+         style="background:rgba(10,40,77,0.6);backdrop-filter:blur(6px)"
+         @keydown.escape.window="showAdd = false">
+
+        <div class="bg-white flex flex-col overflow-hidden w-full"
+             style="max-width:480px;border-radius:1.25rem;box-shadow:0 25px 60px rgba(0,0,0,.25)"
+             @click.outside="showAdd = false">
+
+            <div class="flex items-center justify-between flex-shrink-0"
+                 style="background:#528CBE;padding:1.1rem 1.5rem;border-radius:1.25rem 1.25rem 0 0">
+                <div class="flex items-center gap-3">
+                    <div style="width:40px;height:40px;background:rgba(255,255,255,0.12);border-radius:.75rem;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-shield-plus" style="color:white;font-size:1.1rem"></i>
+                    </div>
+                    <h2 style="color:white;font-size:1.05rem;font-weight:700;margin:0">Add New Role</h2>
+                </div>
+                <button @click="showAdd = false"
+                    style="width:34px;height:34px;background:rgba(255,255,255,0.12);border:none;border-radius:.625rem;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center"
+                    onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+                    <i class="bi bi-x-lg" style="font-size:.85rem"></i>
+                </button>
+            </div>
+
+            <div style="padding:1.5rem 1.75rem">
+                <form action="{{ route('roles.store') }}" method="POST">
+                    @csrf
+                    <div style="display:grid;gap:1rem;margin-bottom:1.25rem">
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role ID</label>
+                            <div style="position:relative">
+                                <input type="text" value="{{ $nextRoleId }}" readonly tabindex="-1"
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #d1d5db;border-radius:.625rem;background:#f3f4f6;color:#6b7280;outline:none;box-sizing:border-box;cursor:not-allowed">
+                                <i class="bi bi-lock" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
+                            </div>
+                            <p style="font-size:.68rem;color:#9ca3af;margin:.3rem 0 0">Auto-generated, sequential.</p>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Display Name <span style="color:#ef4444">*</span></label>
+                            <div style="position:relative">
+                                <input type="text" name="display_name" id="addDisplayName" required maxlength="100"
+                                       placeholder="e.g. Court Manager"
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s"
+                                       onfocus="this.style.borderColor='#528CBE';this.style.boxShadow='0 0 0 3px rgba(82,140,190,.15)'"
+                                       onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
+                                <i class="bi bi-person" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role Slug <span style="color:#ef4444">*</span></label>
+                            <div style="position:relative">
+                                <input type="text" name="name" id="addSlug" required maxlength="50"
+                                       placeholder="e.g. court_manager" pattern="[a-zA-Z0-9_\-]+"
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s"
+                                       onfocus="this.style.borderColor='#528CBE';this.style.boxShadow='0 0 0 3px rgba(82,140,190,.15)'"
+                                       onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
+                                <i class="bi bi-hash" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
+                            </div>
+                            <p style="font-size:.68rem;color:#9ca3af;margin:.3rem 0 0">Lowercase, underscores only. Auto-filled from name.</p>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Badge Color <span style="color:#ef4444">*</span></label>
+                            <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+                                <input type="color" name="color" id="addColor" value="#528CBE"
+                                       style="width:42px;height:36px;border-radius:.5rem;border:1.5px solid #e5e7eb;cursor:pointer;padding:2px">
+                                @foreach(['#528CBE','#F0B43C','#10b981','#7C3AED','#ef4444','#0891B2','#6B7280','#f97316'] as $c)
+                                <button type="button" onclick="document.getElementById('addColor').value='{{ $c }}'"
+                                        style="width:24px;height:24px;border-radius:50%;background:{{ $c }};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer;transition:transform .15s"
+                                        onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1.5px solid #f3f4f6">
+                        <button type="button" @click="showAdd = false"
+                            style="padding:.6rem 1.5rem;font-size:.85rem;font-weight:600;color:#374151;border:1.5px solid #e5e7eb;border-radius:.625rem;background:white;cursor:pointer"
+                            onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">Cancel</button>
+                        <button type="submit"
+                            style="display:flex;align-items:center;gap:.5rem;padding:.6rem 1.75rem;font-size:.85rem;font-weight:700;color:white;background:#528CBE;border:none;border-radius:.625rem;cursor:pointer;box-shadow:0 4px 14px rgba(82,140,190,.4)"
+                            onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+                            <i class="bi bi-check-circle-fill"></i> Save Role
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ── EDIT MODAL ── --}}
+    <div x-show="showEdit"
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[70] flex items-center justify-center p-4"
+         style="background:rgba(10,40,77,0.6);backdrop-filter:blur(6px)"
+         @keydown.escape.window="showEdit = false">
+
+        <div class="bg-white flex flex-col overflow-hidden w-full"
+             style="max-width:480px;border-radius:1.25rem;box-shadow:0 25px 60px rgba(0,0,0,.25)"
+             @click.outside="showEdit = false">
+
+            <div class="flex items-center justify-between flex-shrink-0"
+                 style="background:#528CBE;padding:1.1rem 1.5rem;border-radius:1.25rem 1.25rem 0 0">
+                <div class="flex items-center gap-3">
+                    <div style="width:40px;height:40px;background:rgba(255,255,255,0.12);border-radius:.75rem;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-pencil-square" style="color:white;font-size:1.1rem"></i>
+                    </div>
+                    <div>
+                        <h2 style="color:white;font-size:1.05rem;font-weight:700;margin:0">Edit Role</h2>
+                        <p style="color:rgba(255,255,255,.8);font-size:.75rem;margin:0" x-text="editRole.display_name"></p>
+                    </div>
+                </div>
+                <button @click="showEdit = false"
+                    style="width:34px;height:34px;background:rgba(255,255,255,0.12);border:none;border-radius:.625rem;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center"
+                    onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+                    <i class="bi bi-x-lg" style="font-size:.85rem"></i>
+                </button>
+            </div>
+
+            <div style="padding:1.5rem 1.75rem">
+                <form :action="`/roles/${editRole.id}`" method="POST">
+                    @csrf @method('PUT')
+                    <div style="display:grid;gap:1rem;margin-bottom:1.25rem">
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role ID <span style="font-size:.55rem;color:#9ca3af;background:#f3f4f6;padding:.1rem .35rem;border-radius:.2rem;margin-left:.2rem;font-weight:700">LOCKED</span></label>
+                            <div style="position:relative">
+                                <input type="text" :value="editRole.role_id || '—'" disabled
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;font-family:monospace;font-weight:700;border:1.5px solid #e5e7eb;border-radius:.625rem;background:#f9fafb;color:#9ca3af;outline:none;box-sizing:border-box;cursor:not-allowed">
+                                <i class="bi bi-lock" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#d1d5db;pointer-events:none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Role Slug <span style="font-size:.55rem;color:#9ca3af;background:#f3f4f6;padding:.1rem .35rem;border-radius:.2rem;margin-left:.2rem;font-weight:700">LOCKED</span></label>
+                            <div style="position:relative">
+                                <input type="text" :value="editRole.name" disabled
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;border:1.5px solid #e5e7eb;border-radius:.625rem;background:#f9fafb;color:#9ca3af;outline:none;box-sizing:border-box;font-family:monospace;font-weight:700;cursor:not-allowed">
+                                <i class="bi bi-lock" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#d1d5db;pointer-events:none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Display Name <span style="color:#ef4444">*</span></label>
+                            <div style="position:relative">
+                                <input type="text" name="display_name" required maxlength="100"
+                                       :value="editRole.display_name"
+                                       style="width:100%;padding:.65rem 2.25rem .65rem .875rem;font-size:.85rem;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s"
+                                       onfocus="this.style.borderColor='#528CBE';this.style.boxShadow='0 0 0 3px rgba(82,140,190,.15)'"
+                                       onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
+                                <i class="bi bi-person" style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#9ca3af;pointer-events:none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">Badge Color <span style="color:#ef4444">*</span></label>
+                            <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+                                <input type="color" name="color" id="editColor"
+                                       x-effect="$el.value = editRole.color || '#528CBE'"
+                                       style="width:42px;height:36px;border-radius:.5rem;border:1.5px solid #e5e7eb;cursor:pointer;padding:2px">
+                                @foreach(['#528CBE','#F0B43C','#10b981','#7C3AED','#ef4444','#0891B2','#6B7280','#f97316'] as $c)
+                                <button type="button" onclick="document.getElementById('editColor').value='{{ $c }}'"
+                                        style="width:24px;height:24px;border-radius:50%;background:{{ $c }};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer;transition:transform .15s"
+                                        onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1.5px solid #f3f4f6">
+                        <button type="button" @click="showEdit = false"
+                            style="padding:.6rem 1.5rem;font-size:.85rem;font-weight:600;color:#374151;border:1.5px solid #e5e7eb;border-radius:.625rem;background:white;cursor:pointer"
+                            onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">Cancel</button>
+                        <button type="submit"
+                            style="display:flex;align-items:center;gap:.5rem;padding:.6rem 1.75rem;font-size:.85rem;font-weight:700;color:white;background:#528CBE;border:none;border-radius:.625rem;cursor:pointer;box-shadow:0 4px 14px rgba(82,140,190,.4)"
+                            onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+                            <i class="bi bi-check-circle-fill"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -302,5 +484,17 @@
     </div>
 
 </div>
+
+<script>
+document.getElementById('addDisplayName').addEventListener('input', function () {
+    const slug = document.getElementById('addSlug');
+    if (!slug.dataset.edited) {
+        slug.value = this.value.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    }
+});
+document.getElementById('addSlug').addEventListener('input', function () {
+    this.dataset.edited = '1';
+});
+</script>
 
 @endsection

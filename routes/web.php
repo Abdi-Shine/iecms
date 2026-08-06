@@ -490,6 +490,23 @@ Route::middleware(['auth', 'permission:Appeal Case Handover,create'])->group(fun
     Route::post('appeal-civil-handover', [\App\Http\Controllers\AppealCivilHandoverController::class, 'store'])->name('appeal-civil-handover.store');
 });
 
+// ── Appeal Criminal Handover ────────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Case Handover,view'])->group(function () {
+    Route::get('appeal-criminal-handover/{id}/document', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'document'])->name('appeal-criminal-handover.document');
+    Route::get('appeal-criminal-handover/{id}/document-pdf', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'documentPdf'])->name('appeal-criminal-handover.document-pdf');
+});
+
+Route::middleware(['auth', 'permission:Appeal Case Handover Approval,view'])->group(function () {
+    Route::post('appeal-criminal-handover/{id}/approve', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'approve'])->name('appeal-criminal-handover.approve');
+    Route::post('appeal-criminal-handover/{id}/reject', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'reject'])->name('appeal-criminal-handover.reject');
+    Route::get('appeal-criminal-handover-approval', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'approvalIndex'])->name('appeal-criminal-handover.approval');
+});
+
+Route::middleware(['auth', 'permission:Appeal Case Handover,create'])->group(function () {
+    Route::get('appeal-criminal-handover/{id}', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'create'])->name('appeal-criminal-handover.create');
+    Route::post('appeal-criminal-handover', [\App\Http\Controllers\AppealCriminalHandoverController::class, 'store'])->name('appeal-criminal-handover.store');
+});
+
 // ── Appeal Civil Assignment ───────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(function () {
     Route::get('/appeal-civil-assign', [\App\Http\Controllers\AppealCivilAssignmentController::class, 'index'])->name('appeal-civil-assign.index');
@@ -562,6 +579,21 @@ Route::middleware(['auth', 'permission:Appeal Judgment Receipts,view'])->group(f
     Route::post('/appeal-judgment-receipts/{judgment}/{party}', [\App\Http\Controllers\AppealCivilJudgmentController::class, 'confirmReceipt'])->name('appeal-judgments.receipt.confirm');
 });
 
+// ── Appeal Criminal Judgments ────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Judgments,view'])->group(function () {
+    Route::get('/appeal-criminal-judgments',                 [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'index'])       ->name('appeal-criminal-judgments.index');
+    Route::get('/appeal-criminal-judgments/{caseId}/create', [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'create'])      ->name('appeal-criminal-judgments.create');
+    Route::post('/appeal-criminal-judgments',                [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'store'])       ->name('appeal-criminal-judgments.store');
+    Route::get('/appeal-criminal-judgments/{id}/edit',       [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'edit'])        ->name('appeal-criminal-judgments.edit');
+    Route::put('/appeal-criminal-judgments/{id}',            [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'update'])      ->name('appeal-criminal-judgments.update');
+    Route::get('/appeal-criminal-judgments/{id}/document',   [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'document'])    ->name('appeal-criminal-judgments.document');
+});
+
+Route::middleware(['auth', 'permission:Appeal Judgment Receipts,view'])->group(function () {
+    Route::get('/appeal-criminal-judgment-receipts',         [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'receiptsIndex'])->name('appeal-criminal-judgments.receipts');
+    Route::post('/appeal-criminal-judgment-receipts/{judgment}/{party}', [\App\Http\Controllers\AppealCriminalJudgmentController::class, 'confirmReceipt'])->name('appeal-criminal-judgments.receipt.confirm');
+});
+
 // ── Appeal Civil Return File ──────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:Appeal Return File,view'])->group(function () {
     Route::get('/appeal-return-file',               [\App\Http\Controllers\AppealCivilReturnFileController::class, 'index'])   ->name('appeal-return-file.index');
@@ -569,6 +601,15 @@ Route::middleware(['auth', 'permission:Appeal Return File,view'])->group(functio
     Route::post('/appeal-return-file',              [\App\Http\Controllers\AppealCivilReturnFileController::class, 'store'])   ->name('appeal-return-file.store');
     Route::get('/appeal-return-file/{id}/document', [\App\Http\Controllers\AppealCivilReturnFileController::class, 'document'])->name('appeal-return-file.document');
     Route::get('/appeal-return-file/{id}/document-pdf', [\App\Http\Controllers\AppealCivilReturnFileController::class, 'documentPdf'])->name('appeal-return-file.document-pdf');
+});
+
+// ── Appeal Criminal Return File ───────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Return File,view'])->group(function () {
+    Route::get('/appeal-criminal-return-file',               [\App\Http\Controllers\AppealCriminalReturnFileController::class, 'index'])   ->name('appeal-criminal-return-file.index');
+    Route::get('/appeal-criminal-return-file/{id}/create',   [\App\Http\Controllers\AppealCriminalReturnFileController::class, 'create'])  ->name('appeal-criminal-return-file.create');
+    Route::post('/appeal-criminal-return-file',              [\App\Http\Controllers\AppealCriminalReturnFileController::class, 'store'])   ->name('appeal-criminal-return-file.store');
+    Route::get('/appeal-criminal-return-file/{id}/document', [\App\Http\Controllers\AppealCriminalReturnFileController::class, 'document'])->name('appeal-criminal-return-file.document');
+    Route::get('/appeal-criminal-return-file/{id}/document-pdf', [\App\Http\Controllers\AppealCriminalReturnFileController::class, 'documentPdf'])->name('appeal-criminal-return-file.document-pdf');
 });
 
 // ── Appeal Civil Close Case ───────────────────────────────────────────────────
@@ -580,12 +621,29 @@ Route::middleware(['auth', 'permission:Appeal Close Case,view'])->group(function
     Route::post('/appeal-close-cases/{id}/close',   [\App\Http\Controllers\AppealCivilCloseCaseController::class, 'close'])  ->name('appeal-close-case.close');
 });
 
+// ── Appeal Criminal Close Case ────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Close Case,view'])->group(function () {
+    Route::get('/appeal-criminal-close-cases',              [\App\Http\Controllers\AppealCriminalCloseCaseController::class, 'index'])   ->name('appeal-criminal-close-case.index');
+    Route::get('/appeal-criminal-close-cases/{id}/form',    [\App\Http\Controllers\AppealCriminalCloseCaseController::class, 'form'])    ->name('appeal-criminal-close-case.form');
+    Route::post('/appeal-criminal-close-cases/store',       [\App\Http\Controllers\AppealCriminalCloseCaseController::class, 'store'])   ->name('appeal-criminal-close-case.store');
+    Route::get('/appeal-criminal-close-cases/{id}/document', [\App\Http\Controllers\AppealCriminalCloseCaseController::class, 'document'])->name('appeal-criminal-close-case.document');
+    Route::post('/appeal-criminal-close-cases/{id}/close',   [\App\Http\Controllers\AppealCriminalCloseCaseController::class, 'close'])  ->name('appeal-criminal-close-case.close');
+});
+
 // ── Appeal Civil Enforcement ──────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:Appeal Enforcement,view'])->group(function () {
     Route::get('/appeal-enforcement',               [\App\Http\Controllers\AppealCivilEnforcementController::class, 'index'])   ->name('appeal-enforcement.index');
     Route::get('/appeal-enforcement/{id}/form',     [\App\Http\Controllers\AppealCivilEnforcementController::class, 'form'])    ->name('appeal-enforcement.form');
     Route::post('/appeal-enforcement/store',        [\App\Http\Controllers\AppealCivilEnforcementController::class, 'store'])   ->name('appeal-enforcement.store');
     Route::get('/appeal-enforcement/{id}/document', [\App\Http\Controllers\AppealCivilEnforcementController::class, 'document'])->name('appeal-enforcement.document');
+});
+
+// ── Appeal Criminal Enforcement ───────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Enforcement,view'])->group(function () {
+    Route::get('/appeal-criminal-enforcement',               [\App\Http\Controllers\AppealCriminalEnforcementController::class, 'index'])   ->name('appeal-criminal-enforcement.index');
+    Route::get('/appeal-criminal-enforcement/{id}/form',     [\App\Http\Controllers\AppealCriminalEnforcementController::class, 'form'])    ->name('appeal-criminal-enforcement.form');
+    Route::post('/appeal-criminal-enforcement/store',        [\App\Http\Controllers\AppealCriminalEnforcementController::class, 'store'])   ->name('appeal-criminal-enforcement.store');
+    Route::get('/appeal-criminal-enforcement/{id}/document', [\App\Http\Controllers\AppealCriminalEnforcementController::class, 'document'])->name('appeal-criminal-enforcement.document');
 });
 
 // ── Appeal Civil Appeal & Transfer ───────────────────────────────────────────
@@ -602,9 +660,12 @@ Route::middleware(['auth', 'permission:Appeal Cases,view'])->group(function () {
 
 // ══════════════════════════════════════════════════════════════════════════════
 // APPEAL CRIMINAL CASE ROUTES (Banadir Regional Appeal Court)
-// Registration stage only for now (Assign/Hearing/Conclusion/Integration are
-// separate phases) — mirrors Appeal Civil's structure and the criminal-domain
-// fields already established by District Criminal.
+// Registration, Assignment, Hearing, and Conclusion (Handover/Judgment/Close
+// Case/Return File/Enforcement — routes for those live interleaved next to
+// their Appeal Civil counterparts above) are done. Only Integration/Transfer
+// and the further-appeal-to-Supreme "Appeal" feature remain — mirrors Appeal
+// Civil's structure and the criminal-domain fields already established by
+// District Criminal.
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── Appeal Criminal Registration ────────────────────────────────────────────────

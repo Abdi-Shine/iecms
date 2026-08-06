@@ -703,6 +703,36 @@
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-hearings.scripture') || Route::is('appeal-criminal-hearings.scripture.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Dhegeysiga Ciqaabta</a>
                     @endif
+                    @if($canAppealHandoverApproval)
+                        <a href="{{ route('appeal-criminal-handover.approval') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-handover.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Dhaqdhaqaqa Ciqaabta</a>
+                    @endif
+                    @if($canAppealJudgments)
+                        <a href="{{ route('appeal-criminal-judgments.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-judgments.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Xukunka Ciqaabta</a>
+                    @endif
+                    @if($canAppealReceiveJudgmentParties)
+                        <a href="{{ route('appeal-criminal-judgments.receipts') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-judgments.receipts') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Qatay Xukunka Ciqaabta</a>
+                    @endif
+                    @if($canAppealCloseCase)
+                        <a href="{{ route('appeal-criminal-close-case.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-close-case.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Gal Xeris Ciqaabta</a>
+                    @endif
+                    @if($canAppealReturnFile)
+                        <a href="{{ route('appeal-criminal-return-file.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-return-file.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Celinta Ciqaabta</a>
+                    @endif
+                    @if($canAppealEnforcement)
+                        <a href="{{ route('appeal-criminal-enforcement.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-enforcement.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Dhaqangalka Ciqaabta</a>
+                    @endif
                 </div>
             </div>
         @endif

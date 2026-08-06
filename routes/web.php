@@ -734,9 +734,9 @@ Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(fun
 
 // ══════════════════════════════════════════════════════════════════════════════
 // APPEAL FAMILY CASE ROUTES (Banadir Regional Appeal Court)
-// Registration and Assignment are done. Hearing/Conclusion/Transfer remain —
-// mirrors Appeal Civil's structure and the family-domain fields already
-// established by District Family.
+// Registration, Assignment, and Hearing are done. Conclusion/Transfer
+// remain — mirrors Appeal Civil's structure and the family-domain fields
+// already established by District Family.
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── Appeal Family Registration ──────────────────────────────────────────────
@@ -786,6 +786,30 @@ Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(fun
     Route::post('/appeal-family-assign', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'store'])->name('appeal-family-assign.store');
     Route::put('/appeal-family-assign/{id}', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'update'])->name('appeal-family-assign.update');
     Route::delete('/appeal-family-assign/{id}', [\App\Http\Controllers\AppealFamilyAssignmentController::class, 'destroy'])->name('appeal-family-assign.destroy');
+});
+
+// ── Appeal Family Hearings ────────────────────────────────────────────────────
+// Reuses the shared "Appeal Hearings" module. Route names are
+// appeal-family-hearings.* rather than bare appeal-hearings.* to avoid a
+// name collision with Appeal Civil's own hearing routes.
+Route::middleware(['auth', 'permission:Appeal Hearings,view'])->group(function () {
+    Route::get('/appeal-family-hearing-cases',                  [\App\Http\Controllers\AppealFamilyHearingController::class, 'hearingCases'])  ->name('appeal-family.hearing.cases');
+    Route::get('/appeal-family-hearing-scripture',                    [\App\Http\Controllers\AppealFamilyHearingController::class, 'hearingScripture'])->name('appeal-family-hearings.scripture');
+    Route::get('/appeal-family-hearing-scripture/{caseId}/create',    [\App\Http\Controllers\AppealFamilyHearingController::class, 'createScripture'])->name('appeal-family-hearings.scripture.create');
+    Route::post('/appeal-family-hearing-scripture',                   [\App\Http\Controllers\AppealFamilyHearingController::class, 'storeScripture']) ->name('appeal-family-hearings.scripture.store');
+    Route::get('/appeal-family-hearing-scripture/{id}/edit',          [\App\Http\Controllers\AppealFamilyHearingController::class, 'editScripture'])  ->name('appeal-family-hearings.scripture.edit');
+    Route::put('/appeal-family-hearing-scripture/{id}',               [\App\Http\Controllers\AppealFamilyHearingController::class, 'updateScripture'])->name('appeal-family-hearings.scripture.update');
+    Route::get('/appeal-family-hearing-scripture/{id}/document',      [\App\Http\Controllers\AppealFamilyHearingController::class, 'scriptureDocument'])->name('appeal-family-hearings.scripture.document');
+    Route::get('/appeal-family-hearings',                  [\App\Http\Controllers\AppealFamilyHearingController::class, 'index'])    ->name('appeal-family-hearings.index');
+    Route::get('/appeal-family-hearings-view',             [\App\Http\Controllers\AppealFamilyHearingController::class, 'viewIndex'])->name('appeal-family-hearings.view');
+    Route::get('/appeal-family-hearings/create/{caseId?}', [\App\Http\Controllers\AppealFamilyHearingController::class, 'create'])  ->name('appeal-family-hearings.create');
+    Route::post('/appeal-family-hearings',                 [\App\Http\Controllers\AppealFamilyHearingController::class, 'store'])   ->name('appeal-family-hearings.store');
+    Route::get('/appeal-family-hearings/{id}/edit',        [\App\Http\Controllers\AppealFamilyHearingController::class, 'edit'])    ->name('appeal-family-hearings.edit');
+    Route::get('/appeal-family-hearings/{id}/document',    [\App\Http\Controllers\AppealFamilyHearingController::class, 'document'])->name('appeal-family-hearings.document');
+    Route::get('/appeal-family-hearings/{id}/document-pdf', [\App\Http\Controllers\AppealFamilyHearingController::class, 'documentPdf'])->name('appeal-family-hearings.document-pdf');
+    Route::put('/appeal-family-hearings/{id}',             [\App\Http\Controllers\AppealFamilyHearingController::class, 'update'])  ->name('appeal-family-hearings.update');
+    Route::delete('/appeal-family-hearings/{id}',          [\App\Http\Controllers\AppealFamilyHearingController::class, 'destroy']) ->name('appeal-family-hearings.destroy');
+    Route::get('/appeal-family-hearings/case/{caseId}/json', [\App\Http\Controllers\AppealFamilyHearingController::class, 'hearingsByCase'])->name('appeal-family-hearings.by.case');
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

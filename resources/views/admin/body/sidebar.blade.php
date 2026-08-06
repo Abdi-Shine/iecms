@@ -766,6 +766,17 @@
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-assign.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Gal Ku Qoris Qoyska</a>
                     @endif
+                    @if($canAppealHearings)
+                        <a href="{{ route('appeal-family-hearings.view') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-hearings.view') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Jadwalka Qoyska</a>
+                        <a href="{{ route('appeal-family.hearing.cases') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family.hearing.cases') || Route::is('appeal-family-hearings.edit') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Mudeymaha Qoyska</a>
+                        <a href="{{ route('appeal-family-hearings.scripture') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-hearings.scripture') || Route::is('appeal-family-hearings.scripture.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Dhegeysiga Qoyska</a>
+                    @endif
                 </div>
             </div>
         @endif

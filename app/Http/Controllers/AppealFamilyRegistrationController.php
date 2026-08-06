@@ -55,15 +55,20 @@ class AppealFamilyRegistrationController extends Controller
 
     public function show($id)
     {
-        // Hearing/Judgment/Handover/Close/Enforcement/further-Appeal are not
+        // Judgment/Handover/Close/Enforcement/further-Appeal are not
         // built yet for Appeal Family — those sections are left out of
         // appeal_family_information.blade.php rather than wired to
         // routes/models that don't exist. The lower (District Family) case
         // is fully built already, so its full history is shown here.
         $case = \App\Models\AppealFamilyRegistration::with([
             'court', 'parties', 'documents', 'legalRepresentatives.party', 'lawyers.lawyer', 'lawyers.party',
-            'assignments.employee',
+            'assignments.employee', 'hearings',
         ])->findOrFail($id);
+
+        $scriptures = \App\Models\AppealFamilyHearingScripture::with('hearing')
+            ->where('family_case_id', $id)
+            ->orderBy('created_at')
+            ->get();
 
         $lowerCase        = null;
         $lowerHandover    = null;
@@ -89,7 +94,7 @@ class AppealFamilyRegistrationController extends Controller
         }
 
         return view('appeal_court.Appeal_family.registration.appeal_family_information', compact(
-            'case', 'lowerCase', 'lowerHandover', 'lowerReturnFile', 'lowerScriptures', 'lowerJudgments', 'lowerEnforcement', 'lowerAppeal'
+            'case', 'scriptures', 'lowerCase', 'lowerHandover', 'lowerReturnFile', 'lowerScriptures', 'lowerJudgments', 'lowerEnforcement', 'lowerAppeal'
         ));
     }
 

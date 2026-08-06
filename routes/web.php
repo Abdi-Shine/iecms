@@ -576,6 +576,53 @@ Route::middleware(['auth', 'permission:Appeal Cases,view'])->group(function () {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
+// APPEAL CRIMINAL CASE ROUTES (Banadir Regional Appeal Court)
+// Registration stage only for now (Assign/Hearing/Conclusion/Integration are
+// separate phases) — mirrors Appeal Civil's structure and the criminal-domain
+// fields already established by District Criminal.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Appeal Criminal Registration ────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Criminal Registration,view'])->group(function () {
+    Route::get('appeal-criminal-registration/next-fileno/{courtcode}', [\App\Http\Controllers\AppealCriminalRegistrationController::class, 'nextFileNo'])->name('appeal-criminal-registration.next-fileno');
+    Route::get('appeal-criminal-registration/rafcaan-cases/{courtcode}', [\App\Http\Controllers\AppealCriminalRegistrationController::class, 'rafcaanCases'])->name('appeal-criminal-registration.rafcaan-cases');
+    Route::get('appeal-criminal-tracking', [\App\Http\Controllers\AppealCriminalRegistrationController::class, 'tracking'])->name('appeal-criminal-tracking.index');
+    Route::get('appeal-criminal-registration/{id}/supporting', [\App\Http\Controllers\AppealCriminalRegistrationController::class, 'supporting'])->name('appeal-criminal-registration.supporting');
+    Route::get('appeal-criminal-registration/{appeal_criminal_registration}', [\App\Http\Controllers\AppealCriminalRegistrationController::class, 'show'])->name('appeal-criminal-registration.show');
+    Route::resource('appeal-criminal-registration', \App\Http\Controllers\AppealCriminalRegistrationController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('appeal-criminal-registration/{id}/import-parties', [\App\Http\Controllers\AppealCriminalRegistrationController::class, 'importLowerCourtParties'])->name('appeal-criminal-registration.import-parties');
+
+    // Parties
+    Route::get('appeal-criminal-parties', [\App\Http\Controllers\AppealCriminalPartyController::class, 'index'])->name('appeal-criminal-parties.index');
+    Route::post('appeal-criminal-parties', [\App\Http\Controllers\AppealCriminalPartyController::class, 'store'])->name('appeal-criminal-parties.store');
+    Route::delete('appeal-criminal-parties/{id}', [\App\Http\Controllers\AppealCriminalPartyController::class, 'destroy'])->name('appeal-criminal-parties.destroy');
+    Route::get('appeal-criminal-parties/case/{caseId}', [\App\Http\Controllers\AppealCriminalPartyController::class, 'getPartiesByCase'])->name('appeal-criminal-parties.by-case');
+    Route::post('appeal-criminal-parties/notify/{caseId}', [\App\Http\Controllers\AppealCriminalPartyController::class, 'sendNotifications'])->name('appeal-criminal-parties.notify');
+
+    // Documents
+    Route::get('appeal-criminal-documents', [\App\Http\Controllers\AppealCriminalDocumentController::class, 'index'])->name('appeal-criminal-documents.index');
+    Route::post('appeal-criminal-documents', [\App\Http\Controllers\AppealCriminalDocumentController::class, 'store'])->name('appeal-criminal-documents.store');
+    Route::delete('appeal-criminal-documents/{id}', [\App\Http\Controllers\AppealCriminalDocumentController::class, 'destroy'])->name('appeal-criminal-documents.destroy');
+    Route::get('appeal-criminal-documents/case/{caseId}', [\App\Http\Controllers\AppealCriminalDocumentController::class, 'getDocumentsByCase'])->name('appeal-criminal-documents.by-case');
+
+    // Legal Representatives
+    Route::get('appeal-criminal-legal-reps/case/{caseId}', [\App\Http\Controllers\AppealCriminalLegalRepresentativeController::class, 'getByCase'])->name('appeal-criminal-legal-reps.by-case');
+    Route::post('appeal-criminal-legal-reps', [\App\Http\Controllers\AppealCriminalLegalRepresentativeController::class, 'store'])->name('appeal-criminal-legal-reps.store');
+    Route::delete('appeal-criminal-legal-reps/{id}', [\App\Http\Controllers\AppealCriminalLegalRepresentativeController::class, 'destroy'])->name('appeal-criminal-legal-reps.destroy');
+});
+
+// ── Appeal Criminal Case Lawyers (Lawyer Assignment) ────────────────────────────
+// Reuses the "Appeal Case Lawyers" module shared across all Appeal case types,
+// same as Appeal Civil's lawyer routes below.
+Route::middleware(['auth', 'permission:Appeal Case Lawyers,view'])->group(function () {
+    Route::get('appeal-criminal-lawyers', [\App\Http\Controllers\AppealCriminalLawyerController::class, 'index'])->name('appeal-criminal-lawyers.index');
+    Route::post('appeal-criminal-lawyers', [\App\Http\Controllers\AppealCriminalLawyerController::class, 'store'])->name('appeal-criminal-lawyers.store');
+    Route::put('appeal-criminal-lawyers/{id}', [\App\Http\Controllers\AppealCriminalLawyerController::class, 'update'])->name('appeal-criminal-lawyers.update');
+    Route::delete('appeal-criminal-lawyers/{id}', [\App\Http\Controllers\AppealCriminalLawyerController::class, 'destroy'])->name('appeal-criminal-lawyers.destroy');
+    Route::get('appeal-criminal-lawyers/case/{caseId}', [\App\Http\Controllers\AppealCriminalLawyerController::class, 'getAssignmentsByCase'])->name('appeal-criminal-lawyers.by-case');
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
 
 // ── District Family Case Registration (+ Parties, Documents, Lawyers sub-resources) ──
 Route::middleware(['auth', 'permission:Family Case Registration,view'])->group(function () {

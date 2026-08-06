@@ -55,15 +55,17 @@ class AppealCriminalRegistrationController extends Controller
 
     public function show($id)
     {
-        // Hearing/Judgment/Handover/Close/Enforcement/further-Appeal are not
-        // built yet for Appeal Criminal — those sections are left out of
+        // Judgment/Handover/Close/Enforcement/further-Appeal are not built
+        // yet for Appeal Criminal — those sections are left out of
         // appeal_criminal_information.blade.php rather than wired to
         // routes/models that don't exist. The lower (District Criminal) case
         // is fully built already, so its full history is shown here.
         $case = \App\Models\AppealCriminalRegistration::with([
             'court', 'parties', 'documents', 'legalRepresentatives.party', 'lawyers.lawyer', 'lawyers.party',
-            'assignments.employee',
+            'assignments.employee', 'hearings',
         ])->findOrFail($id);
+
+        $scriptures = \App\Models\AppealCriminalHearingScripture::with('hearing')->where('criminal_case_id', $id)->orderBy('created_at')->get();
 
         $lowerCase        = null;
         $lowerHandover    = null;
@@ -89,7 +91,7 @@ class AppealCriminalRegistrationController extends Controller
         }
 
         return view('appeal_court.Appeal_criminal.registration.appeal_criminal_information', compact(
-            'case', 'lowerCase', 'lowerHandover', 'lowerReturnFile', 'lowerScriptures', 'lowerJudgments', 'lowerEnforcement', 'lowerAppeal'
+            'case', 'scriptures', 'lowerCase', 'lowerHandover', 'lowerReturnFile', 'lowerScriptures', 'lowerJudgments', 'lowerEnforcement', 'lowerAppeal'
         ));
     }
 

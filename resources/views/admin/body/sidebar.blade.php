@@ -692,6 +692,17 @@
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-assign.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Gal Ku Qoris Ciqaabta</a>
                     @endif
+                    @if($canAppealHearings)
+                        <a href="{{ route('appeal-criminal-hearings.view') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-hearings.view') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Jadwalka Ciqaabta</a>
+                        <a href="{{ route('appeal-criminal.hearing.cases') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal.hearing.cases') || Route::is('appeal-criminal-hearings.edit') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Mudeymaha Ciqaabta</a>
+                        <a href="{{ route('appeal-criminal-hearings.scripture') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-hearings.scripture') || Route::is('appeal-criminal-hearings.scripture.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Dhegeysiga Ciqaabta</a>
+                    @endif
                 </div>
             </div>
         @endif

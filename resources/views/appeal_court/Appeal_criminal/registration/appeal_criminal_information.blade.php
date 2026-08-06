@@ -493,6 +493,161 @@
                 </div>
             </div>
 
+            {{-- ═══ HEARING INFORMATION ═══ --}}
+            <div class="bg-white">
+                <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-calendar3-week text-sm" style="color:#528CBE"></i>
+                        <span class="text-xs font-black uppercase tracking-[2px] text-neutral-500">Mudeynta Dacwada Ciqaabta</span>
+                    </div>
+                    <span class="text-xs text-neutral-400 font-medium">{{ $case->hearings->count() }} {{ Str::plural('hearing', $case->hearings->count()) }}</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr style="background:rgba(82,140,190,0.06)">
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 w-14">T.T</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Magaca Kaaliyaha</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Tariikhda Dacwadda</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Saacadda</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Ujeedada</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Fayl</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Xaalada</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-100">
+                            @forelse($case->hearings->sortBy('hearing_date') as $hearing)
+                                @php
+                                    $cs = $case->Status;
+                                    $hBg = in_array($cs, ['Active', 'Gal Ku Qoris', 'Qaatay', 'Mudeyn']) ? 'rgba(16,185,129,0.12)' : ($cs === 'Closed' ? 'rgba(239,68,68,0.1)' : 'rgba(240,180,60,0.12)');
+                                    $hColor = in_array($cs, ['Active', 'Gal Ku Qoris', 'Qaatay', 'Mudeyn']) ? '#059669' : ($cs === 'Closed' ? '#DC2626' : '#C07E15');
+                                    $hDot = in_array($cs, ['Active', 'Gal Ku Qoris', 'Qaatay', 'Mudeyn']) ? '#10B981' : ($cs === 'Closed' ? '#ef4444' : '#F0B43C');
+                                @endphp
+                                <tr class="hover:bg-neutral-50 transition-colors">
+                                    <td class="px-6 py-4"><span class="text-xs font-bold text-neutral-400">{{ sprintf('%02d', $loop->iteration) }}</span></td>
+                                    <td class="px-6 py-4 font-semibold text-neutral-800">{{ $hearing->created_by ?: '—' }}</td>
+                                    <td class="px-6 py-4 font-semibold text-neutral-800">{{ $hearing->hearing_date->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-neutral-600 text-sm">{{ substr($hearing->hearing_time, 0, 5) }}</td>
+                                    <td class="px-6 py-4 text-neutral-500">{{ Str::limit($hearing->hearing_purpose, 40) ?: '—' }}</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="{{ route('appeal-criminal-hearings.document', $hearing->id) }}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold"
+                                            style="background:rgba(82,140,190,0.1);color:#528CBE">
+                                            <i class="bi bi-file-earmark-text"></i> Eeg
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                                            style="background:{{ $hBg }};color:{{ $hColor }}">
+                                            <span class="w-1.5 h-1.5 rounded-full inline-block" style="background:{{ $hDot }}"></span>
+                                            {{ $case->Status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-16 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background:rgba(82,140,190,0.1)">
+                                                <i class="bi bi-calendar3-week text-2xl" style="color:#528CBE"></i>
+                                            </div>
+                                            <p class="text-neutral-400 font-medium text-sm">Wali ma jiraan mudeynno la qorsheeyay.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="px-6 py-4 border-t border-neutral-100">
+                    <p class="text-xs text-neutral-400 font-medium">
+                        Muujinaya <span class="font-bold text-neutral-600">{{ $case->hearings->count() }}</span>
+                        {{ Str::plural('mudeyn', $case->hearings->count()) }}
+                    </p>
+                </div>
+            </div>
+
+            {{-- ═══ HEARING SCRIPTURE RECORDS ═══ --}}
+            <div class="bg-white">
+                <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-journal-text text-sm" style="color:#528CBE"></i>
+                        <span class="text-xs font-black uppercase tracking-[2px] text-neutral-500">Dhageysi Dacwada Ciqaabta</span>
+                    </div>
+                    <span class="text-xs text-neutral-400 font-medium">{{ $scriptures->count() }} {{ Str::plural('record', $scriptures->count()) }}</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr style="background:rgba(82,140,190,0.06)">
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 w-14">T.T</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Magaca Kaaliyaha</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Taariikhda Dhageysiga</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Nooca Dhageysiga</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Dukuumintiga</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Xaalada</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-100">
+                            @forelse($scriptures as $scripture)
+                                @php
+                                    $sBg = match ($scripture->status) { 'Submitted' => 'rgba(82,140,190,0.1)', 'Confirmed' => 'rgba(16,185,129,0.1)', default => 'rgba(240,180,60,0.12)'};
+                                    $sColor = match ($scripture->status) { 'Submitted' => '#528CBE', 'Confirmed' => '#059669', default => '#C07E15'};
+                                    $sDot = match ($scripture->status) { 'Submitted' => '#528CBE', 'Confirmed' => '#10B981', default => '#F0B43C'};
+                                @endphp
+                                <tr class="hover:bg-neutral-50 transition-colors">
+                                    <td class="px-6 py-4"><span class="text-xs font-bold text-neutral-400">{{ sprintf('%02d', $loop->iteration) }}</span></td>
+                                    <td class="px-6 py-4 text-neutral-700 text-sm font-medium">{{ $scripture->created_by ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-neutral-600 text-sm">
+                                        {{ $scripture->hearing_date ? \Carbon\Carbon::parse($scripture->hearing_date)->format('d/m/Y') : '—' }}
+                                        @if($scripture->hearing_time)
+                                            <span class="text-xs text-neutral-400 block">{{ substr($scripture->hearing_time, 0, 5) }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-neutral-500 text-sm">{{ $scripture->hearing_type ?: '—' }}</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="{{ route('appeal-criminal-hearings.scripture.document', $scripture->id) }}"
+                                            class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 transition-all"
+                                            onmouseover="this.style.background='#528CBE';this.style.borderColor='#528CBE';this.style.color='white'"
+                                            onmouseout="this.style.background='';this.style.borderColor='';this.style.color=''">
+                                            <i class="bi bi-file-earmark-richtext text-xs"></i>
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                                            style="background:{{ $sBg }};color:{{ $sColor }}">
+                                            <span class="w-1.5 h-1.5 rounded-full inline-block" style="background:{{ $sDot }}"></span>
+                                            {{ $scripture->status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-6 py-16 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background:rgba(82,140,190,0.1)">
+                                                <i class="bi bi-journal-text text-2xl" style="color:#528CBE"></i>
+                                            </div>
+                                            <p class="text-neutral-400 font-medium text-sm">No hearing scripture records found.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="px-6 py-4 border-t border-neutral-100">
+                    <p class="text-xs text-neutral-400 font-medium">
+                        Showing <span class="font-bold text-neutral-600">{{ $scriptures->count() }}</span>
+                        {{ Str::plural('scripture record', $scriptures->count()) }}
+                    </p>
+                </div>
+            </div>
+
             @if($case->lower_case_no)
                 @include('appeal_court.Appeal_criminal.registration.partials.lower_court_information')
             @endif

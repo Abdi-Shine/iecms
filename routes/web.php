@@ -520,6 +520,31 @@ Route::middleware(['auth', 'permission:Appeal Hearings,view'])->group(function (
     Route::get('/appeal-hearings/case/{caseId}/json', [\App\Http\Controllers\AppealCivilHearingController::class, 'hearingsByCase'])->name('appeal-hearings.by.case');
 });
 
+// ── Appeal Criminal Hearings ─────────────────────────────────────────────────
+// Reuses the shared "Appeal Hearings" module. Route names are
+// appeal-criminal-hearings.* rather than bare appeal-hearings.* — Appeal
+// Civil's route names for this stage aren't case-type-prefixed, so this
+// avoids a name collision.
+Route::middleware(['auth', 'permission:Appeal Hearings,view'])->group(function () {
+    Route::get('/appeal-criminal-hearing-cases',                  [\App\Http\Controllers\AppealCriminalHearingController::class, 'hearingCases'])  ->name('appeal-criminal.hearing.cases');
+    Route::get('/appeal-criminal-hearing-scripture',                    [\App\Http\Controllers\AppealCriminalHearingController::class, 'hearingScripture'])->name('appeal-criminal-hearings.scripture');
+    Route::get('/appeal-criminal-hearing-scripture/{caseId}/create',    [\App\Http\Controllers\AppealCriminalHearingController::class, 'createScripture'])->name('appeal-criminal-hearings.scripture.create');
+    Route::post('/appeal-criminal-hearing-scripture',                   [\App\Http\Controllers\AppealCriminalHearingController::class, 'storeScripture']) ->name('appeal-criminal-hearings.scripture.store');
+    Route::get('/appeal-criminal-hearing-scripture/{id}/edit',          [\App\Http\Controllers\AppealCriminalHearingController::class, 'editScripture'])  ->name('appeal-criminal-hearings.scripture.edit');
+    Route::put('/appeal-criminal-hearing-scripture/{id}',               [\App\Http\Controllers\AppealCriminalHearingController::class, 'updateScripture'])->name('appeal-criminal-hearings.scripture.update');
+    Route::get('/appeal-criminal-hearing-scripture/{id}/document',      [\App\Http\Controllers\AppealCriminalHearingController::class, 'scriptureDocument'])->name('appeal-criminal-hearings.scripture.document');
+    Route::get('/appeal-criminal-hearings',                  [\App\Http\Controllers\AppealCriminalHearingController::class, 'index'])    ->name('appeal-criminal-hearings.index');
+    Route::get('/appeal-criminal-hearings-view',             [\App\Http\Controllers\AppealCriminalHearingController::class, 'viewIndex'])->name('appeal-criminal-hearings.view');
+    Route::get('/appeal-criminal-hearings/create/{caseId?}', [\App\Http\Controllers\AppealCriminalHearingController::class, 'create'])  ->name('appeal-criminal-hearings.create');
+    Route::post('/appeal-criminal-hearings',                 [\App\Http\Controllers\AppealCriminalHearingController::class, 'store'])   ->name('appeal-criminal-hearings.store');
+    Route::get('/appeal-criminal-hearings/{id}/edit',        [\App\Http\Controllers\AppealCriminalHearingController::class, 'edit'])    ->name('appeal-criminal-hearings.edit');
+    Route::get('/appeal-criminal-hearings/{id}/document',    [\App\Http\Controllers\AppealCriminalHearingController::class, 'document'])->name('appeal-criminal-hearings.document');
+    Route::get('/appeal-criminal-hearings/{id}/document-pdf', [\App\Http\Controllers\AppealCriminalHearingController::class, 'documentPdf'])->name('appeal-criminal-hearings.document-pdf');
+    Route::put('/appeal-criminal-hearings/{id}',             [\App\Http\Controllers\AppealCriminalHearingController::class, 'update'])  ->name('appeal-criminal-hearings.update');
+    Route::delete('/appeal-criminal-hearings/{id}',          [\App\Http\Controllers\AppealCriminalHearingController::class, 'destroy']) ->name('appeal-criminal-hearings.destroy');
+    Route::get('/appeal-criminal-hearings/case/{caseId}/json', [\App\Http\Controllers\AppealCriminalHearingController::class, 'hearingsByCase'])->name('appeal-criminal-hearings.by.case');
+});
+
 // ── Appeal Civil Judgments ────────────────────────────────────────────────────
 Route::middleware(['auth', 'permission:Appeal Judgments,view'])->group(function () {
     Route::get('/appeal-judgments',                 [\App\Http\Controllers\AppealCivilJudgmentController::class, 'index'])       ->name('appeal-judgments.index');

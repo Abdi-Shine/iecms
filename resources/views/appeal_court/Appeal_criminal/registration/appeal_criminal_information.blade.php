@@ -416,6 +416,83 @@
                 </div>
             </div>
 
+            {{-- ═══ JUDICIAL PANEL ASSIGNMENTS ═══ --}}
+            <div class="bg-white">
+                <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-person-workspace text-sm" style="color:#528CBE"></i>
+                        <span class="text-xs font-black uppercase tracking-[2px] text-neutral-500">Gal ku Qorista Dacwada Ciqaabta</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr style="background:rgba(82,140,190,0.06)">
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 w-14">No#</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Gorsoore/Kaaliye</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Imeyl</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Taleefanka</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Xilka Guddiga</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-neutral-500 text-center">Xaalada</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-100">
+                            @forelse($case->assignments as $assignment)
+                                <tr class="hover:bg-neutral-50 transition-colors">
+                                    <td class="px-6 py-4"><span class="text-xs font-bold text-neutral-400">{{ sprintf('%02d', $loop->iteration) }}</span></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-col">
+                                            <span class="font-semibold text-neutral-800">{{ $assignment->employee->EmpName ?? 'N/A' }}</span>
+                                            <span class="text-xs text-neutral-400 uppercase font-semibold">{{ $assignment->employee->Position ?? 'Staff' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-neutral-600 text-sm">{{ $assignment->employee->email ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-neutral-600 text-sm">{{ $assignment->employee->phone ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full"
+                                            style="background:{{ $assignment->panel_role === 'Chair' ? 'rgba(82,140,190,0.1)' : 'rgba(240,180,60,0.12)' }};color:{{ $assignment->panel_role === 'Chair' ? '#528CBE' : '#C07E15' }}">
+                                            {{ $assignment->panel_role }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        @php
+                                            $caseStatus = $case->Status;
+                                            $isActive = in_array($caseStatus, ['Active', 'Gal Ku Qoris', 'Qaatay']);
+                                            $isClosed = $caseStatus === 'Closed';
+                                            $csBg = $isActive ? 'rgba(16,185,129,0.1)' : ($isClosed ? 'rgba(239,68,68,0.1)' : 'rgba(240,180,60,0.12)');
+                                            $csColor = $isActive ? '#059669' : ($isClosed ? '#b91c1c' : '#C07E15');
+                                        @endphp
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                            style="background:{{ $csBg }};color:{{ $csColor }}">
+                                            {{ $caseStatus }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-6 py-16 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background:rgba(82,140,190,0.1)">
+                                                <i class="bi bi-person-workspace text-2xl" style="color:#528CBE"></i>
+                                            </div>
+                                            <p class="text-neutral-400 font-medium text-sm">No judicial panel members assigned yet.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="px-6 py-4 border-t border-neutral-100">
+                    <p class="text-xs text-neutral-400 font-medium">
+                        Showing <span class="font-bold text-neutral-600">{{ $case->assignments->count() }}</span>
+                        {{ Str::plural('assignment', $case->assignments->count()) }}
+                    </p>
+                </div>
+            </div>
+
             @if($case->lower_case_no)
                 @include('appeal_court.Appeal_criminal.registration.partials.lower_court_information')
             @endif

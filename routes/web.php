@@ -622,6 +622,17 @@ Route::middleware(['auth', 'permission:Appeal Case Lawyers,view'])->group(functi
     Route::get('appeal-criminal-lawyers/case/{caseId}', [\App\Http\Controllers\AppealCriminalLawyerController::class, 'getAssignmentsByCase'])->name('appeal-criminal-lawyers.by-case');
 });
 
+// ── Appeal Criminal Case Assignment (Panel of Judges) ───────────────────────────
+// Reuses the "Appeal Case Assignment" module shared across all Appeal case
+// types, same as Appeal Civil's assignment routes below.
+Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(function () {
+    Route::get('/appeal-criminal-assign', [\App\Http\Controllers\AppealCriminalAssignmentController::class, 'index'])->name('appeal-criminal-assign.index');
+    Route::get('/appeal-criminal-assign/add/{id}', [\App\Http\Controllers\AppealCriminalAssignmentController::class, 'addJudges'])->name('appeal-criminal-assign.add');
+    Route::post('/appeal-criminal-assign', [\App\Http\Controllers\AppealCriminalAssignmentController::class, 'store'])->name('appeal-criminal-assign.store');
+    Route::put('/appeal-criminal-assign/{id}', [\App\Http\Controllers\AppealCriminalAssignmentController::class, 'update'])->name('appeal-criminal-assign.update');
+    Route::delete('/appeal-criminal-assign/{id}', [\App\Http\Controllers\AppealCriminalAssignmentController::class, 'destroy'])->name('appeal-criminal-assign.destroy');
+});
+
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── District Family Case Registration (+ Parties, Documents, Lawyers sub-resources) ──

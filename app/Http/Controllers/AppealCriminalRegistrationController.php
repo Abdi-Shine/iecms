@@ -55,13 +55,14 @@ class AppealCriminalRegistrationController extends Controller
 
     public function show($id)
     {
-        // Assignment/Hearing/Judgment/Handover/Close/Enforcement/further-Appeal
-        // are not built yet for Appeal Criminal — those sections are left out
-        // of appeal_criminal_information.blade.php rather than wired to
+        // Hearing/Judgment/Handover/Close/Enforcement/further-Appeal are not
+        // built yet for Appeal Criminal — those sections are left out of
+        // appeal_criminal_information.blade.php rather than wired to
         // routes/models that don't exist. The lower (District Criminal) case
         // is fully built already, so its full history is shown here.
         $case = \App\Models\AppealCriminalRegistration::with([
             'court', 'parties', 'documents', 'legalRepresentatives.party', 'lawyers.lawyer', 'lawyers.party',
+            'assignments.employee',
         ])->findOrFail($id);
 
         $lowerCase        = null;
@@ -191,7 +192,7 @@ class AppealCriminalRegistrationController extends Controller
         $allStatuses = (clone $baseQuery)->whereNotNull('Status')->distinct()->orderBy('Status')->pluck('Status');
 
         $query = (clone $baseQuery)->with([
-            'court', 'handover', 'parties', 'documents',
+            'court', 'parties', 'documents', 'assignments.employee',
         ])->orderByDesc('ACMID');
 
         if ($request->filled('search')) {

@@ -739,7 +739,7 @@
             </div>
         @endif
 
-        <!-- 2c. Family Cases for Banadir Regional Appeal Court (Registration stage only so far) -->
+        <!-- 2c. Family Cases for Banadir Regional Appeal Court (Registration through Conclusion; Transfer remains) -->
         @if($hasAppealFamilySection)
             <div class="space-y-1">
                 <button @click="toggleMenu('appeal-family-registration')"
@@ -776,6 +776,36 @@
                         <a href="{{ route('appeal-family-hearings.scripture') }}"
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-hearings.scripture') || Route::is('appeal-family-hearings.scripture.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Dhegeysiga Qoyska</a>
+                    @endif
+                    @if($canAppealHandoverApproval)
+                        <a href="{{ route('appeal-family-handover.approval') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-handover.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Dhaqdhaqaqa Qoyska</a>
+                    @endif
+                    @if($canAppealJudgments)
+                        <a href="{{ route('appeal-family-judgments.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-judgments.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Xukunka Qoyska</a>
+                    @endif
+                    @if($canAppealReceiveJudgmentParties)
+                        <a href="{{ route('appeal-family-judgments.receipts') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-judgments.receipts') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Qatay Xukunka Qoyska</a>
+                    @endif
+                    @if($canAppealCloseCase)
+                        <a href="{{ route('appeal-family-close-case.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-close-case.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Gal Xeris Qoyska</a>
+                    @endif
+                    @if($canAppealReturnFile)
+                        <a href="{{ route('appeal-family-return-file.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-return-file.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Celinta Qoyska</a>
+                    @endif
+                    @if($canAppealEnforcement)
+                        <a href="{{ route('appeal-family-enforcement.index') }}"
+                            class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-enforcement.*') ? 'text-white bg-white/5' : '' }}">
+                            <i class="bi bi-plus text-lg"></i> Dhaqangalka Qoyska</a>
                     @endif
                 </div>
             </div>

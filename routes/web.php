@@ -734,9 +734,10 @@ Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(fun
 
 // ══════════════════════════════════════════════════════════════════════════════
 // APPEAL FAMILY CASE ROUTES (Banadir Regional Appeal Court)
-// Registration, Assignment, and Hearing are done. Conclusion/Transfer
-// remain — mirrors Appeal Civil's structure and the family-domain fields
-// already established by District Family.
+// Registration, Assignment, Hearing, and Conclusion (Handover, Judgments,
+// Return File, Close Case, Enforcement) are done. Transfer remains —
+// mirrors Appeal Civil's structure and the family-domain fields already
+// established by District Family.
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── Appeal Family Registration ──────────────────────────────────────────────
@@ -810,6 +811,64 @@ Route::middleware(['auth', 'permission:Appeal Hearings,view'])->group(function (
     Route::put('/appeal-family-hearings/{id}',             [\App\Http\Controllers\AppealFamilyHearingController::class, 'update'])  ->name('appeal-family-hearings.update');
     Route::delete('/appeal-family-hearings/{id}',          [\App\Http\Controllers\AppealFamilyHearingController::class, 'destroy']) ->name('appeal-family-hearings.destroy');
     Route::get('/appeal-family-hearings/case/{caseId}/json', [\App\Http\Controllers\AppealFamilyHearingController::class, 'hearingsByCase'])->name('appeal-family-hearings.by.case');
+});
+
+// ── Appeal Family Handover ──────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Case Handover,view'])->group(function () {
+    Route::get('appeal-family-handover/{id}/document', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'document'])->name('appeal-family-handover.document');
+    Route::get('appeal-family-handover/{id}/document-pdf', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'documentPdf'])->name('appeal-family-handover.document-pdf');
+});
+
+Route::middleware(['auth', 'permission:Appeal Case Handover Approval,view'])->group(function () {
+    Route::post('appeal-family-handover/{id}/approve', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'approve'])->name('appeal-family-handover.approve');
+    Route::post('appeal-family-handover/{id}/reject', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'reject'])->name('appeal-family-handover.reject');
+    Route::get('appeal-family-handover-approval', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'approvalIndex'])->name('appeal-family-handover.approval');
+});
+
+Route::middleware(['auth', 'permission:Appeal Case Handover,create'])->group(function () {
+    Route::get('appeal-family-handover/{id}', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'create'])->name('appeal-family-handover.create');
+    Route::post('appeal-family-handover', [\App\Http\Controllers\AppealFamilyHandoverController::class, 'store'])->name('appeal-family-handover.store');
+});
+
+// ── Appeal Family Judgments ──────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Judgments,view'])->group(function () {
+    Route::get('/appeal-family-judgments',                 [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'index'])       ->name('appeal-family-judgments.index');
+    Route::get('/appeal-family-judgments/{caseId}/create', [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'create'])      ->name('appeal-family-judgments.create');
+    Route::post('/appeal-family-judgments',                [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'store'])       ->name('appeal-family-judgments.store');
+    Route::get('/appeal-family-judgments/{id}/edit',       [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'edit'])        ->name('appeal-family-judgments.edit');
+    Route::put('/appeal-family-judgments/{id}',            [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'update'])      ->name('appeal-family-judgments.update');
+    Route::get('/appeal-family-judgments/{id}/document',   [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'document'])    ->name('appeal-family-judgments.document');
+});
+
+Route::middleware(['auth', 'permission:Appeal Judgment Receipts,view'])->group(function () {
+    Route::get('/appeal-family-judgment-receipts',         [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'receiptsIndex'])->name('appeal-family-judgments.receipts');
+    Route::post('/appeal-family-judgment-receipts/{judgment}/{party}', [\App\Http\Controllers\AppealFamilyJudgmentController::class, 'confirmReceipt'])->name('appeal-family-judgments.receipt.confirm');
+});
+
+// ── Appeal Family Return File ────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Return File,view'])->group(function () {
+    Route::get('/appeal-family-return-file',               [\App\Http\Controllers\AppealFamilyReturnFileController::class, 'index'])   ->name('appeal-family-return-file.index');
+    Route::get('/appeal-family-return-file/{id}/create',   [\App\Http\Controllers\AppealFamilyReturnFileController::class, 'create'])  ->name('appeal-family-return-file.create');
+    Route::post('/appeal-family-return-file',              [\App\Http\Controllers\AppealFamilyReturnFileController::class, 'store'])   ->name('appeal-family-return-file.store');
+    Route::get('/appeal-family-return-file/{id}/document', [\App\Http\Controllers\AppealFamilyReturnFileController::class, 'document'])->name('appeal-family-return-file.document');
+    Route::get('/appeal-family-return-file/{id}/document-pdf', [\App\Http\Controllers\AppealFamilyReturnFileController::class, 'documentPdf'])->name('appeal-family-return-file.document-pdf');
+});
+
+// ── Appeal Family Close Case ─────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Close Case,view'])->group(function () {
+    Route::get('/appeal-family-close-cases',              [\App\Http\Controllers\AppealFamilyCloseCaseController::class, 'index'])   ->name('appeal-family-close-case.index');
+    Route::get('/appeal-family-close-cases/{id}/form',    [\App\Http\Controllers\AppealFamilyCloseCaseController::class, 'form'])    ->name('appeal-family-close-case.form');
+    Route::post('/appeal-family-close-cases/store',       [\App\Http\Controllers\AppealFamilyCloseCaseController::class, 'store'])   ->name('appeal-family-close-case.store');
+    Route::get('/appeal-family-close-cases/{id}/document', [\App\Http\Controllers\AppealFamilyCloseCaseController::class, 'document'])->name('appeal-family-close-case.document');
+    Route::post('/appeal-family-close-cases/{id}/close',   [\App\Http\Controllers\AppealFamilyCloseCaseController::class, 'close'])  ->name('appeal-family-close-case.close');
+});
+
+// ── Appeal Family Enforcement ────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Enforcement,view'])->group(function () {
+    Route::get('/appeal-family-enforcement',               [\App\Http\Controllers\AppealFamilyEnforcementController::class, 'index'])   ->name('appeal-family-enforcement.index');
+    Route::get('/appeal-family-enforcement/{id}/form',     [\App\Http\Controllers\AppealFamilyEnforcementController::class, 'form'])    ->name('appeal-family-enforcement.form');
+    Route::post('/appeal-family-enforcement/store',        [\App\Http\Controllers\AppealFamilyEnforcementController::class, 'store'])   ->name('appeal-family-enforcement.store');
+    Route::get('/appeal-family-enforcement/{id}/document', [\App\Http\Controllers\AppealFamilyEnforcementController::class, 'document'])->name('appeal-family-enforcement.document');
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

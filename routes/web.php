@@ -733,6 +733,51 @@ Route::middleware(['auth', 'permission:Appeal Case Assignment,view'])->group(fun
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
+// APPEAL FAMILY CASE ROUTES (Banadir Regional Appeal Court)
+// Registration stage only for now — mirrors Appeal Civil's structure and the
+// family-domain fields already established by District Family.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Appeal Family Registration ──────────────────────────────────────────────
+Route::middleware(['auth', 'permission:Appeal Family Registration,view'])->group(function () {
+    Route::get('appeal-family-registration/next-fileno/{courtcode}', [\App\Http\Controllers\AppealFamilyRegistrationController::class, 'nextFileNo'])->name('appeal-family-registration.next-fileno');
+    Route::get('appeal-family-registration/rafcaan-cases/{courtcode}', [\App\Http\Controllers\AppealFamilyRegistrationController::class, 'rafcaanCases'])->name('appeal-family-registration.rafcaan-cases');
+    Route::get('appeal-family-tracking', [\App\Http\Controllers\AppealFamilyRegistrationController::class, 'tracking'])->name('appeal-family-tracking.index');
+    Route::get('appeal-family-registration/{id}/supporting', [\App\Http\Controllers\AppealFamilyRegistrationController::class, 'supporting'])->name('appeal-family-registration.supporting');
+    Route::get('appeal-family-registration/{appeal_family_registration}', [\App\Http\Controllers\AppealFamilyRegistrationController::class, 'show'])->name('appeal-family-registration.show');
+    Route::resource('appeal-family-registration', \App\Http\Controllers\AppealFamilyRegistrationController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('appeal-family-registration/{id}/import-parties', [\App\Http\Controllers\AppealFamilyRegistrationController::class, 'importLowerCourtParties'])->name('appeal-family-registration.import-parties');
+
+    // Parties
+    Route::get('appeal-family-parties', [\App\Http\Controllers\AppealFamilyPartyController::class, 'index'])->name('appeal-family-parties.index');
+    Route::post('appeal-family-parties', [\App\Http\Controllers\AppealFamilyPartyController::class, 'store'])->name('appeal-family-parties.store');
+    Route::delete('appeal-family-parties/{id}', [\App\Http\Controllers\AppealFamilyPartyController::class, 'destroy'])->name('appeal-family-parties.destroy');
+    Route::get('appeal-family-parties/case/{caseId}', [\App\Http\Controllers\AppealFamilyPartyController::class, 'getPartiesByCase'])->name('appeal-family-parties.by-case');
+    Route::post('appeal-family-parties/notify/{caseId}', [\App\Http\Controllers\AppealFamilyPartyController::class, 'sendNotifications'])->name('appeal-family-parties.notify');
+
+    // Documents
+    Route::get('appeal-family-documents', [\App\Http\Controllers\AppealFamilyDocumentController::class, 'index'])->name('appeal-family-documents.index');
+    Route::post('appeal-family-documents', [\App\Http\Controllers\AppealFamilyDocumentController::class, 'store'])->name('appeal-family-documents.store');
+    Route::delete('appeal-family-documents/{id}', [\App\Http\Controllers\AppealFamilyDocumentController::class, 'destroy'])->name('appeal-family-documents.destroy');
+    Route::get('appeal-family-documents/case/{caseId}', [\App\Http\Controllers\AppealFamilyDocumentController::class, 'getDocumentsByCase'])->name('appeal-family-documents.by-case');
+
+    // Legal Representatives
+    Route::get('appeal-family-legal-reps/case/{caseId}', [\App\Http\Controllers\AppealFamilyLegalRepresentativeController::class, 'getByCase'])->name('appeal-family-legal-reps.by-case');
+    Route::post('appeal-family-legal-reps', [\App\Http\Controllers\AppealFamilyLegalRepresentativeController::class, 'store'])->name('appeal-family-legal-reps.store');
+    Route::delete('appeal-family-legal-reps/{id}', [\App\Http\Controllers\AppealFamilyLegalRepresentativeController::class, 'destroy'])->name('appeal-family-legal-reps.destroy');
+});
+
+// ── Appeal Family Case Lawyers (Lawyer Assignment) ──────────────────────────
+// Reuses the "Appeal Case Lawyers" module shared across all Appeal case types.
+Route::middleware(['auth', 'permission:Appeal Case Lawyers,view'])->group(function () {
+    Route::get('appeal-family-lawyers', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'index'])->name('appeal-family-lawyers.index');
+    Route::post('appeal-family-lawyers', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'store'])->name('appeal-family-lawyers.store');
+    Route::put('appeal-family-lawyers/{id}', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'update'])->name('appeal-family-lawyers.update');
+    Route::delete('appeal-family-lawyers/{id}', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'destroy'])->name('appeal-family-lawyers.destroy');
+    Route::get('appeal-family-lawyers/case/{caseId}', [\App\Http\Controllers\AppealFamilyLawyerController::class, 'getAssignmentsByCase'])->name('appeal-family-lawyers.by-case');
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
 
 // ── District Family Case Registration (+ Parties, Documents, Lawyers sub-resources) ──
 Route::middleware(['auth', 'permission:Family Case Registration,view'])->group(function () {

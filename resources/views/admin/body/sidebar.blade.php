@@ -77,6 +77,7 @@
         $canAppealReceiveJudgmentParties = $u->hasPermission('Appeal Judgment Receipts');
 
         $canAppealCriminal = $u->hasPermission('Appeal Criminal Registration');
+        $canAppealFamily = $u->hasPermission('Appeal Family Registration');
 
         $canFamily = $u->hasPermission('Family Case Registration');
         $canFamilyHandover = $u->hasPermission('Family Case Handover');
@@ -202,6 +203,7 @@
         $hasDistrictAndRegionalCivilSection = $civilPermSet;
         $hasAppealCivilSection = $appealCivilPermSet;
         $hasAppealCriminalSection = $canAppealCriminal;
+        $hasAppealFamilySection = $canAppealFamily;
     @endphp
 
     <!-- Menu Sections -->
@@ -733,6 +735,32 @@
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-criminal-enforcement.*') ? 'text-white bg-white/5' : '' }}">
                             <i class="bi bi-plus text-lg"></i> Dhaqangalka Ciqaabta</a>
                     @endif
+                </div>
+            </div>
+        @endif
+
+        <!-- 2c. Family Cases for Banadir Regional Appeal Court (Registration stage only so far) -->
+        @if($hasAppealFamilySection)
+            <div class="space-y-1">
+                <button @click="toggleMenu('appeal-family-registration')"
+                    class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full"
+                    >
+                    <i class="bi bi-arrow-repeat text-lg"></i>
+                    <span class="text-left leading-tight">Dacwadaha Rafcaanka - Qoyska</span>
+                    <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
+                        :class="isOpen('appeal-family-registration') ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="isOpen('appeal-family-registration')" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[500px]"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 max-h-[500px]" x-transition:leave-end="opacity-0 max-h-0"
+                    class="space-y-1 overflow-hidden transition-all duration-300">
+                    <a href="{{ route('appeal-family-tracking.index') }}"
+                        class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-tracking.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-plus text-lg"></i> Lasocadka Dacwada </a>
+                    <a href="{{ route('appeal-family-registration.index') }}"
+                        class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('appeal-family-registration.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="bi bi-plus text-lg"></i> Diiwaanka Dacwada </a>
                 </div>
             </div>
         @endif

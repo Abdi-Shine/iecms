@@ -1378,6 +1378,12 @@ Route::middleware(['auth', 'permission:CID Case Management,view'])->group(functi
     Route::get('cid-period-alerts', [\App\Http\Controllers\CriminalPeriodAlertsController::class, 'index'])->name('cid-period-alerts.index');
 });
 
+// ── CID Settings ──────────────────────────────────────────────────────────────
+Route::middleware(['auth', 'permission:CID Settings,view'])->group(function () {
+    Route::get('cid-number-formats', [\App\Http\Controllers\CriminalNumberFormatController::class, 'index'])->name('cid-number-formats.index');
+    Route::post('cid-number-formats/{key}', [\App\Http\Controllers\CriminalNumberFormatController::class, 'update'])->name('cid-number-formats.update');
+});
+
 // ── CID Evidence & Documentation ─────────────────────────────────────────────
 Route::middleware(['auth', 'permission:CID Evidence & Documentation,view'])->group(function () {
     Route::get('cid-evidence-registry', [\App\Http\Controllers\CriminalEvidenceController::class, 'index'])->name('cid-evidence-registry.index');

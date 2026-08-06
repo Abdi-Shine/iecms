@@ -15,6 +15,35 @@ class CriminalDetainee extends Model
 
     public const STATUSES = ['Newly Admitted', 'Remanded', 'Awaiting Bail Hearing', 'Granted Bail', 'Released', 'Transferred', 'Deceased'];
 
+    protected static function booted(): void
+    {
+        static::creating(function ($detainee) {
+            if (!$detainee->detainee_number) {
+                $detainee->detainee_number = static::nextDetaineeNumber($detainee->institution_id);
+            }
+        });
+    }
+
+    public static function nextDetaineeNumber(?int $institutionId = null): string
+    {
+        $config = CriminalNumberFormat::configFor('detainee_id', $institutionId);
+        $searchPrefix = CriminalNumberFormat::searchPrefix($config);
+
+        $last = static::withoutGlobalScopes()
+            ->where('detainee_number', 'like', $searchPrefix . '%')
+            ->orderByDesc('id')
+            ->value('detainee_number');
+
+        $serial = 1;
+        if ($last) {
+            $serial = intval(substr($last, strlen($searchPrefix))) + 1;
+        }
+
+        CriminalNumberFormat::markUsed('detainee_id', $institutionId);
+
+        return CriminalNumberFormat::format($config, $serial);
+    }
+
     protected function casts(): array
     {
         return [

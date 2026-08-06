@@ -7,7 +7,7 @@
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">{{ $detainee->detainee_name }}</h1>
-            <p class="text-sm text-neutral-500 mt-0.5">{{ $detainee->criminalCase->case_number ?? '—' }} &mdash; admitted {{ $detainee->admission_datetime->format('Y-m-d H:i') }}</p>
+            <p class="text-sm text-neutral-500 mt-0.5">{{ $detainee->detainee_number }} &mdash; {{ $detainee->criminalCase->case_number ?? '—' }} &mdash; admitted {{ $detainee->admission_datetime->format('Y-m-d H:i') }}</p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('criminal-cases.workflow', $detainee->criminal_case_id) }}"

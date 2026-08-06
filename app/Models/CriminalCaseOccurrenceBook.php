@@ -13,25 +13,29 @@ class CriminalCaseOccurrenceBook extends Model
     {
         static::creating(function ($ob) {
             if (!$ob->ob_number) {
-                $ob->ob_number = static::nextObNumber();
+                $institutionId = CriminalCase::withoutGlobalScopes()->where('id', $ob->criminal_case_id)->value('institution_id');
+                $ob->ob_number = static::nextObNumber($institutionId);
             }
         });
     }
 
-    public static function nextObNumber(): string
+    public static function nextObNumber(?int $institutionId = null): string
     {
-        $prefix = 'OB-CID-' . date('Y') . '-';
+        $config = CriminalNumberFormat::configFor('ob_number', $institutionId);
+        $searchPrefix = CriminalNumberFormat::searchPrefix($config);
 
-        $last = static::where('ob_number', 'like', $prefix . '%')
+        $last = static::where('ob_number', 'like', $searchPrefix . '%')
             ->orderByDesc('id')
             ->value('ob_number');
 
         $serial = 1;
         if ($last) {
-            $serial = intval(substr($last, strlen($prefix))) + 1;
+            $serial = intval(substr($last, strlen($searchPrefix))) + 1;
         }
 
-        return $prefix . str_pad($serial, 5, '0', STR_PAD_LEFT);
+        CriminalNumberFormat::markUsed('ob_number', $institutionId);
+
+        return CriminalNumberFormat::format($config, $serial);
     }
 
     protected function casts(): array

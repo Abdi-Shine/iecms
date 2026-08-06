@@ -52,7 +52,7 @@
             <tbody>
                 @forelse($items as $item)
                     <tr class="border-b border-neutral-50 hover:bg-neutral-50/50">
-                        <td class="px-5 py-3 font-semibold text-neutral-800">EV-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}</td>
+                        <td class="px-5 py-3 font-semibold text-neutral-800">{{ $item->evidence_id }}</td>
                         <td class="px-5 py-3 text-neutral-600">{{ $item->criminalCase->case_number ?? '—' }}</td>
                         <td class="px-5 py-3 text-neutral-600">{{ $item->description }}</td>
                         <td class="px-5 py-3 text-neutral-600">{{ ucfirst($item->evidence_type) }}</td>

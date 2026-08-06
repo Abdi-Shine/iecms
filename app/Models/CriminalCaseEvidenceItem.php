@@ -14,6 +14,35 @@ class CriminalCaseEvidenceItem extends Model
 
     public const STATUSES = ['collected', 'submitted_to_lab', 'lab_results_received', 'court_submitted', 'returned'];
 
+    protected static function booted(): void
+    {
+        static::creating(function ($item) {
+            if (!$item->evidence_id) {
+                $institutionId = CriminalCase::withoutGlobalScopes()->where('id', $item->criminal_case_id)->value('institution_id');
+                $item->evidence_id = static::nextEvidenceId($institutionId);
+            }
+        });
+    }
+
+    public static function nextEvidenceId(?int $institutionId = null): string
+    {
+        $config = CriminalNumberFormat::configFor('evidence_id', $institutionId);
+        $searchPrefix = CriminalNumberFormat::searchPrefix($config);
+
+        $last = static::where('evidence_id', 'like', $searchPrefix . '%')
+            ->orderByDesc('id')
+            ->value('evidence_id');
+
+        $serial = 1;
+        if ($last) {
+            $serial = intval(substr($last, strlen($searchPrefix))) + 1;
+        }
+
+        CriminalNumberFormat::markUsed('evidence_id', $institutionId);
+
+        return CriminalNumberFormat::format($config, $serial);
+    }
+
     protected function casts(): array
     {
         return [

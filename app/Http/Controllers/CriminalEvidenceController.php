@@ -12,7 +12,7 @@ class CriminalEvidenceController extends Controller
         $query = CriminalCaseEvidenceItem::with(['criminalCase', 'custodyLogs']);
 
         if ($request->filled('evidence_id')) {
-            $query->where('id', $request->evidence_id);
+            $query->where('evidence_id', 'like', '%' . $request->evidence_id . '%');
         }
         if ($request->filled('case')) {
             $query->whereHas('criminalCase', fn ($q) => $q->where('case_number', 'like', '%' . $request->case . '%'));

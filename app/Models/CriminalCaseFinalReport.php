@@ -25,25 +25,29 @@ class CriminalCaseFinalReport extends Model
     {
         static::creating(function ($report) {
             if (!$report->report_number) {
-                $report->report_number = static::nextReportNumber();
+                $institutionId = CriminalCase::withoutGlobalScopes()->where('id', $report->criminal_case_id)->value('institution_id');
+                $report->report_number = static::nextReportNumber($institutionId);
             }
         });
     }
 
-    public static function nextReportNumber(): string
+    public static function nextReportNumber(?int $institutionId = null): string
     {
-        $prefix = 'RPT-CID-' . date('Y') . '-';
+        $config = CriminalNumberFormat::configFor('report_number', $institutionId);
+        $searchPrefix = CriminalNumberFormat::searchPrefix($config);
 
-        $last = static::where('report_number', 'like', $prefix . '%')
+        $last = static::where('report_number', 'like', $searchPrefix . '%')
             ->orderByDesc('id')
             ->value('report_number');
 
         $serial = 1;
         if ($last) {
-            $serial = intval(substr($last, strlen($prefix))) + 1;
+            $serial = intval(substr($last, strlen($searchPrefix))) + 1;
         }
 
-        return $prefix . str_pad($serial, 5, '0', STR_PAD_LEFT);
+        CriminalNumberFormat::markUsed('report_number', $institutionId);
+
+        return CriminalNumberFormat::format($config, $serial);
     }
 
     protected function casts(): array

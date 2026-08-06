@@ -26,26 +26,29 @@ class CriminalCase extends Model
     {
         static::creating(function ($case) {
             if (!$case->case_number) {
-                $case->case_number = static::nextCaseNumber();
+                $case->case_number = static::nextCaseNumber($case->institution_id);
             }
         });
     }
 
-    public static function nextCaseNumber(): string
+    public static function nextCaseNumber(?int $institutionId = null): string
     {
-        $prefix = 'CASE-CID-' . date('Y') . '-';
+        $config = CriminalNumberFormat::configFor('case_number', $institutionId);
+        $searchPrefix = CriminalNumberFormat::searchPrefix($config);
 
         $last = static::withoutGlobalScopes()
-            ->where('case_number', 'like', $prefix . '%')
+            ->where('case_number', 'like', $searchPrefix . '%')
             ->orderByDesc('id')
             ->value('case_number');
 
         $serial = 1;
         if ($last) {
-            $serial = intval(substr($last, strlen($prefix))) + 1;
+            $serial = intval(substr($last, strlen($searchPrefix))) + 1;
         }
 
-        return $prefix . str_pad($serial, 5, '0', STR_PAD_LEFT);
+        CriminalNumberFormat::markUsed('case_number', $institutionId);
+
+        return CriminalNumberFormat::format($config, $serial);
     }
 
     /**

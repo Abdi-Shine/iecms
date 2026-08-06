@@ -34,6 +34,7 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-[11px] font-bold text-neutral-400 uppercase tracking-wider border-b border-neutral-100">
+                    <th class="px-5 py-3">Detainee ID</th>
                     <th class="px-5 py-3">Detainee</th>
                     <th class="px-5 py-3">Case</th>
                     <th class="px-5 py-3">Admitted</th>
@@ -46,6 +47,7 @@
             <tbody>
                 @forelse($detainees as $d)
                     <tr class="border-b border-neutral-50 hover:bg-neutral-50/50">
+                        <td class="px-5 py-3 font-semibold text-neutral-800">{{ $d->detainee_number }}</td>
                         <td class="px-5 py-3 font-semibold text-neutral-800">{{ $d->detainee_name }}
                             @if($d->isPending())<span class="ml-1 w-2 h-2 inline-block rounded-full bg-red-500"></span>@endif
                         </td>

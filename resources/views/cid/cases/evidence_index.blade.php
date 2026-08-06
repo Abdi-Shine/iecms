@@ -80,7 +80,7 @@
             <div class="bg-white rounded-2xl border border-neutral-100 p-5">
                 <div class="flex items-start justify-between mb-3">
                     <div>
-                        <h3 class="text-sm font-bold text-neutral-800">{{ $item->description }}</h3>
+                        <h3 class="text-sm font-bold text-neutral-800">{{ $item->evidence_id }} &mdash; {{ $item->description }}</h3>
                         <p class="text-xs text-neutral-500">{{ ucfirst($item->evidence_type) }} &middot; collected {{ $item->collection_date->format('Y-m-d') }} by {{ $item->collected_by }}
                             @if($item->storage_location) &middot; stored at {{ $item->storage_location }} @endif
                         </p>

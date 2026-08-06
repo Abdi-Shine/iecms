@@ -462,20 +462,13 @@
             </div>
         @endif
 
-        @php
-            $cidComingSoonMenus = [
-                ['can' => $canCidSettings,       'icon' => 'bi-gear-fill',                'label' => 'CID Settings'],
-            ];
-        @endphp
-        @foreach($cidComingSoonMenus as $menu)
-            @if($menu['can'])
-                <div class="flex items-center gap-3 px-4 py-3 text-white/30 rounded-xl font-semibold text-[14px] w-full cursor-not-allowed">
-                    <i class="bi {{ $menu['icon'] }} text-lg"></i>
-                    <span class="flex-1 text-left leading-tight">{{ $menu['label'] }}</span>
-                    <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 text-white/40">Soon</span>
-                </div>
-            @endif
-        @endforeach
+        @if($canCidSettings)
+            <a href="{{ route('cid-number-formats.index') }}"
+                class="flex items-center gap-3 px-4 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] transition-all duration-200 w-full {{ Route::is('cid-number-formats.*') ? 'bg-white/5 text-white' : '' }}">
+                <i class="bi bi-gear-fill text-lg"></i>
+                <span>CID Settings</span>
+            </a>
+        @endif
 
         <!-- 2. Civil Cases for District and Regional Court-->
         @if($hasDistrictAndRegionalCivilSection)

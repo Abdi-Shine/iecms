@@ -13,7 +13,7 @@ class DistrictFamilyRegistrationController extends Controller
 {
     public function familyPaymentReceipt($id)
     {
-        return view('Courts.District_civil.finance.payment_receipt', $this->familyPaymentReceiptData($id));
+        return view('distract_courts.District_civil.finance.payment_receipt', $this->familyPaymentReceiptData($id));
     }
 
     public function familyPaymentReceiptPdf($id)
@@ -21,7 +21,7 @@ class DistrictFamilyRegistrationController extends Controller
         $data = $this->familyPaymentReceiptData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.finance.payment_receipt',
+            'distract_courts.District_civil.finance.payment_receipt',
             $data,
             'Rasiid-' . str_pad($data['payment']->id, 4, '0', STR_PAD_LEFT) . '.pdf'
         );
@@ -56,7 +56,7 @@ class DistrictFamilyRegistrationController extends Controller
             ->unique('payer_name')
             ->values();
 
-        return view('Courts.District_family.registration.district_family_add_payment', compact('case', 'knownApplicants'));
+        return view('distract_courts.District_family.registration.district_family_add_payment', compact('case', 'knownApplicants'));
     }
 
     public function storePaymentRequest(Request $request)
@@ -165,7 +165,7 @@ class DistrictFamilyRegistrationController extends Controller
         $caseTypes       = \App\Models\CaseType::orderBy('case_name')->get();
         $statuses        = \App\Models\StatusProcess::orderBy('name')->get();
         $familySubCases  = \App\Models\CaseCategory::where('case_name', 'Qoyska')->pluck('sub_case');
-        return view('Courts.District_family.registration.district_family_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'familySubCases'));
+        return view('distract_courts.District_family.registration.district_family_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'familySubCases'));
     }
 
     public function create()
@@ -175,7 +175,7 @@ class DistrictFamilyRegistrationController extends Controller
                         ? (auth()->user()->employee->courtID ?? null)
                         : null;
 
-        return view('Courts.District_family.registration.district_family_registration_form', compact('courts', 'userCourtID'));
+        return view('distract_courts.District_family.registration.district_family_registration_form', compact('courts', 'userCourtID'));
     }
 
     public function edit($id)
@@ -186,7 +186,7 @@ class DistrictFamilyRegistrationController extends Controller
                         ? (auth()->user()->employee->courtID ?? null)
                         : null;
 
-        return view('Courts.District_family.registration.district_family_registration_form', compact('record', 'courts', 'userCourtID'));
+        return view('distract_courts.District_family.registration.district_family_registration_form', compact('record', 'courts', 'userCourtID'));
     }
 
     public function show($id)
@@ -198,7 +198,7 @@ class DistrictFamilyRegistrationController extends Controller
         $judgments   = \App\Models\DistrictFamilyJudgment::with('receipts')->where('family_case_id', $id)->orderByDesc('created_at')->get();
         $enforcement = \App\Models\DistrictFamilyEnforcement::where('family_case_id', $id)->latest()->first();
         $appeal      = \App\Models\DistrictFamilyAppeal::where('family_case_id', $id)->latest()->first();
-        return view('Courts.District_family.registration.district_family_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
+        return view('distract_courts.District_family.registration.district_family_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
     }
 
     public function supporting($id)
@@ -206,7 +206,7 @@ class DistrictFamilyRegistrationController extends Controller
         $case       = \App\Models\DistrictFamilyRegistration::with(['court', 'parties', 'documents', 'lawyers.lawyer', 'lawyers.party', 'assignments.employee', 'hearings', 'payments.tariff'])->findOrFail($id);
         $handover   = \App\Models\DistrictFamilyHandover::where('family_case_id', $id)->latest()->first();
         $scriptures = \App\Models\DistrictFamilyHearingScripture::with('hearing')->where('family_case_id', $id)->orderBy('created_at')->get();
-        return view('Courts.District_family.registration.district_family_add_supporting', compact('case', 'handover', 'scriptures'));
+        return view('distract_courts.District_family.registration.district_family_add_supporting', compact('case', 'handover', 'scriptures'));
     }
 
     public function store(Request $request)
@@ -330,7 +330,7 @@ class DistrictFamilyRegistrationController extends Controller
         $courts         = \App\Models\Court::orderBy('longName')->get();
         $familySubCases = \App\Models\CaseCategory::where('case_name', 'Qoyska')->pluck('sub_case');
 
-        return view('Courts.District_family.registration.district_family_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'familySubCases'));
+        return view('distract_courts.District_family.registration.district_family_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'familySubCases'));
     }
 
     public function handover(Request $request)
@@ -377,7 +377,7 @@ class DistrictFamilyRegistrationController extends Controller
         $statuses       = \App\Models\StatusProcess::orderBy('name')->get();
         $familySubCases = \App\Models\CaseCategory::where('case_name', 'Qoyska')->pluck('sub_case');
 
-        return view('Courts.District_family.registration.district_family_handover', compact('records', 'statuses', 'stats', 'familySubCases'));
+        return view('distract_courts.District_family.registration.district_family_handover', compact('records', 'statuses', 'stats', 'familySubCases'));
     }
 
     public function nextFileNo($courtcode)

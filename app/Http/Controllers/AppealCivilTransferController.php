@@ -42,7 +42,7 @@ class AppealCivilTransferController extends Controller
             'closed'      => AppealCivilRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.Appeal_civil.integration.appeal_civil_transfer',
+        return view('appeal_court.Appeal_civil.integration.appeal_civil_transfer',
             compact('records', 'courts', 'stats', 'statuses', 'isKaaliyeSare'));
     }
 
@@ -53,7 +53,7 @@ class AppealCivilTransferController extends Controller
         $courts   = Court::where('status', 'active')->orderBy('longName')->get();
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_add_transfer',
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_add_transfer',
             compact('case', 'transfer', 'courts', 'judge'));
     }
 

@@ -13,7 +13,7 @@ class DistrictExecutionRegistrationController extends Controller
 {
     public function executionPaymentReceipt($id)
     {
-        return view('Courts.District_civil.finance.payment_receipt', $this->executionPaymentReceiptData($id));
+        return view('distract_courts.District_civil.finance.payment_receipt', $this->executionPaymentReceiptData($id));
     }
 
     public function executionPaymentReceiptPdf($id)
@@ -21,7 +21,7 @@ class DistrictExecutionRegistrationController extends Controller
         $data = $this->executionPaymentReceiptData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.finance.payment_receipt',
+            'distract_courts.District_civil.finance.payment_receipt',
             $data,
             'Rasiid-' . str_pad($data['payment']->id, 4, '0', STR_PAD_LEFT) . '.pdf'
         );
@@ -56,7 +56,7 @@ class DistrictExecutionRegistrationController extends Controller
             ->unique('payer_name')
             ->values();
 
-        return view('Courts.District_execution.registration.district_execution_add_payment', compact('case', 'knownApplicants'));
+        return view('distract_courts.District_execution.registration.district_execution_add_payment', compact('case', 'knownApplicants'));
     }
 
     public function storePaymentRequest(Request $request)
@@ -165,7 +165,7 @@ class DistrictExecutionRegistrationController extends Controller
         $caseTypes       = \App\Models\CaseType::orderBy('case_name')->get();
         $statuses        = \App\Models\StatusProcess::orderBy('name')->get();
         $executionSubCases  = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
-        return view('Courts.District_execution.registration.district_execution_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'executionSubCases'));
+        return view('distract_courts.District_execution.registration.district_execution_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'executionSubCases'));
     }
 
     public function create()
@@ -176,7 +176,7 @@ class DistrictExecutionRegistrationController extends Controller
                         ? (auth()->user()->employee->courtID ?? null)
                         : null;
 
-        return view('Courts.District_execution.registration.district_execution_registration_form', compact('courts', 'executionSubCases', 'userCourtID'));
+        return view('distract_courts.District_execution.registration.district_execution_registration_form', compact('courts', 'executionSubCases', 'userCourtID'));
     }
 
     public function edit($id)
@@ -188,7 +188,7 @@ class DistrictExecutionRegistrationController extends Controller
                         ? (auth()->user()->employee->courtID ?? null)
                         : null;
 
-        return view('Courts.District_execution.registration.district_execution_registration_form', compact('record', 'courts', 'executionSubCases', 'userCourtID'));
+        return view('distract_courts.District_execution.registration.district_execution_registration_form', compact('record', 'courts', 'executionSubCases', 'userCourtID'));
     }
 
     public function show($id)
@@ -200,7 +200,7 @@ class DistrictExecutionRegistrationController extends Controller
         $judgments   = \App\Models\DistrictExecutionJudgment::with('receipts')->where('execution_case_id', $id)->orderByDesc('created_at')->get();
         $enforcement = \App\Models\DistrictExecutionEnforcement::where('execution_case_id', $id)->latest()->first();
         $appeal      = \App\Models\DistrictExecutionAppeal::where('execution_case_id', $id)->latest()->first();
-        return view('Courts.District_execution.registration.district_execution_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
+        return view('distract_courts.District_execution.registration.district_execution_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
     }
 
     public function supporting($id)
@@ -208,7 +208,7 @@ class DistrictExecutionRegistrationController extends Controller
         $case       = \App\Models\DistrictExecutionRegistration::with(['court', 'parties', 'documents', 'lawyers.lawyer', 'lawyers.party', 'assignments.employee', 'hearings', 'payments.tariff'])->findOrFail($id);
         $handover   = \App\Models\DistrictExecutionHandover::where('execution_case_id', $id)->latest()->first();
         $scriptures = \App\Models\DistrictExecutionHearingScripture::with('hearing')->where('execution_case_id', $id)->orderBy('created_at')->get();
-        return view('Courts.District_execution.registration.district_execution_add_supporting', compact('case', 'handover', 'scriptures'));
+        return view('distract_courts.District_execution.registration.district_execution_add_supporting', compact('case', 'handover', 'scriptures'));
     }
 
     public function store(Request $request)
@@ -332,7 +332,7 @@ class DistrictExecutionRegistrationController extends Controller
         $courts         = \App\Models\Court::orderBy('longName')->get();
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.registration.district_execution_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'executionSubCases'));
+        return view('distract_courts.District_execution.registration.district_execution_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'executionSubCases'));
     }
 
     public function handover(Request $request)
@@ -379,7 +379,7 @@ class DistrictExecutionRegistrationController extends Controller
         $statuses       = \App\Models\StatusProcess::orderBy('name')->get();
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.registration.district_execution_handover', compact('records', 'statuses', 'stats', 'executionSubCases'));
+        return view('distract_courts.District_execution.registration.district_execution_handover', compact('records', 'statuses', 'stats', 'executionSubCases'));
     }
 
     public function nextFileNo($courtcode)

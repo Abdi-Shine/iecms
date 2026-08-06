@@ -37,7 +37,7 @@ class DistrictCriminalAppealController extends Controller
             'closed'   => DistrictCriminalRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.District_criminal.registration.district_criminal_view_appeal', compact('records', 'statuses', 'stats'));
+        return view('distract_courts.District_criminal.registration.district_criminal_view_appeal', compact('records', 'statuses', 'stats'));
     }
 
     public function form($caseId)
@@ -52,7 +52,7 @@ class DistrictCriminalAppealController extends Controller
         $receipts    = $judgment?->receipts ?? collect();
         $lagaParties = $receipts->filter(fn($rc) => str_contains(strtolower($rc->judgment_outcome ?? ''), 'laga'))->values();
 
-        return view('Courts.District_criminal.registration.district_criminal_add_appeal',
+        return view('distract_courts.District_criminal.registration.district_criminal_add_appeal',
             compact('case', 'appeal', 'judge', 'caseStatus', 'defaultStatus', 'lagaParties'));
     }
 

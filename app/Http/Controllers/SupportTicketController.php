@@ -58,7 +58,7 @@ class SupportTicketController extends Controller
 
         $tickets = $query->paginate($perPage)->withQueryString();
 
-        return view('Courts.support.support_tickets_index', [
+        return view('support.support_tickets_index', [
             'tickets'        => $tickets,
             'stats'          => $stats,
             'isSuperAdmin'   => $isSuperAdmin,
@@ -72,7 +72,7 @@ class SupportTicketController extends Controller
 
     public function create()
     {
-        return view('Courts.support.support_ticket_create', [
+        return view('support.support_ticket_create', [
             'categories' => self::CATEGORIES,
             'priorities' => self::PRIORITIES,
         ]);
@@ -121,7 +121,7 @@ class SupportTicketController extends Controller
 
         $staff = $isSuperAdmin ? User::orderBy('name')->get() : collect();
 
-        return view('Courts.support.support_ticket_show', [
+        return view('support.support_ticket_show', [
             'ticket'       => $ticket,
             'isSuperAdmin' => $isSuperAdmin,
             'staff'        => $staff,

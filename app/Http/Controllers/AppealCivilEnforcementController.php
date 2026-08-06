@@ -37,7 +37,7 @@ class AppealCivilEnforcementController extends Controller
             'closed'  => AppealCivilRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_view_Enforcement', compact('records', 'statuses', 'stats'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_view_Enforcement', compact('records', 'statuses', 'stats'));
     }
 
     public function form($caseId)
@@ -48,7 +48,7 @@ class AppealCivilEnforcementController extends Controller
         $caseStatus    = StatusProcess::where('name', 'Dhaqan Gal')->get();
         $defaultStatus = 'Dhaqan Gal';
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_add_Enforcement',
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_add_Enforcement',
             compact('case', 'enforcement', 'judge', 'caseStatus', 'defaultStatus'));
     }
 
@@ -97,6 +97,6 @@ class AppealCivilEnforcementController extends Controller
         $enforcement = AppealCivilEnforcement::where('civil_case_id', $caseId)->latest()->firstOrFail();
         $court       = $case->court;
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_document_Enforcement', compact('case', 'enforcement', 'court'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_document_Enforcement', compact('case', 'enforcement', 'court'));
     }
 }

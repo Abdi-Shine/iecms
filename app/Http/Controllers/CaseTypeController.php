@@ -9,7 +9,7 @@ class CaseTypeController extends Controller
     public function index()
     {
         $caseTypes = \App\Models\CaseType::orderBy('case_name')->get();
-        return view('Courts.setting.case_type', compact('caseTypes'));
+        return view('setting.case_type', compact('caseTypes'));
     }
 
     public function store(Request $request)

@@ -43,7 +43,7 @@ class DistrictExecutionEnforcementController extends Controller
 
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.registration.district_execution_view_Enforcement', compact('records', 'statuses', 'stats', 'executionSubCases'));
+        return view('distract_courts.District_execution.registration.district_execution_view_Enforcement', compact('records', 'statuses', 'stats', 'executionSubCases'));
     }
 
     public function form($caseId)
@@ -54,7 +54,7 @@ class DistrictExecutionEnforcementController extends Controller
         $caseStatus  = StatusProcess::where('name', 'Dhaqan Gal')->get();
         $defaultStatus = 'Dhaqan Gal';
 
-        return view('Courts.District_execution.registration.district_execution_add_Enforcement',
+        return view('distract_courts.District_execution.registration.district_execution_add_Enforcement',
             compact('case', 'enforcement', 'judge', 'caseStatus', 'defaultStatus'));
     }
 
@@ -103,6 +103,6 @@ class DistrictExecutionEnforcementController extends Controller
         $enforcement = DistrictExecutionEnforcement::where('execution_case_id', $caseId)->latest()->firstOrFail();
         $court       = $case->court;
 
-        return view('Courts.District_execution.registration.district_execution_document_Enforcement', compact('case', 'enforcement', 'court'));
+        return view('distract_courts.District_execution.registration.district_execution_document_Enforcement', compact('case', 'enforcement', 'court'));
     }
 }

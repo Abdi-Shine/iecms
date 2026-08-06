@@ -20,7 +20,7 @@ class AppealCivilPartyController extends Controller
         }
         $case    = AppealCivilRegistration::findOrFail($caseId);
         $lawyers = Lawyer::where('status', 'active')->orderBy('LawyerName')->get();
-        return view('Courts.Appeal_civil.registration.appeal_civil_Parties_information', compact('case', 'lawyers'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_Parties_information', compact('case', 'lawyers'));
     }
 
     public function getPartiesByCase($caseId)

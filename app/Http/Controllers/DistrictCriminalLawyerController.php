@@ -16,7 +16,7 @@ class DistrictCriminalLawyerController extends Controller
         $caseId = $request->query('case_id');
         $case = DistrictCriminalRegistration::with('parties')->findOrFail($caseId);
         $lawyers = Lawyer::where('status', 'active')->where('Grade', 'Darajada Koobaad')->orderBy('LawyerName')->get();
-        return view('Courts.District_criminal.registration.district_criminal_lawyer_assign', compact('case', 'lawyers'));
+        return view('distract_courts.District_criminal.registration.district_criminal_lawyer_assign', compact('case', 'lawyers'));
     }
 
     public function store(Request $request)

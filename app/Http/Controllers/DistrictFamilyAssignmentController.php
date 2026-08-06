@@ -58,7 +58,7 @@ class DistrictFamilyAssignmentController extends Controller
                                ->get();
         $familySubCases = \App\Models\CaseCategory::where('case_name', 'Qoyska')->pluck('sub_case');
 
-        return view('Courts.District_family.assign.district_family_assign_view', compact('cases', 'assignments', 'employees', 'stats', 'familySubCases'));
+        return view('distract_courts.District_family.assign.district_family_assign_view', compact('cases', 'assignments', 'employees', 'stats', 'familySubCases'));
     }
 
     public function addJudges($id)
@@ -69,7 +69,7 @@ class DistrictFamilyAssignmentController extends Controller
                                ->when($courtId, fn($q) => $q->where('courtID', $courtId))
                                ->get();
         $stageStatus = StatusProcess::where('name', 'Gal Ku Qoris')->first();
-        return view('Courts.District_family.assign.district_family_add_judges', compact('case', 'employees', 'stageStatus'));
+        return view('distract_courts.District_family.assign.district_family_add_judges', compact('case', 'employees', 'stageStatus'));
     }
 
     public function store(Request $request)

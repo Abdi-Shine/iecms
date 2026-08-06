@@ -19,7 +19,7 @@ class DistrictFamilyPartyController extends Controller
         }
 
         $case = DistrictFamilyRegistration::findOrFail($caseId);
-        return view('Courts.District_family.registration.district_family_Parties_information', compact('case'));
+        return view('distract_courts.District_family.registration.district_family_Parties_information', compact('case'));
     }
 
     public function getPartiesByCase($caseId)

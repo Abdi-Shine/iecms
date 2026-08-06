@@ -47,14 +47,14 @@ class CloseCaseController extends Controller
 
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.Conclusion.district_civil_view_Close', compact('records', 'statuses', 'stats', 'civilSubCases'));
+        return view('distract_courts.District_civil.Conclusion.district_civil_view_Close', compact('records', 'statuses', 'stats', 'civilSubCases'));
     }
 
     public function document($caseId)
     {
         $data = $this->closeCaseDocumentData($caseId);
 
-        return view('Courts.District_civil.Conclusion.district_civil_document_Close', $data);
+        return view('distract_courts.District_civil.Conclusion.district_civil_document_Close', $data);
     }
 
     /**
@@ -66,7 +66,7 @@ class CloseCaseController extends Controller
     {
         $data = $this->closeCaseDocumentData($caseId);
 
-        return view('Courts.District_civil.Conclusion.district_civil_document_Close_readonly', $data);
+        return view('distract_courts.District_civil.Conclusion.district_civil_document_Close_readonly', $data);
     }
 
     public function documentPdf($caseId)
@@ -74,7 +74,7 @@ class CloseCaseController extends Controller
         $data = $this->closeCaseDocumentData($caseId);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.Conclusion.district_civil_document_Close',
+            'distract_courts.District_civil.Conclusion.district_civil_document_Close',
             $data,
             'CloseCase-' . $data['case']->FileNo . '.pdf'
         );
@@ -147,7 +147,7 @@ class CloseCaseController extends Controller
         $judge      = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? 'â€”';
         $caseStatus = StatusProcess::where('name', 'Oodista')->get();
 
-        return view('Courts.District_civil.Conclusion.district_civil_add_Close',
+        return view('distract_courts.District_civil.Conclusion.district_civil_add_Close',
             compact('case', 'closeCase', 'judge', 'caseStatus'));
     }
 
@@ -212,7 +212,7 @@ class CloseCaseController extends Controller
 
         $isArchiveOfficer = auth()->user()->hasPermission('Archive', 'view');
 
-        return view('Courts.District_civil.Conclusion.district_civil_close_stamp_document',
+        return view('distract_courts.District_civil.Conclusion.district_civil_close_stamp_document',
             compact('closeCase', 'case', 'clerk', 'clerkSig', 'archiveSig',
                     'isComplete', 'isArchiveOfficer'));
     }

@@ -47,7 +47,7 @@ class ReturnCivilFileController extends Controller
         $statuses      = StatusProcess::orderBy('name')->get();
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.Conclusion.district_civil_view_return_file',
+        return view('distract_courts.District_civil.Conclusion.district_civil_view_return_file',
             compact('records', 'statuses', 'stats', 'civilSubCases'));
     }
 
@@ -76,7 +76,7 @@ class ReturnCivilFileController extends Controller
             return ['name' => $doc->document_name, 'pages' => $pages > 0 ? (string) $pages : ''];
         })->values()->toArray();
 
-        return view('Courts.District_civil.Conclusion.district_civil_add_return_file',
+        return view('distract_courts.District_civil.Conclusion.district_civil_add_return_file',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments'));
     }
 
@@ -84,7 +84,7 @@ class ReturnCivilFileController extends Controller
     {
         $data = $this->returnFileDocumentData($id);
 
-        return view('Courts.District_civil.Conclusion.district_civil_document_return_file', $data);
+        return view('distract_courts.District_civil.Conclusion.district_civil_document_return_file', $data);
     }
 
     /**
@@ -95,7 +95,7 @@ class ReturnCivilFileController extends Controller
     {
         $data = $this->returnFileDocumentData($id);
 
-        return view('Courts.District_civil.Conclusion.district_civil_document_return_file_readonly', $data);
+        return view('distract_courts.District_civil.Conclusion.district_civil_document_return_file_readonly', $data);
     }
 
     public function documentPdf($id)
@@ -103,7 +103,7 @@ class ReturnCivilFileController extends Controller
         $data = $this->returnFileDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.Conclusion.district_civil_document_return_file',
+            'distract_courts.District_civil.Conclusion.district_civil_document_return_file',
             $data,
             'ReturnFile-' . $data['case']->FileNo . '.pdf'
         );

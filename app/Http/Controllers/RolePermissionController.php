@@ -32,7 +32,7 @@ class RolePermissionController extends Controller
         $roles = $query->orderBy('id')->paginate($perPage)->withQueryString();
         $nextRoleId = $this->generateNextRoleId();
 
-        return view('Courts.setting.role_view', compact('roles', 'stats', 'nextRoleId'));
+        return view('setting.role_view', compact('roles', 'stats', 'nextRoleId'));
     }
 
     /**
@@ -162,7 +162,7 @@ class RolePermissionController extends Controller
 
         $selectedRole = $roles->firstWhere('id', (int) $request->get('role')) ?? $roles->first();
 
-        return view('Courts.setting.role_permission', compact('roles', 'permissions', 'groups', 'selectedRole'));
+        return view('setting.role_permission', compact('roles', 'permissions', 'groups', 'selectedRole'));
     }
 
     public function update(Request $request)

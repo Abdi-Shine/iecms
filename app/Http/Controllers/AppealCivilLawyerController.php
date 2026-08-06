@@ -16,7 +16,7 @@ class AppealCivilLawyerController extends Controller
         $caseId = $request->query('case_id');
         $case = AppealCivilRegistration::with('parties')->findOrFail($caseId);
         $lawyers = Lawyer::where('status', 'active')->orderBy('LawyerName')->get();
-        return view('Courts.Appeal_civil.registration.appeal_civil_lawyer_assign', compact('case', 'lawyers'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_lawyer_assign', compact('case', 'lawyers'));
     }
 
     public function store(Request $request)

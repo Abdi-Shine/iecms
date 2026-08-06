@@ -31,7 +31,7 @@ class PositionController extends Controller
 
         $nextCode = 'POS' . str_pad($total + 1, 3, '0', STR_PAD_LEFT);
 
-        return view('Courts.setting.position_view', compact('positions', 'stats', 'nextCode'));
+        return view('setting.position_view', compact('positions', 'stats', 'nextCode'));
     }
 
     public function store(Request $request)

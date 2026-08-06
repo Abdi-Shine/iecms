@@ -51,7 +51,7 @@ class CivilCaseHandoverController extends Controller
             })
             ->values();
 
-        return view('Courts.District_civil.registration.district_civil_add_handover',
+        return view('distract_courts.District_civil.registration.district_civil_add_handover',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments'));
     }
 
@@ -59,7 +59,7 @@ class CivilCaseHandoverController extends Controller
     {
         $data = $this->handoverDocumentData($id);
 
-        return view('Courts.District_civil.registration.district_civil_handover_document', $data);
+        return view('distract_courts.District_civil.registration.district_civil_handover_document', $data);
     }
 
     public function documentPdf($id)
@@ -67,7 +67,7 @@ class CivilCaseHandoverController extends Controller
         $data = $this->handoverDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.registration.district_civil_handover_document',
+            'distract_courts.District_civil.registration.district_civil_handover_document',
             $data,
             'Handover-' . $data['case']->FileNo . '.pdf'
         );
@@ -240,7 +240,7 @@ class CivilCaseHandoverController extends Controller
         $handovers     = $query->paginate($perPage)->withQueryString();
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.Conclusion.district_civil_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes', 'civilSubCases'));
+        return view('distract_courts.District_civil.Conclusion.district_civil_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes', 'civilSubCases'));
     }
 
     /**

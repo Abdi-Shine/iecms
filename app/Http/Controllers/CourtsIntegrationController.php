@@ -44,7 +44,7 @@ class CourtsIntegrationController extends Controller
             'closed'      => DistricCivilRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.integration.courts_integration_transfer',
+        return view('distract_courts.integration.courts_integration_transfer',
             compact('records', 'courts', 'stats', 'statuses', 'isKaaliyeSare'));
     }
 
@@ -67,7 +67,7 @@ class CourtsIntegrationController extends Controller
 
         $courts = Court::where('status', 'active')->orderBy('longName')->get();
 
-        return view('Courts.integration.courts_integration_received',
+        return view('distract_courts.integration.courts_integration_received',
             compact('records', 'courts'));
     }
 }

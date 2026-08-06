@@ -33,7 +33,7 @@ class BackupRestoreController extends Controller
 
         $dbSize = $this->getDatabaseSize();
 
-        return view('Courts.setting.backup_restore', compact('backups', 'settings', 'stats', 'dbSize'));
+        return view('setting.backup_restore', compact('backups', 'settings', 'stats', 'dbSize'));
     }
 
     // ── Create backup ────────────────────────────────────────────────────

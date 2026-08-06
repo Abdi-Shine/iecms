@@ -27,7 +27,7 @@ class CityController extends Controller
         $regionsCovered = City::whereNotNull('state_region_id')->distinct()->count('state_region_id');
         $regions = StateRegion::orderBy('state_name')->get();
 
-        return view('Courts.setting.city', compact('cities', 'totalCities', 'regionsCovered', 'regions'));
+        return view('setting.city', compact('cities', 'totalCities', 'regionsCovered', 'regions'));
     }
 
     public function store(Request $request)

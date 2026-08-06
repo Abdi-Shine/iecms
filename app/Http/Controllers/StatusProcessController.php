@@ -9,7 +9,7 @@ class StatusProcessController extends Controller
     public function index()
     {
         $statuses = \App\Models\StatusProcess::orderBy('status_code')->get();
-        return view('Courts.setting.status_process', compact('statuses'));
+        return view('setting.status_process', compact('statuses'));
     }
 
     public function store(Request $request)

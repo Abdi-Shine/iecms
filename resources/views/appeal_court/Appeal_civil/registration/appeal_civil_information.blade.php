@@ -1617,7 +1617,7 @@
                     </div>
                 </div>
 
-                @include('Courts.Appeal_civil.registration.partials.lower_court_information')
+                @include('appeal_court.Appeal_civil.registration.partials.lower_court_information')
             </div>
         </div>{{-- /ALL SECTIONS WRAPPER --}}
     </div>

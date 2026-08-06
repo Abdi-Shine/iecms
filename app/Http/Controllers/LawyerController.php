@@ -40,14 +40,14 @@ class LawyerController extends Controller
         $lawyers = $query->orderBy('LRID', 'desc')->paginate($perPage)->withQueryString();
         $courts  = \App\Models\Court::orderBy('longName')->get();
 
-        return view('Courts.lawyer.lawyer_view', compact('lawyers', 'courts', 'stats'));
+        return view('lawyer.lawyer_view', compact('lawyers', 'courts', 'stats'));
     }
 
     public function create()
     {
         $courts    = \App\Models\Court::orderBy('longName')->get();
         $positions = ['Qareen', 'La-taliye Sharci'];
-        return view('Courts.lawyer.lawyer_add', compact('courts', 'positions'));
+        return view('lawyer.lawyer_add', compact('courts', 'positions'));
     }
 
     public function store(Request $request)
@@ -80,7 +80,7 @@ class LawyerController extends Controller
     public function show($id)
     {
         $lawyer = Lawyer::findOrFail($id);
-        return view('Courts.lawyer.lawyer_show', compact('lawyer'));
+        return view('lawyer.lawyer_show', compact('lawyer'));
     }
 
     public function edit($id)
@@ -88,7 +88,7 @@ class LawyerController extends Controller
         $lawyer    = Lawyer::findOrFail($id);
         $courts    = \App\Models\Court::orderBy('longName')->get();
         $positions = ['Qareen', 'La-taliye Sharci'];
-        return view('Courts.lawyer.lawyer_edit', compact('lawyer', 'courts', 'positions'));
+        return view('lawyer.lawyer_edit', compact('lawyer', 'courts', 'positions'));
     }
 
     public function update(Request $request, $id)

@@ -53,7 +53,7 @@ class AppealCivilAssignmentController extends Controller
                                ->when($courtId, fn($q) => $q->where('courtID', $courtId))
                                ->get();
 
-        return view('Courts.Appeal_civil.assign.appeal_civil_assign_view', compact('cases', 'assignments', 'employees', 'stats'));
+        return view('appeal_court.Appeal_civil.assign.appeal_civil_assign_view', compact('cases', 'assignments', 'employees', 'stats'));
     }
 
     public function addJudges($id)
@@ -64,7 +64,7 @@ class AppealCivilAssignmentController extends Controller
                                ->when($courtId, fn($q) => $q->where('courtID', $courtId))
                                ->get();
         $stageStatus = StatusProcess::where('name', 'Gal Ku Qoris')->first();
-        return view('Courts.Appeal_civil.assign.appeal_civil_add_judges', compact('case', 'employees', 'stageStatus'));
+        return view('appeal_court.Appeal_civil.assign.appeal_civil_add_judges', compact('case', 'employees', 'stageStatus'));
     }
 
     public function store(Request $request)

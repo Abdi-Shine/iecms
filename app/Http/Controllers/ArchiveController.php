@@ -26,7 +26,7 @@ class ArchiveController extends Controller
             ->orderByDesc('hearing_time')
             ->get();
 
-        return view('Courts.Archive.district_civil_approval_stamp',
+        return view('distract_courts.Archive.district_civil_approval_stamp',
             compact('hearings', 'stampSigs'));
     }
 
@@ -56,7 +56,7 @@ class ArchiveController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        return view('Courts.Archive.district_civil_judgment_approvals',
+        return view('distract_courts.Archive.district_civil_judgment_approvals',
             compact('judgments', 'stampSigs', 'closeCases', 'closeStampSigs'));
     }
 
@@ -64,7 +64,7 @@ class ArchiveController extends Controller
     {
         $judgment = Judgment::with(['civilCase.court', 'civilCase.parties'])->findOrFail($id);
 
-        return view('Courts.Archive.district_civil_judgment_stamp_document', compact('judgment'));
+        return view('distract_courts.Archive.district_civil_judgment_stamp_document', compact('judgment'));
     }
 
 }

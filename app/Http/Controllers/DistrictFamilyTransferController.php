@@ -42,7 +42,7 @@ class DistrictFamilyTransferController extends Controller
             'closed'     => DistrictFamilyRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.District_family.integration.district_family_transfer',
+        return view('distract_courts.District_family.integration.district_family_transfer',
             compact('records', 'courts', 'stats', 'statuses', 'isKaaliyeSare'));
     }
 
@@ -53,7 +53,7 @@ class DistrictFamilyTransferController extends Controller
         $courts   = Court::where('status', 'active')->orderBy('longName')->get();
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
 
-        return view('Courts.District_family.registration.district_family_add_transfer',
+        return view('distract_courts.District_family.registration.district_family_add_transfer',
             compact('case', 'transfer', 'courts', 'judge'));
     }
 

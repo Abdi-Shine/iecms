@@ -50,7 +50,7 @@ class DistrictExecutionJudgmentController extends Controller
         ];
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.Conclusion.district_execution_view_Judgment', compact('records', 'statuses', 'stats', 'executionSubCases'));
+        return view('distract_courts.District_execution.Conclusion.district_execution_view_Judgment', compact('records', 'statuses', 'stats', 'executionSubCases'));
     }
 
     public function create($caseId)
@@ -58,7 +58,7 @@ class DistrictExecutionJudgmentController extends Controller
         $case     = DistrictExecutionRegistration::with('court', 'assignments.employee')->findOrFail($caseId);
         $judgment = null;
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
-        return view('Courts.District_execution.Conclusion.district_execution_add_Judgment', compact('case', 'judgment', 'judge'));
+        return view('distract_courts.District_execution.Conclusion.district_execution_add_Judgment', compact('case', 'judgment', 'judge'));
     }
 
     public function store(Request $request)
@@ -104,7 +104,7 @@ class DistrictExecutionJudgmentController extends Controller
         $judgment = DistrictExecutionJudgment::findOrFail($id);
         $case     = DistrictExecutionRegistration::with('court', 'assignments.employee')->findOrFail($judgment->execution_case_id);
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
-        return view('Courts.District_execution.Conclusion.district_execution_add_Judgment', compact('case', 'judgment', 'judge'));
+        return view('distract_courts.District_execution.Conclusion.district_execution_add_Judgment', compact('case', 'judgment', 'judge'));
     }
 
     public function document($id)
@@ -167,7 +167,7 @@ class DistrictExecutionJudgmentController extends Controller
             $myAlreadySigned = false;
         }
 
-        return view('Courts.District_execution.Conclusion.district_execution_document_Judgment',
+        return view('distract_courts.District_execution.Conclusion.district_execution_document_Judgment',
             compact('judgment', 'case', 'court', 'chair', 'clerk',
                     'signatures', 'judgeSig', 'clerkSig', 'isComplete',
                     'myRole', 'myAlreadySigned', 'isStampRequested', 'isStampApproved'));
@@ -201,7 +201,7 @@ class DistrictExecutionJudgmentController extends Controller
             ->where('document_id', $judgment->id)->pluck('role');
         $isStampApproved   = $stampSigs->contains('kaaliye') && $stampSigs->contains('archive_officer');
 
-        return view('Courts.District_execution.Conclusion.district_execution_document_Judgment_readonly',
+        return view('distract_courts.District_execution.Conclusion.district_execution_document_Judgment_readonly',
             compact('judgment', 'case', 'court', 'chair', 'clerk', 'judgeSig', 'clerkSig', 'isStampApproved'));
     }
 
@@ -244,7 +244,7 @@ class DistrictExecutionJudgmentController extends Controller
 
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.Conclusion.district_execution_view_Judgment_taking_parties',
+        return view('distract_courts.District_execution.Conclusion.district_execution_view_Judgment_taking_parties',
             compact('records', 'statuses', 'stats', 'executionSubCases'));
     }
 
@@ -349,7 +349,7 @@ class DistrictExecutionJudgmentController extends Controller
             default           => true,
         };
 
-        return view('Courts.Archive.district_execution_judgment_stamp_document',
+        return view('distract_courts.Archive.district_execution_judgment_stamp_document',
             compact('judgment', 'case', 'clerk', 'myRole', 'myAlreadyActed',
                     'clerkSig', 'archiveSig', 'isComplete'));
     }

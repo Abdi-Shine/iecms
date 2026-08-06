@@ -36,7 +36,7 @@ class FinanceController extends Controller
 
         $recent_payments = Payment::orderBy('created_at', 'desc')->take(10)->get();
 
-        return view('Courts.District_civil.finance.finance_Dashboard', compact('stats', 'status_breakdown', 'recent_payments'));
+        return view('distract_courts.District_civil.finance.finance_Dashboard', compact('stats', 'status_breakdown', 'recent_payments'));
     }
 
     public function paymentsIndex(Request $request)
@@ -69,7 +69,7 @@ class FinanceController extends Controller
         $courts   = \App\Models\Court::orderBy('longName')->get();
         $tariffs  = \App\Models\Tariff::where('status', 'Active')->orderBy('name_so')->get();
 
-        return view('Courts.District_civil.finance.Payment', compact('payments', 'stats', 'courts', 'tariffs'));
+        return view('distract_courts.District_civil.finance.Payment', compact('payments', 'stats', 'courts', 'tariffs'));
     }
 
     public function applicantRequestsIndex(Request $request)
@@ -102,7 +102,7 @@ class FinanceController extends Controller
         $courts   = \App\Models\Court::orderBy('longName')->get();
         $tariffs  = \App\Models\Tariff::where('status', 'Active')->orderBy('name_so')->get();
 
-        return view('Courts.District_civil.finance.applicant_requests', compact('requests', 'stats', 'courts', 'tariffs'));
+        return view('distract_courts.District_civil.finance.applicant_requests', compact('requests', 'stats', 'courts', 'tariffs'));
     }
 
     public function updatePaymentRequest(Request $request, $id)
@@ -206,7 +206,7 @@ class FinanceController extends Controller
 
     public function paymentReceipt($id)
     {
-        return view('Courts.District_civil.finance.payment_receipt', $this->paymentReceiptData($id));
+        return view('distract_courts.District_civil.finance.payment_receipt', $this->paymentReceiptData($id));
     }
 
     public function paymentReceiptPdf($id)
@@ -214,7 +214,7 @@ class FinanceController extends Controller
         $data = $this->paymentReceiptData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.finance.payment_receipt',
+            'distract_courts.District_civil.finance.payment_receipt',
             $data,
             'Rasiid-' . str_pad($data['payment']->id, 4, '0', STR_PAD_LEFT) . '.pdf'
         );
@@ -270,7 +270,7 @@ class FinanceController extends Controller
         $tariffs = $query->orderBy('name_so')->paginate($perPage)->withQueryString();
         $courts  = \App\Models\Court::orderBy('longName')->get();
 
-        return view('Courts.District_civil.finance.Tariffs', compact('tariffs', 'stats', 'courts'));
+        return view('distract_courts.District_civil.finance.Tariffs', compact('tariffs', 'stats', 'courts'));
     }
 
     public function storeTariff(Request $request)

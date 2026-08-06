@@ -44,7 +44,7 @@ class EmployeeController extends Controller
         $employees = $query->with(['court', 'assignments.case'])->latest('AID')->paginate($perPage)->withQueryString();
         $roles     = \App\Models\Role::all();
         $courts    = \App\Models\Court::all();
-        return view('Courts.setting.employee_view', compact('employees', 'roles', 'courts', 'stats'));
+        return view('setting.employee_view', compact('employees', 'roles', 'courts', 'stats'));
     }
 
     /**
@@ -58,7 +58,7 @@ class EmployeeController extends Controller
             $q->orderBy('city_name');
         }])->orderBy('state_name')->get();
         $nextEmpId = $this->generateNextEmpId();
-        return view('Courts.setting.employee_add', compact('roles', 'courts', 'regions', 'nextEmpId'));
+        return view('setting.employee_add', compact('roles', 'courts', 'regions', 'nextEmpId'));
     }
 
     /**
@@ -124,7 +124,7 @@ class EmployeeController extends Controller
     public function show(string $id)
     {
         $employee = Employee::findOrFail($id);
-        return view('Courts.setting.employee_show', compact('employee'));
+        return view('setting.employee_show', compact('employee'));
     }
 
     /**
@@ -136,7 +136,7 @@ class EmployeeController extends Controller
         $regions  = \App\Models\StateRegion::with(['cities' => function ($q) {
             $q->orderBy('city_name');
         }])->orderBy('state_name')->get();
-        return view('Courts.setting.employee_edit', compact('employee', 'regions'));
+        return view('setting.employee_edit', compact('employee', 'regions'));
     }
 
     /**
@@ -240,7 +240,7 @@ class EmployeeController extends Controller
             'active' => $allEmployees->where('islogin', '1')->count(),
         ];
 
-        return view('Courts.setting.access_login_view', compact('employees', 'courts', 'stats'));
+        return view('setting.access_login_view', compact('employees', 'courts', 'stats'));
     }
 
     public function accessLoginCreate(string $id)
@@ -248,7 +248,7 @@ class EmployeeController extends Controller
         $employee = Employee::findOrFail($id);
         $roles    = \App\Models\Role::orderBy('display_name')->get();
         $groups   = \App\Models\Group::where('status', 'active')->orderBy('name')->get();
-        return view('Courts.setting.access_login_add', compact('employee', 'roles', 'groups'));
+        return view('setting.access_login_add', compact('employee', 'roles', 'groups'));
     }
 
     public function accessLoginStore(Request $request, string $id)
@@ -393,7 +393,7 @@ class EmployeeController extends Controller
         $roles    = \App\Models\Role::orderBy('display_name')->get();
         $groups   = \App\Models\Group::where('status', 'active')->orderBy('name')->get();
         $user     = \App\Models\User::where('email', $employee->system_username)->first();
-        return view('Courts.setting.access_login_edit', compact('employee', 'roles', 'groups', 'user'));
+        return view('setting.access_login_edit', compact('employee', 'roles', 'groups', 'user'));
     }
 
     public function accessLoginUpdate(Request $request, string $id)

@@ -42,7 +42,7 @@ class AppealCivilReturnFileController extends Controller
         $records  = $query->paginate($perPage)->withQueryString();
         $statuses = StatusProcess::orderBy('name')->get();
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_view_return_file',
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_view_return_file',
             compact('records', 'statuses', 'stats'));
     }
 
@@ -72,7 +72,7 @@ class AppealCivilReturnFileController extends Controller
             return ['name' => $doc->document_name, 'pages' => $pages > 0 ? (string) $pages : ''];
         })->values()->toArray();
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_add_return_file',
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_add_return_file',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments'));
     }
 
@@ -80,7 +80,7 @@ class AppealCivilReturnFileController extends Controller
     {
         $data = $this->returnFileDocumentData($id);
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_document_return_file', $data);
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_document_return_file', $data);
     }
 
     public function documentPdf($id)
@@ -88,7 +88,7 @@ class AppealCivilReturnFileController extends Controller
         $data = $this->returnFileDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.Appeal_civil.Conclusion.appeal_civil_document_return_file',
+            'appeal_court.Appeal_civil.Conclusion.appeal_civil_document_return_file',
             $data,
             'Appeal-ReturnFile-' . $data['case']->FileNo . '.pdf'
         );

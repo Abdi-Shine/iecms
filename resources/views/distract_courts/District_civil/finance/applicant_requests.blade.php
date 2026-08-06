@@ -249,7 +249,7 @@
             </div>
         </div>
 
-        @include('Courts.District_civil.finance.partials.payment_edit_modal')
+        @include('distract_courts.District_civil.finance.partials.payment_edit_modal')
     </div>
 
     <script>

@@ -42,7 +42,7 @@ class DistrictExecutionTransferController extends Controller
             'closed'     => DistrictExecutionRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.District_execution.integration.district_execution_transfer',
+        return view('distract_courts.District_execution.integration.district_execution_transfer',
             compact('records', 'courts', 'stats', 'statuses', 'isKaaliyeSare'));
     }
 
@@ -53,7 +53,7 @@ class DistrictExecutionTransferController extends Controller
         $courts   = Court::where('status', 'active')->orderBy('longName')->get();
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
 
-        return view('Courts.District_execution.registration.district_execution_add_transfer',
+        return view('distract_courts.District_execution.registration.district_execution_add_transfer',
             compact('case', 'transfer', 'courts', 'judge'));
     }
 

@@ -51,7 +51,7 @@ class DistrictCriminalHandoverController extends Controller
             })
             ->values();
 
-        return view('Courts.District_criminal.registration.district_criminal_add_handover',
+        return view('distract_courts.District_criminal.registration.district_criminal_add_handover',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments'));
     }
 
@@ -59,7 +59,7 @@ class DistrictCriminalHandoverController extends Controller
     {
         $data = $this->handoverDocumentData($id);
 
-        return view('Courts.District_criminal.registration.district_criminal_handover_document', $data);
+        return view('distract_courts.District_criminal.registration.district_criminal_handover_document', $data);
     }
 
     public function documentPdf($id)
@@ -67,7 +67,7 @@ class DistrictCriminalHandoverController extends Controller
         $data = $this->handoverDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_criminal.registration.district_criminal_handover_document',
+            'distract_courts.District_criminal.registration.district_criminal_handover_document',
             $data,
             'Handover-' . $data['case']->FileNo . '.pdf'
         );
@@ -240,7 +240,7 @@ class DistrictCriminalHandoverController extends Controller
         $handovers      = $query->paginate($perPage)->withQueryString();
         $criminalSubCases = \App\Models\CaseCategory::where('case_name', 'Ciqaabta')->pluck('sub_case');
 
-        return view('Courts.District_criminal.Conclusion.district_criminal_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes', 'criminalSubCases'));
+        return view('distract_courts.District_criminal.Conclusion.district_criminal_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes', 'criminalSubCases'));
     }
 
     /**

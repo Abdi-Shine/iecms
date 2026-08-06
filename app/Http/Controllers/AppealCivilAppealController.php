@@ -37,7 +37,7 @@ class AppealCivilAppealController extends Controller
             'closed'    => AppealCivilRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_view_appeal', compact('records', 'statuses', 'stats'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_view_appeal', compact('records', 'statuses', 'stats'));
     }
 
     public function form($caseId)
@@ -52,7 +52,7 @@ class AppealCivilAppealController extends Controller
         $receipts    = $judgment?->receipts ?? collect();
         $lagaParties = $receipts->filter(fn($rc) => str_contains(strtolower($rc->judgment_outcome ?? ''), 'laga'))->values();
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_add_appeal',
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_add_appeal',
             compact('case', 'appeal', 'judge', 'caseStatus', 'defaultStatus', 'lagaParties'));
     }
 

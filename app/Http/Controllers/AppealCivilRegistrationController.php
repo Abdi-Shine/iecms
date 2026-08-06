@@ -50,7 +50,7 @@ class AppealCivilRegistrationController extends Controller
         $statuses      = \App\Models\StatusProcess::orderBy('name')->get();
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'civilSubCases'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'civilSubCases'));
     }
 
     public function show($id)
@@ -86,7 +86,7 @@ class AppealCivilRegistrationController extends Controller
             }
         }
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_information', compact(
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_information', compact(
             'case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal',
             'lowerCase', 'lowerHandover', 'lowerReturnFile', 'lowerScriptures', 'lowerJudgments', 'lowerEnforcement', 'lowerAppeal'
         ));
@@ -98,7 +98,7 @@ class AppealCivilRegistrationController extends Controller
         $handover   = \App\Models\AppealCivilHandover::where('civil_case_id', $id)->latest()->first();
         $scriptures = \App\Models\AppealCivilHearingScripture::with('hearing')->where('civil_case_id', $id)->orderByDesc('created_at')->get();
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_add_supporting', compact('case', 'handover', 'scriptures'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_add_supporting', compact('case', 'handover', 'scriptures'));
     }
 
     public function store(Request $request)
@@ -220,7 +220,7 @@ class AppealCivilRegistrationController extends Controller
         $records = $query->paginate($perPage)->withQueryString();
         $courts  = \App\Models\Court::orderBy('longName')->get();
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_tracking', compact('records', 'courts', 'stats', 'allStatuses'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_tracking', compact('records', 'courts', 'stats', 'allStatuses'));
     }
 
     public function importLowerCourtParties($id)

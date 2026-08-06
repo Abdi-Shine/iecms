@@ -14,7 +14,7 @@ class DistrictExecutionDocumentController extends Controller
         $caseId = $request->query('case_id');
         $case = DistrictExecutionRegistration::findOrFail($caseId);
         $docTypes = \App\Models\DocumentAttachment::orderBy('Aname')->get();
-        return view('Courts.District_execution.registration.district_execution_document_support', compact('case', 'docTypes'));
+        return view('distract_courts.District_execution.registration.district_execution_document_support', compact('case', 'docTypes'));
     }
 
     public function getDocumentsByCase($caseId)

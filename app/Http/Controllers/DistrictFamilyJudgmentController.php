@@ -50,7 +50,7 @@ class DistrictFamilyJudgmentController extends Controller
         ];
         $familySubCases = \App\Models\CaseCategory::where('case_name', 'Qoyska')->pluck('sub_case');
 
-        return view('Courts.District_family.Conclusion.district_family_view_Judgment', compact('records', 'statuses', 'stats', 'familySubCases'));
+        return view('distract_courts.District_family.Conclusion.district_family_view_Judgment', compact('records', 'statuses', 'stats', 'familySubCases'));
     }
 
     public function create($caseId)
@@ -58,7 +58,7 @@ class DistrictFamilyJudgmentController extends Controller
         $case     = DistrictFamilyRegistration::with('court', 'assignments.employee')->findOrFail($caseId);
         $judgment = null;
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
-        return view('Courts.District_family.Conclusion.district_family_add_Judgment', compact('case', 'judgment', 'judge'));
+        return view('distract_courts.District_family.Conclusion.district_family_add_Judgment', compact('case', 'judgment', 'judge'));
     }
 
     public function store(Request $request)
@@ -104,7 +104,7 @@ class DistrictFamilyJudgmentController extends Controller
         $judgment = DistrictFamilyJudgment::findOrFail($id);
         $case     = DistrictFamilyRegistration::with('court', 'assignments.employee')->findOrFail($judgment->family_case_id);
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
-        return view('Courts.District_family.Conclusion.district_family_add_Judgment', compact('case', 'judgment', 'judge'));
+        return view('distract_courts.District_family.Conclusion.district_family_add_Judgment', compact('case', 'judgment', 'judge'));
     }
 
     public function document($id)
@@ -167,7 +167,7 @@ class DistrictFamilyJudgmentController extends Controller
             $myAlreadySigned = false;
         }
 
-        return view('Courts.District_family.Conclusion.district_family_document_Judgment',
+        return view('distract_courts.District_family.Conclusion.district_family_document_Judgment',
             compact('judgment', 'case', 'court', 'chair', 'clerk',
                     'signatures', 'judgeSig', 'clerkSig', 'isComplete',
                     'myRole', 'myAlreadySigned', 'isStampRequested', 'isStampApproved'));
@@ -201,7 +201,7 @@ class DistrictFamilyJudgmentController extends Controller
             ->where('document_id', $judgment->id)->pluck('role');
         $isStampApproved   = $stampSigs->contains('kaaliye') && $stampSigs->contains('archive_officer');
 
-        return view('Courts.District_family.Conclusion.district_family_document_Judgment_readonly',
+        return view('distract_courts.District_family.Conclusion.district_family_document_Judgment_readonly',
             compact('judgment', 'case', 'court', 'chair', 'clerk', 'judgeSig', 'clerkSig', 'isStampApproved'));
     }
 
@@ -244,7 +244,7 @@ class DistrictFamilyJudgmentController extends Controller
 
         $familySubCases = \App\Models\CaseCategory::where('case_name', 'Qoyska')->pluck('sub_case');
 
-        return view('Courts.District_family.Conclusion.district_family_view_Judgment_taking_parties',
+        return view('distract_courts.District_family.Conclusion.district_family_view_Judgment_taking_parties',
             compact('records', 'statuses', 'stats', 'familySubCases'));
     }
 
@@ -349,7 +349,7 @@ class DistrictFamilyJudgmentController extends Controller
             default           => true,
         };
 
-        return view('Courts.Archive.district_family_judgment_stamp_document',
+        return view('distract_courts.Archive.district_family_judgment_stamp_document',
             compact('judgment', 'case', 'clerk', 'myRole', 'myAlreadyActed',
                     'clerkSig', 'archiveSig', 'isComplete'));
     }

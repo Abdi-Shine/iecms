@@ -13,7 +13,7 @@ class DistricCivilRegistrationController extends Controller
 {
     public function districtPaymentReceipt($id)
     {
-        return view('Courts.District_civil.finance.payment_receipt', $this->districtPaymentReceiptData($id));
+        return view('distract_courts.District_civil.finance.payment_receipt', $this->districtPaymentReceiptData($id));
     }
 
     public function districtPaymentReceiptPdf($id)
@@ -21,7 +21,7 @@ class DistricCivilRegistrationController extends Controller
         $data = $this->districtPaymentReceiptData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.finance.payment_receipt',
+            'distract_courts.District_civil.finance.payment_receipt',
             $data,
             'Rasiid-' . str_pad($data['payment']->id, 4, '0', STR_PAD_LEFT) . '.pdf'
         );
@@ -91,7 +91,7 @@ class DistricCivilRegistrationController extends Controller
         $caseTypes      = \App\Models\CaseType::orderBy('case_name')->get();
         $statuses       = \App\Models\StatusProcess::orderBy('name')->get();
         $civilSubCases  = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
-        return view('Courts.District_civil.registration.district_civil_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'civilSubCases'));
+        return view('distract_courts.District_civil.registration.district_civil_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'civilSubCases'));
     }
 
     public function create()
@@ -102,7 +102,7 @@ class DistricCivilRegistrationController extends Controller
                         ? (auth()->user()->employee->courtID ?? null)
                         : null;
 
-        return view('Courts.District_civil.registration.district_civil_registration_form', compact('courts', 'civilSubCases', 'userCourtID'));
+        return view('distract_courts.District_civil.registration.district_civil_registration_form', compact('courts', 'civilSubCases', 'userCourtID'));
     }
 
     public function edit($id)
@@ -114,7 +114,7 @@ class DistricCivilRegistrationController extends Controller
                         ? (auth()->user()->employee->courtID ?? null)
                         : null;
 
-        return view('Courts.District_civil.registration.district_civil_registration_form', compact('record', 'courts', 'civilSubCases', 'userCourtID'));
+        return view('distract_courts.District_civil.registration.district_civil_registration_form', compact('record', 'courts', 'civilSubCases', 'userCourtID'));
     }
 
     public function show($id)
@@ -126,7 +126,7 @@ class DistricCivilRegistrationController extends Controller
         $judgments   = \App\Models\Judgment::with('receipts')->where('civil_case_id', $id)->orderByDesc('created_at')->get();
         $enforcement = \App\Models\CivilCaseEnforcement::where('civil_case_id', $id)->latest()->first();
         $appeal      = \App\Models\CivilCaseAppeal::where('civil_case_id', $id)->latest()->first();
-        return view('Courts.District_civil.registration.district_civil_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
+        return view('distract_courts.District_civil.registration.district_civil_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
     }
 
     public function supporting($id)
@@ -134,7 +134,7 @@ class DistricCivilRegistrationController extends Controller
         $case       = \App\Models\DistricCivilRegistration::with(['court', 'parties', 'documents', 'lawyers.lawyer', 'lawyers.party', 'assignments.employee', 'hearings', 'districtCivilPayments.tariff'])->findOrFail($id);
         $handover   = \App\Models\CivilCaseHandover::where('civil_case_id', $id)->latest()->first();
         $scriptures = \App\Models\HearingScripture::with('hearing')->where('civil_case_id', $id)->orderBy('created_at')->get();
-        return view('Courts.District_civil.registration.district_civil_add_supporting', compact('case', 'handover', 'scriptures'));
+        return view('distract_courts.District_civil.registration.district_civil_add_supporting', compact('case', 'handover', 'scriptures'));
     }
 
     public function paymentRequestForm($id = null)
@@ -153,7 +153,7 @@ class DistricCivilRegistrationController extends Controller
         $courts  = \App\Models\Court::orderBy('longName')->get();
         $tariffs = \App\Models\Tariff::where('status', 'Active')->orderBy('name_so')->get();
 
-        return view('Courts.District_civil.registration.district_civil_add_payment', compact('case', 'knownApplicants', 'courts', 'tariffs'));
+        return view('distract_courts.District_civil.registration.district_civil_add_payment', compact('case', 'knownApplicants', 'courts', 'tariffs'));
     }
 
     public function storePaymentRequest(Request $request)
@@ -368,7 +368,7 @@ class DistricCivilRegistrationController extends Controller
         $courts        = \App\Models\Court::orderBy('longName')->get();
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.registration.district_civil_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'civilSubCases'));
+        return view('distract_courts.District_civil.registration.district_civil_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'civilSubCases'));
     }
 
     public function handover(Request $request)
@@ -415,7 +415,7 @@ class DistricCivilRegistrationController extends Controller
         $statuses      = \App\Models\StatusProcess::orderBy('name')->get();
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.registration.district_civil_handover', compact('records', 'statuses', 'stats', 'civilSubCases'));
+        return view('distract_courts.District_civil.registration.district_civil_handover', compact('records', 'statuses', 'stats', 'civilSubCases'));
     }
 
     public function nextFileNo($courtcode)

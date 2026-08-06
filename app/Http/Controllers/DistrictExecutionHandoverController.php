@@ -51,7 +51,7 @@ class DistrictExecutionHandoverController extends Controller
             })
             ->values();
 
-        return view('Courts.District_execution.registration.district_execution_add_handover',
+        return view('distract_courts.District_execution.registration.district_execution_add_handover',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments'));
     }
 
@@ -59,7 +59,7 @@ class DistrictExecutionHandoverController extends Controller
     {
         $data = $this->handoverDocumentData($id);
 
-        return view('Courts.District_execution.registration.district_execution_handover_document', $data);
+        return view('distract_courts.District_execution.registration.district_execution_handover_document', $data);
     }
 
     public function documentPdf($id)
@@ -67,7 +67,7 @@ class DistrictExecutionHandoverController extends Controller
         $data = $this->handoverDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_execution.registration.district_execution_handover_document',
+            'distract_courts.District_execution.registration.district_execution_handover_document',
             $data,
             'Handover-' . $data['case']->FileNo . '.pdf'
         );
@@ -240,7 +240,7 @@ class DistrictExecutionHandoverController extends Controller
         $handovers      = $query->paginate($perPage)->withQueryString();
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.Conclusion.district_execution_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes', 'executionSubCases'));
+        return view('distract_courts.District_execution.Conclusion.district_execution_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes', 'executionSubCases'));
     }
 
     /**

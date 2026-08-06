@@ -14,7 +14,7 @@ class AppealCivilDocumentController extends Controller
         $caseId  = $request->query('case_id');
         $case    = AppealCivilRegistration::findOrFail($caseId);
         $docTypes = \App\Models\DocumentAttachment::orderBy('Aname')->get();
-        return view('Courts.Appeal_civil.registration.appeal_civil_document_support', compact('case', 'docTypes'));
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_document_support', compact('case', 'docTypes'));
     }
 
     public function getDocumentsByCase($caseId)

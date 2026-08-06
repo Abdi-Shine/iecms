@@ -29,7 +29,7 @@ class GroupController extends Controller
             'inactive' => Group::where('status', 'inactive')->count(),
         ];
 
-        return view('Courts.setting.group_view', compact('groups', 'roles', 'stats'));
+        return view('setting.group_view', compact('groups', 'roles', 'stats'));
     }
 
     public function store(Request $request)

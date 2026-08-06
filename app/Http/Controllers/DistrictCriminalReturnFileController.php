@@ -47,7 +47,7 @@ class DistrictCriminalReturnFileController extends Controller
         $statuses       = StatusProcess::orderBy('name')->get();
         $criminalSubCases = \App\Models\CaseCategory::where('case_name', 'Ciqaabta')->pluck('sub_case');
 
-        return view('Courts.District_criminal.Conclusion.district_criminal_view_return_file',
+        return view('distract_courts.District_criminal.Conclusion.district_criminal_view_return_file',
             compact('records', 'statuses', 'stats', 'criminalSubCases'));
     }
 
@@ -76,7 +76,7 @@ class DistrictCriminalReturnFileController extends Controller
             return ['name' => $doc->document_name, 'pages' => $pages > 0 ? (string) $pages : ''];
         })->values()->toArray();
 
-        return view('Courts.District_criminal.Conclusion.district_criminal_add_return_file',
+        return view('distract_courts.District_criminal.Conclusion.district_criminal_add_return_file',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments'));
     }
 
@@ -84,7 +84,7 @@ class DistrictCriminalReturnFileController extends Controller
     {
         $data = $this->returnFileDocumentData($id);
 
-        return view('Courts.District_criminal.Conclusion.district_criminal_document_return_file', $data);
+        return view('distract_courts.District_criminal.Conclusion.district_criminal_document_return_file', $data);
     }
 
     /**
@@ -95,7 +95,7 @@ class DistrictCriminalReturnFileController extends Controller
     {
         $data = $this->returnFileDocumentData($id);
 
-        return view('Courts.District_criminal.Conclusion.district_criminal_document_return_file_readonly', $data);
+        return view('distract_courts.District_criminal.Conclusion.district_criminal_document_return_file_readonly', $data);
     }
 
     public function documentPdf($id)
@@ -103,7 +103,7 @@ class DistrictCriminalReturnFileController extends Controller
         $data = $this->returnFileDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_criminal.Conclusion.district_criminal_document_return_file',
+            'distract_courts.District_criminal.Conclusion.district_criminal_document_return_file',
             $data,
             'ReturnFile-' . $data['case']->FileNo . '.pdf'
         );

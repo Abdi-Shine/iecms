@@ -58,7 +58,7 @@ class CivilCaseAssignmentController extends Controller
                                ->get();
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.assign.district_civil_assign_view', compact('cases', 'assignments', 'employees', 'stats', 'civilSubCases'));
+        return view('distract_courts.District_civil.assign.district_civil_assign_view', compact('cases', 'assignments', 'employees', 'stats', 'civilSubCases'));
     }
 
     public function addJudges($id)
@@ -69,7 +69,7 @@ class CivilCaseAssignmentController extends Controller
                                ->when($courtId, fn($q) => $q->where('courtID', $courtId))
                                ->get();
         $stageStatus = StatusProcess::where('name', 'Gal Ku Qoris')->first();
-        return view('Courts.District_civil.assign.district_civil_add_judges', compact('case', 'employees', 'stageStatus'));
+        return view('distract_courts.District_civil.assign.district_civil_add_judges', compact('case', 'employees', 'stageStatus'));
     }
 
 

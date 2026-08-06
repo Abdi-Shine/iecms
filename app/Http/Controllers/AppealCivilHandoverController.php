@@ -49,7 +49,7 @@ class AppealCivilHandoverController extends Controller
         $existingReturnFile  = AppealCivilReturnFile::where('civil_case_id', $id)->latest()->first();
         $returnFileDocuments = $existingReturnFile?->documents ?? $caseDocuments->toArray();
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_add_handover',
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_add_handover',
             compact('case', 'judge', 'clerk', 'existing', 'caseDocuments', 'existingReturnFile', 'returnFileDocuments'));
     }
 
@@ -57,7 +57,7 @@ class AppealCivilHandoverController extends Controller
     {
         $data = $this->handoverDocumentData($id);
 
-        return view('Courts.Appeal_civil.registration.appeal_civil_handover_document', $data);
+        return view('appeal_court.Appeal_civil.registration.appeal_civil_handover_document', $data);
     }
 
     public function documentPdf($id)
@@ -65,7 +65,7 @@ class AppealCivilHandoverController extends Controller
         $data = $this->handoverDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.Appeal_civil.registration.appeal_civil_handover_document',
+            'appeal_court.Appeal_civil.registration.appeal_civil_handover_document',
             $data,
             'Handover-' . $data['case']->FileNo . '.pdf'
         );
@@ -229,7 +229,7 @@ class AppealCivilHandoverController extends Controller
 
         $handovers = $query->paginate($perPage)->withQueryString();
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes'));
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_handover_approval', compact('handovers', 'pending', 'approved', 'rejected', 'draft', 'caseTypes'));
     }
 
     /**

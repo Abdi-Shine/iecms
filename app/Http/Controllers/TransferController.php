@@ -27,7 +27,7 @@ class TransferController extends Controller
             'closed'     => DistricCivilRegistration::where('Status', 'Closed')->count(),
         ];
 
-        return view('Courts.integration.courts_integration_transfer',
+        return view('distract_courts.integration.courts_integration_transfer',
             compact('records', 'courts', 'stats', 'statuses', 'isKaaliyeSare'));
     }
 
@@ -38,7 +38,7 @@ class TransferController extends Controller
         $courts   = Court::where('status', 'active')->orderBy('longName')->get();
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? 'â€”';
 
-        return view('Courts.District_civil.registration.district_civil_add_transfer',
+        return view('distract_courts.District_civil.registration.district_civil_add_transfer',
             compact('case', 'transfer', 'courts', 'judge'));
     }
 

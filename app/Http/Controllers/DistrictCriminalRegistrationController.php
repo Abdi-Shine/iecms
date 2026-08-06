@@ -13,7 +13,7 @@ class DistrictCriminalRegistrationController extends Controller
 {
     public function criminalPaymentReceipt($id)
     {
-        return view('Courts.District_civil.finance.payment_receipt', $this->criminalPaymentReceiptData($id));
+        return view('distract_courts.District_civil.finance.payment_receipt', $this->criminalPaymentReceiptData($id));
     }
 
     public function criminalPaymentReceiptPdf($id)
@@ -21,7 +21,7 @@ class DistrictCriminalRegistrationController extends Controller
         $data = $this->criminalPaymentReceiptData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_civil.finance.payment_receipt',
+            'distract_courts.District_civil.finance.payment_receipt',
             $data,
             'Rasiid-' . str_pad($data['payment']->id, 4, '0', STR_PAD_LEFT) . '.pdf'
         );
@@ -56,7 +56,7 @@ class DistrictCriminalRegistrationController extends Controller
             ->unique('payer_name')
             ->values();
 
-        return view('Courts.District_criminal.registration.district_criminal_add_payment', compact('case', 'knownApplicants'));
+        return view('distract_courts.District_criminal.registration.district_criminal_add_payment', compact('case', 'knownApplicants'));
     }
 
     public function storePaymentRequest(Request $request)
@@ -165,7 +165,7 @@ class DistrictCriminalRegistrationController extends Controller
         $caseTypes       = \App\Models\CaseType::orderBy('case_name')->get();
         $statuses        = \App\Models\StatusProcess::orderBy('name')->get();
         $criminalSubCases  = \App\Models\CaseCategory::where('case_name', 'Ciqaabta')->pluck('sub_case');
-        return view('Courts.District_criminal.registration.district_criminal_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'criminalSubCases'));
+        return view('distract_courts.District_criminal.registration.district_criminal_registration', compact('records', 'allRecords', 'courts', 'caseTypes', 'statuses', 'userCourtID', 'criminalSubCases'));
     }
 
     public function show($id)
@@ -177,7 +177,7 @@ class DistrictCriminalRegistrationController extends Controller
         $judgments   = \App\Models\DistrictCriminalJudgment::with('receipts')->where('criminal_case_id', $id)->orderByDesc('created_at')->get();
         $enforcement = \App\Models\DistrictCriminalEnforcement::where('criminal_case_id', $id)->latest()->first();
         $appeal      = \App\Models\DistrictCriminalAppeal::where('criminal_case_id', $id)->latest()->first();
-        return view('Courts.District_criminal.registration.district_criminal_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
+        return view('distract_courts.District_criminal.registration.district_criminal_information', compact('case', 'handover', 'returnFile', 'scriptures', 'judgments', 'enforcement', 'appeal'));
     }
 
     public function supporting($id)
@@ -185,7 +185,7 @@ class DistrictCriminalRegistrationController extends Controller
         $case       = \App\Models\DistrictCriminalRegistration::with(['court', 'parties', 'documents', 'lawyers.lawyer', 'lawyers.party', 'assignments.employee', 'hearings', 'payments.tariff'])->findOrFail($id);
         $handover   = \App\Models\DistrictCriminalHandover::where('criminal_case_id', $id)->latest()->first();
         $scriptures = \App\Models\DistrictCriminalHearingScripture::with('hearing')->where('criminal_case_id', $id)->orderBy('created_at')->get();
-        return view('Courts.District_criminal.registration.district_criminal_add_supporting', compact('case', 'handover', 'scriptures'));
+        return view('distract_courts.District_criminal.registration.district_criminal_add_supporting', compact('case', 'handover', 'scriptures'));
     }
 
     public function store(Request $request)
@@ -307,7 +307,7 @@ class DistrictCriminalRegistrationController extends Controller
         $courts         = \App\Models\Court::orderBy('longName')->get();
         $criminalSubCases = \App\Models\CaseCategory::where('case_name', 'Ciqaabta')->pluck('sub_case');
 
-        return view('Courts.District_criminal.registration.district_criminal_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'criminalSubCases'));
+        return view('distract_courts.District_criminal.registration.district_criminal_tracking', compact('records', 'courts', 'stats', 'allStatuses', 'criminalSubCases'));
     }
 
     public function handover(Request $request)
@@ -354,7 +354,7 @@ class DistrictCriminalRegistrationController extends Controller
         $statuses       = \App\Models\StatusProcess::orderBy('name')->get();
         $criminalSubCases = \App\Models\CaseCategory::where('case_name', 'Ciqaabta')->pluck('sub_case');
 
-        return view('Courts.District_criminal.registration.district_criminal_handover', compact('records', 'statuses', 'stats', 'criminalSubCases'));
+        return view('distract_courts.District_criminal.registration.district_criminal_handover', compact('records', 'statuses', 'stats', 'criminalSubCases'));
     }
 
     public function nextFileNo($courtcode)

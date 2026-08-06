@@ -10,7 +10,7 @@ class CaseCategoryController extends Controller
     {
         $caseTypes  = \App\Models\CaseType::orderBy('case_name')->get();
         $categories = \App\Models\CaseCategory::orderBy('case_name')->get();
-        return view('Courts.setting.case_category', compact('categories', 'caseTypes'));
+        return view('setting.case_category', compact('categories', 'caseTypes'));
     }
 
     public function store(Request $request)

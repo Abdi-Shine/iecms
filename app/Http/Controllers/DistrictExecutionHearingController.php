@@ -54,7 +54,7 @@ class DistrictExecutionHearingController extends Controller
             'thisMonth' => $hearings->filter(fn($h) => \Carbon\Carbon::parse($h->hearing_date)->format('Y-m') === date('Y-m'))->count(),
         ];
 
-        return view('Courts.District_execution.hearing.district_execution_view_hearing_Cases', compact('records', 'statuses', 'court', 'hearingStats', 'executionSubCases'));
+        return view('distract_courts.District_execution.hearing.district_execution_view_hearing_Cases', compact('records', 'statuses', 'court', 'hearingStats', 'executionSubCases'));
     }
 
     public function hearingScripture(Request $request)
@@ -91,7 +91,7 @@ class DistrictExecutionHearingController extends Controller
         ];
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
 
-        return view('Courts.District_execution.hearing.district_execution_view_hearing_scripture', compact('records', 'statuses', 'hearingStats', 'executionSubCases'));
+        return view('distract_courts.District_execution.hearing.district_execution_view_hearing_scripture', compact('records', 'statuses', 'hearingStats', 'executionSubCases'));
     }
 
     public function index()
@@ -129,7 +129,7 @@ class DistrictExecutionHearingController extends Controller
             'postponed' => $hearings->where('status', 'Postponed')->count(),
         ];
 
-        return view('Courts.District_execution.hearing.district_execution_view_schedule', compact('hearings', 'cases', 'courts', 'calendarEvents', 'stats'));
+        return view('distract_courts.District_execution.hearing.district_execution_view_schedule', compact('hearings', 'cases', 'courts', 'calendarEvents', 'stats'));
     }
 
     public function viewIndex()
@@ -144,7 +144,7 @@ class DistrictExecutionHearingController extends Controller
             'thisMonth' => $hearings->filter(fn($h) => \Carbon\Carbon::parse($h->hearing_date)->format('Y-m') === date('Y-m'))->count(),
         ];
         $executionSubCases = \App\Models\CaseCategory::where('case_name', 'Fulinta')->pluck('sub_case');
-        return view('Courts.District_execution.hearing.district_execution_calendar_view', compact('hearings', 'stats', 'executionSubCases'));
+        return view('distract_courts.District_execution.hearing.district_execution_calendar_view', compact('hearings', 'stats', 'executionSubCases'));
     }
 
     public function create($caseId = null)
@@ -155,7 +155,7 @@ class DistrictExecutionHearingController extends Controller
         $selectedCase = $caseId ? DistrictExecutionRegistration::with('court')->find($caseId) : null;
         $hearing      = null;
         $caseHearings = $caseId ? DistrictExecutionHearing::where('execution_case_id', $caseId)->orderBy('hearing_date')->get() : collect();
-        return view('Courts.District_execution.hearing.district_execution_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
+        return view('distract_courts.District_execution.hearing.district_execution_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
     }
 
     public function edit($id)
@@ -166,7 +166,7 @@ class DistrictExecutionHearingController extends Controller
         $statuses     = StatusProcess::orderBy('name')->get();
         $selectedCase = $hearing->executionCase;
         $caseHearings = DistrictExecutionHearing::where('execution_case_id', $hearing->execution_case_id)->orderBy('hearing_date')->get();
-        return view('Courts.District_execution.hearing.district_execution_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
+        return view('distract_courts.District_execution.hearing.district_execution_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
     }
 
     public function store(Request $request)
@@ -255,7 +255,7 @@ class DistrictExecutionHearingController extends Controller
           ->orderByDesc('hearing_time')
           ->firstOrFail();
 
-        return view('Courts.District_execution.hearing.district_execution_hearing_document',
+        return view('distract_courts.District_execution.hearing.district_execution_hearing_document',
             array_merge(compact('hearing'), $this->hearingSignVars($hearing)));
     }
 
@@ -266,7 +266,7 @@ class DistrictExecutionHearingController extends Controller
                         ->whereIn('status', ['Scheduled', 'Submitted', 'Confirmed'])
                         ->orderByDesc('hearing_date')->get();
         $scripture = null;
-        return view('Courts.District_execution.hearing.district_execution_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
+        return view('distract_courts.District_execution.hearing.district_execution_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
     }
 
     public function storeScripture(Request $request)
@@ -314,7 +314,7 @@ class DistrictExecutionHearingController extends Controller
         $hearings  = DistrictExecutionHearing::where('execution_case_id', $scripture->execution_case_id)
                         ->whereIn('status', ['Scheduled', 'Submitted', 'Confirmed'])
                         ->orderByDesc('hearing_date')->get();
-        return view('Courts.District_execution.hearing.district_execution_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
+        return view('distract_courts.District_execution.hearing.district_execution_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
     }
 
     public function updateScripture(Request $request, $id)
@@ -417,7 +417,7 @@ class DistrictExecutionHearingController extends Controller
             default   => false,
         };
 
-        return view('Courts.District_execution.hearing.district_execution_document_hearing_scripture',
+        return view('distract_courts.District_execution.hearing.district_execution_document_hearing_scripture',
             compact('scripture', 'case', 'court', 'judge', 'clerk',
                     'signatures', 'judgeSig', 'clerkSig', 'isComplete',
                     'myRole', 'myAlreadySigned'));
@@ -433,7 +433,7 @@ class DistrictExecutionHearingController extends Controller
             'executionCase.assignments.employee',
         ])->findOrFail($id);
 
-        return view('Courts.District_execution.hearing.district_execution_hearing_document',
+        return view('distract_courts.District_execution.hearing.district_execution_hearing_document',
             array_merge(compact('hearing'), $this->hearingSignVars($hearing)));
     }
 
@@ -450,7 +450,7 @@ class DistrictExecutionHearingController extends Controller
         $data = array_merge(compact('hearing'), $this->hearingSignVars($hearing));
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.District_execution.hearing.district_execution_hearing_document',
+            'distract_courts.District_execution.hearing.district_execution_hearing_document',
             $data,
             'Hearing-' . $hearing->executionCase->FileNo . '.pdf'
         );
@@ -499,7 +499,7 @@ class DistrictExecutionHearingController extends Controller
             ? (bool) $clerkSig
             : (bool) $archiveSig;
 
-        return view('Courts.Archive.district_execution_approval_stamp_document',
+        return view('distract_courts.Archive.district_execution_approval_stamp_document',
             compact('hearing', 'case', 'clerk', 'signatures',
                     'clerkSig', 'archiveSig',
                     'myEmployee', 'myRole', 'myAlreadySigned'));

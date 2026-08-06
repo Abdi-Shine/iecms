@@ -9,7 +9,7 @@ class StateRegionController extends Controller
     public function index()
     {
         $regions = \App\Models\StateRegion::orderBy('state_name')->get();
-        return view('Courts.setting.state_region', compact('regions'));
+        return view('setting.state_region', compact('regions'));
     }
 
     public function store(Request $request)

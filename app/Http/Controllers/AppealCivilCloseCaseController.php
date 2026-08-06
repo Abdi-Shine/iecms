@@ -41,7 +41,7 @@ class AppealCivilCloseCaseController extends Controller
             'final'  => AppealCivilJudgment::where('status', 'Final')->count(),
         ];
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_view_Close', compact('records', 'statuses', 'stats'));
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_view_Close', compact('records', 'statuses', 'stats'));
     }
 
     public function document($caseId)
@@ -99,7 +99,7 @@ class AppealCivilCloseCaseController extends Controller
             }
         }
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_document_Close',
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_document_Close',
             compact('case', 'closeCase', 'court', 'judgment', 'chair', 'clerk',
                     'judgeSig', 'clerkSig', 'myEmployee', 'myRole', 'myAlreadySigned',
                     'isComplete', 'isStampApproved', 'isStampRequested', 'myStampRole'));
@@ -112,7 +112,7 @@ class AppealCivilCloseCaseController extends Controller
         $judge      = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
         $caseStatus = StatusProcess::where('name', 'Oodista')->get();
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_add_Close',
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_add_Close',
             compact('case', 'closeCase', 'judge', 'caseStatus'));
     }
 

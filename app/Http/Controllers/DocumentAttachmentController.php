@@ -25,7 +25,7 @@ class DocumentAttachmentController extends Controller
         }
 
         $attachments = $query->get();
-        return view('Courts.setting.document_attachement', compact('attachments', 'courts'));
+        return view('setting.document_attachement', compact('attachments', 'courts'));
     }
 
     public function store(Request $request)

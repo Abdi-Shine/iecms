@@ -20,7 +20,7 @@ class PublicInstitutionController extends Controller
         $institutions = $query->paginate($perPage)->withQueryString();
         $totalInstitutions = PublicInstitution::count();
 
-        return view('Courts.setting.public_institution', compact('institutions', 'totalInstitutions'));
+        return view('setting.public_institution', compact('institutions', 'totalInstitutions'));
     }
 
     public function store(Request $request)

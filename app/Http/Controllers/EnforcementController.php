@@ -43,7 +43,7 @@ class EnforcementController extends Controller
 
         $civilSubCases = \App\Models\CaseCategory::where('case_name', 'Madani')->pluck('sub_case');
 
-        return view('Courts.District_civil.registration.district_civil_view_Enforcement', compact('records', 'statuses', 'stats', 'civilSubCases'));
+        return view('distract_courts.District_civil.registration.district_civil_view_Enforcement', compact('records', 'statuses', 'stats', 'civilSubCases'));
     }
 
     public function form($caseId)
@@ -54,7 +54,7 @@ class EnforcementController extends Controller
         $caseStatus  = StatusProcess::where('name', 'Dhaqan Gal')->get();
         $defaultStatus = 'Dhaqan Gal';
 
-        return view('Courts.District_civil.registration.district_civil_add_Enforcement',
+        return view('distract_courts.District_civil.registration.district_civil_add_Enforcement',
             compact('case', 'enforcement', 'judge', 'caseStatus', 'defaultStatus'));
     }
 
@@ -103,7 +103,7 @@ class EnforcementController extends Controller
         $enforcement = CivilCaseEnforcement::where('civil_case_id', $caseId)->latest()->firstOrFail();
         $court       = $case->court;
 
-        return view('Courts.District_civil.registration.district_civil_document_Enforcement', compact('case', 'enforcement', 'court'));
+        return view('distract_courts.District_civil.registration.district_civil_document_Enforcement', compact('case', 'enforcement', 'court'));
     }
 }
 

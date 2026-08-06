@@ -48,7 +48,7 @@ class AppealCivilHearingController extends Controller
             'thisMonth' => $hearings->filter(fn($h) => \Carbon\Carbon::parse($h->hearing_date)->format('Y-m') === date('Y-m'))->count(),
         ];
 
-        return view('Courts.Appeal_civil.hearing.appeal_civil_view_hearing_Cases', compact('records', 'statuses', 'court', 'hearingStats'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_view_hearing_Cases', compact('records', 'statuses', 'court', 'hearingStats'));
     }
 
     public function hearingScripture(Request $request)
@@ -80,7 +80,7 @@ class AppealCivilHearingController extends Controller
             'thisMonth' => $hearings->filter(fn($h) => \Carbon\Carbon::parse($h->hearing_date)->format('Y-m') === date('Y-m'))->count(),
         ];
 
-        return view('Courts.Appeal_civil.hearing.appeal_civil_view_hearing_scripture', compact('records', 'statuses', 'hearingStats'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_view_hearing_scripture', compact('records', 'statuses', 'hearingStats'));
     }
 
     public function index()
@@ -118,7 +118,7 @@ class AppealCivilHearingController extends Controller
             'postponed' => $hearings->where('status', 'Postponed')->count(),
         ];
 
-        return view('Courts.Appeal_civil.hearing.appeal_civil_view_schedule', compact('hearings', 'cases', 'courts', 'calendarEvents', 'stats'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_view_schedule', compact('hearings', 'cases', 'courts', 'calendarEvents', 'stats'));
     }
 
     public function viewIndex()
@@ -132,7 +132,7 @@ class AppealCivilHearingController extends Controller
             'cancelled' => $hearings->where('status', 'Cancelled')->count(),
             'thisMonth' => $hearings->filter(fn($h) => \Carbon\Carbon::parse($h->hearing_date)->format('Y-m') === date('Y-m'))->count(),
         ];
-        return view('Courts.Appeal_civil.hearing.appeal_civil_calendar_view', compact('hearings', 'stats'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_calendar_view', compact('hearings', 'stats'));
     }
 
     public function create($caseId = null)
@@ -143,7 +143,7 @@ class AppealCivilHearingController extends Controller
         $selectedCase = $caseId ? AppealCivilRegistration::with('court')->find($caseId) : null;
         $hearing      = null;
         $caseHearings = $caseId ? AppealCivilHearing::where('civil_case_id', $caseId)->orderBy('hearing_date')->get() : collect();
-        return view('Courts.Appeal_civil.hearing.appeal_civil_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
     }
 
     public function edit($id)
@@ -154,7 +154,7 @@ class AppealCivilHearingController extends Controller
         $statuses     = StatusProcess::orderBy('name')->get();
         $selectedCase = $hearing->civilCase;
         $caseHearings = AppealCivilHearing::where('civil_case_id', $hearing->civil_case_id)->orderBy('hearing_date')->get();
-        return view('Courts.Appeal_civil.hearing.appeal_civil_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_hearing_scheduling', compact('cases', 'courts', 'statuses', 'selectedCase', 'hearing', 'caseHearings'));
     }
 
     public function store(Request $request)
@@ -235,7 +235,7 @@ class AppealCivilHearingController extends Controller
                         ->whereIn('status', ['Scheduled', 'Submitted', 'Confirmed'])
                         ->orderByDesc('hearing_date')->get();
         $scripture = null;
-        return view('Courts.Appeal_civil.hearing.appeal_civil_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
     }
 
     public function storeScripture(Request $request)
@@ -283,7 +283,7 @@ class AppealCivilHearingController extends Controller
         $hearings  = AppealCivilHearing::where('civil_case_id', $scripture->civil_case_id)
                         ->whereIn('status', ['Scheduled', 'Submitted', 'Confirmed'])
                         ->orderByDesc('hearing_date')->get();
-        return view('Courts.Appeal_civil.hearing.appeal_civil_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_add_hearing_scripture', compact('case', 'hearings', 'scripture'));
     }
 
     public function updateScripture(Request $request, $id)
@@ -327,7 +327,7 @@ class AppealCivilHearingController extends Controller
     {
         $data = $this->hearingDocumentData($id);
 
-        return view('Courts.Appeal_civil.hearing.appeal_civil_hearing_document', $data);
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_hearing_document', $data);
     }
 
     public function documentPdf($id)
@@ -335,7 +335,7 @@ class AppealCivilHearingController extends Controller
         $data = $this->hearingDocumentData($id);
 
         return \App\Support\CourtDocumentPdf::stream(
-            'Courts.Appeal_civil.hearing.appeal_civil_hearing_document',
+            'appeal_court.Appeal_civil.hearing.appeal_civil_hearing_document',
             $data,
             'Appeal-Hearing-' . $data['hearing']->civilCase->FileNo . '.pdf'
         );
@@ -453,7 +453,7 @@ class AppealCivilHearingController extends Controller
             default   => false,
         };
 
-        return view('Courts.Appeal_civil.hearing.appeal_civil_document_hearing_scripture',
+        return view('appeal_court.Appeal_civil.hearing.appeal_civil_document_hearing_scripture',
             compact('scripture', 'case', 'court', 'judge', 'clerk',
                     'signatures', 'judgeSig', 'clerkSig', 'isComplete',
                     'myRole', 'myAlreadySigned'));

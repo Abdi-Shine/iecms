@@ -43,7 +43,7 @@ class AppealCivilJudgmentController extends Controller
             'submitted' => AppealCivilJudgment::where('status', 'Submitted')->count(),
             'final'     => AppealCivilJudgment::where('status', 'Final')->count(),
         ];
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_view_Judgment', compact('records', 'statuses', 'stats'));
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_view_Judgment', compact('records', 'statuses', 'stats'));
     }
 
     public function create($caseId)
@@ -51,7 +51,7 @@ class AppealCivilJudgmentController extends Controller
         $case     = AppealCivilRegistration::with('court', 'assignments.employee')->findOrFail($caseId);
         $judgment = null;
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_add_Judgment', compact('case', 'judgment', 'judge'));
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_add_Judgment', compact('case', 'judgment', 'judge'));
     }
 
     public function store(Request $request)
@@ -95,7 +95,7 @@ class AppealCivilJudgmentController extends Controller
         $judgment = AppealCivilJudgment::findOrFail($id);
         $case     = AppealCivilRegistration::with('court', 'assignments.employee')->findOrFail($judgment->civil_case_id);
         $judge    = $case->assignments->whereIn('panel_role', ['Chair', 'Guddoomiye'])->first()?->employee?->EmpName ?? '—';
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_add_Judgment', compact('case', 'judgment', 'judge'));
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_add_Judgment', compact('case', 'judgment', 'judge'));
     }
 
     public function document($id)
@@ -151,7 +151,7 @@ class AppealCivilJudgmentController extends Controller
         $isStampRequested = false;
         $isStampApproved  = false;
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_document_Judgment',
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_document_Judgment',
             compact('judgment', 'case', 'court', 'chair', 'clerk',
                     'signatures', 'judgeSig', 'clerkSig', 'isComplete',
                     'myRole', 'myAlreadySigned', 'isStampRequested', 'isStampApproved'));
@@ -190,7 +190,7 @@ class AppealCivilJudgmentController extends Controller
             'not_received'   => AppealCivilJudgment::doesntHave('receipts')->count(),
         ];
 
-        return view('Courts.Appeal_civil.Conclusion.appeal_civil_view_Judgment_taking_parties',
+        return view('appeal_court.Appeal_civil.Conclusion.appeal_civil_view_Judgment_taking_parties',
             compact('records', 'statuses', 'stats'));
     }
 

@@ -14,7 +14,7 @@ class CivilCaseDocumentController extends Controller
         $caseId = $request->query('case_id');
         $case = DistricCivilRegistration::findOrFail($caseId);
         $docTypes = \App\Models\DocumentAttachment::orderBy('Aname')->get();
-        return view('Courts.District_civil.registration.district_civil_document_support', compact('case', 'docTypes'));
+        return view('distract_courts.District_civil.registration.district_civil_document_support', compact('case', 'docTypes'));
     }
 
     public function getDocumentsByCase($caseId)

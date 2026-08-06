@@ -19,7 +19,7 @@ class CivilCasePartyController extends Controller
         }
 
         $case = DistricCivilRegistration::findOrFail($caseId);
-        return view('Courts.District_civil.registration.district_civil_Parties _information', compact('case'));
+        return view('distract_courts.District_civil.registration.district_civil_Parties _information', compact('case'));
     }
 
     public function getPartiesByCase($caseId)

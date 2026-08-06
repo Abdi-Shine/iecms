@@ -658,14 +658,27 @@ Route::middleware(['auth', 'permission:Appeal Cases,view'])->group(function () {
     Route::post('/appeal-transfer/{transfer}/approve', [\App\Http\Controllers\AppealCivilTransferController::class, 'approve'])->name('appeal-transfer.approve');
 });
 
+// ── Appeal Criminal Transfer ──────────────────────────────────────────────────
+// Reuses the shared "Appeal Cases" module, same as Appeal Civil's transfer
+// routes above. The further-appeal-to-Supreme feature (AppealCivilAppealController's
+// equivalent) is still deferred — it depends on Judgment data the same way,
+// but is a separate, later phase.
+Route::middleware(['auth', 'permission:Appeal Cases,view'])->group(function () {
+    Route::get('/appeal-criminal-transfer',                     [\App\Http\Controllers\AppealCriminalTransferController::class, 'index'])  ->name('appeal-criminal-transfer.index');
+    Route::get('/appeal-criminal-transfer/{id}/form',           [\App\Http\Controllers\AppealCriminalTransferController::class, 'form'])   ->name('appeal-criminal-transfer.form');
+    Route::post('/appeal-criminal-transfer/store',              [\App\Http\Controllers\AppealCriminalTransferController::class, 'store'])  ->name('appeal-criminal-transfer.store');
+    Route::post('/appeal-criminal-transfer/{transfer}/approve', [\App\Http\Controllers\AppealCriminalTransferController::class, 'approve'])->name('appeal-criminal-transfer.approve');
+});
+
 // ══════════════════════════════════════════════════════════════════════════════
 // APPEAL CRIMINAL CASE ROUTES (Banadir Regional Appeal Court)
-// Registration, Assignment, Hearing, and Conclusion (Handover/Judgment/Close
-// Case/Return File/Enforcement — routes for those live interleaved next to
-// their Appeal Civil counterparts above) are done. Only Integration/Transfer
-// and the further-appeal-to-Supreme "Appeal" feature remain — mirrors Appeal
-// Civil's structure and the criminal-domain fields already established by
-// District Criminal.
+// Registration, Assignment, Hearing, Conclusion (Handover/Judgment/Close
+// Case/Return File/Enforcement), and Transfer — routes for all of those live
+// interleaved next to their Appeal Civil counterparts above — are done. Only
+// the further-appeal-to-Supreme "Appeal" feature (AppealCivilAppealController's
+// equivalent) remains, deferred since it depends on Judgment/Assignment data
+// the same way Registration originally did. Mirrors Appeal Civil's structure
+// and the criminal-domain fields already established by District Criminal.
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── Appeal Criminal Registration ────────────────────────────────────────────────

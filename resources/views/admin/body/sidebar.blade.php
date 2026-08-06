@@ -169,16 +169,34 @@
             || $canTransfer || $canAssignment || $canHearings || $canJudgments || $canCloseCase
             || $canReturnFile || $canReceiveJudgmentParties;
 
+        // courts.type (dropdown-driven from court_types) is the real tier
+        // field — District Court | Regional Court | Appellate Court |
+        // High Court | Supreme Court, backfilled in
+        // 2026_08_06_000003_backfill_court_type_and_retire_legacy_court_types.
+        // Civil/Criminal/Family/Execution modules are shared between
+        // District and Regional tiers (same permissions, same views), so
+        // this only relabels the shared section — it doesn't gate it.
         $userCourtRecord = $u->employee?->court ?? null;
-        $isAppealCourt = $userCourtRecord && (
-            str_contains(strtolower($userCourtRecord->Grade_levels ?? ''), 'appeal') ||
-            str_contains(strtolower($userCourtRecord->Grade_levels ?? ''), 'rafcaan')
-        );
+        $courtTier = match ($userCourtRecord?->type) {
+            'District Court'  => 'district',
+            'Regional Court'  => 'regional',
+            'Appellate Court' => 'appeal',
+            'High Court'      => 'high',
+            'Supreme Court'   => 'supreme',
+            default           => null,
+        };
+        $sharedTierLabel = match ($courtTier) {
+            'regional' => ' (Gobolka)',
+            'district' => ' (Degmada)',
+            default    => '',
+        };
         $appealCivilPermSet = $canAppealCivil || $canAppealHandover || $canAppealEnforcement || $canAppealCases
             || $canAppealAssignment || $canAppealHearings || $canAppealJudgments || $canAppealCloseCase
             || $canAppealReturnFile || $canAppealReceiveJudgmentParties;
 
-        // Court-type detection (appeal vs district) drives which one is pre-expanded via JS.
+        // Section visibility still follows permissions, not court tier —
+        // an employee's role, not just their court record, decides what
+        // they can see. $courtTier only relabels the shared sections.
         $hasDistrictAndRegionalCivilSection = $civilPermSet;
         $hasAppealCivilSection = $appealCivilPermSet;
     @endphp
@@ -477,7 +495,7 @@
                     class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full"
                     >
                     <i class="bi bi-briefcase-fill text-lg"></i>
-                    <span class="text-left leading-tight">Dacwadaha Madaniga</span>
+                    <span class="text-left leading-tight">Dacwadaha Madaniga{{ $sharedTierLabel }}</span>
                     <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
                         :class="isOpen('case-registration') ? 'rotate-180' : ''"></i>
                 </button>
@@ -651,7 +669,7 @@
                     class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full"
                     >
                     <i class="bi bi-people text-lg"></i>
-                    <span class="text-left leading-tight">Dacwadaha Qoyska</span>
+                    <span class="text-left leading-tight">Dacwadaha Qoyska{{ $sharedTierLabel }}</span>
                     <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
                         :class="isOpen('family-registration') ? 'rotate-180' : ''"></i>
                 </button>
@@ -744,7 +762,7 @@
                     class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full"
                     >
                     <i class="bi bi-hammer text-lg"></i>
-                    <span class="text-left leading-tight">Dacwadaha Fulinta</span>
+                    <span class="text-left leading-tight">Dacwadaha Fulinta{{ $sharedTierLabel }}</span>
                     <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
                         :class="isOpen('execution-registration') ? 'rotate-180' : ''"></i>
                 </button>
@@ -836,7 +854,7 @@
                     class="flex items-center gap-2 px-3 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] text-left transition-all duration-200 w-full"
                     >
                     <i class="bi bi-shield-fill-exclamation text-lg"></i>
-                    <span class="text-left leading-tight">Dacwadaha Ciqaabta</span>
+                    <span class="text-left leading-tight">Dacwadaha Ciqaabta{{ $sharedTierLabel }}</span>
                     <i class="bi bi-chevron-down ml-auto text-[10px] transition-transform duration-200"
                         :class="isOpen('criminal-registration') ? 'rotate-180' : ''"></i>
                 </button>

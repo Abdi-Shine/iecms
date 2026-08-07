@@ -209,8 +209,11 @@
     <!-- Menu Sections -->
     <div class="px-4 py-4 space-y-1">
 
-        <!-- 1. Dashboard -->
-        @if($canDashboard)
+        <!-- 1. Dashboard (suppressed for institutions that have their own
+             dashboard — e.g. CID/AGO — since the generic Dashboard here
+             surfaces court-wide civil/criminal case statistics that don't
+             belong in a non-court institution admin's sidebar) -->
+        @if($canDashboard && !$canCidDashboard && !$canAttorneyDashboard)
             <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-4 py-3 text-white/70 hover:bg-white/5 hover:text-white rounded-xl font-semibold text-[14px] transition-all duration-200 w-full {{ Route::currentRouteName() == 'dashboard' ? 'bg-white/5 text-white' : '' }}">
                 <i class="bi bi-speedometer2 text-lg"></i>

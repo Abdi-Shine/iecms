@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class CriminalObController extends Controller
 {
+    public const STATUSES = ['Draft', 'Assigned', 'Active', 'Closed'];
+
     public function index(Request $request)
     {
         return $this->filteredView($request, internal: false, archived: false);
@@ -34,28 +36,72 @@ class CriminalObController extends Controller
 
     private function filteredView(Request $request, ?bool $internal, bool $archived)
     {
-        $query = CriminalCaseOccurrenceBook::with(['criminalCase', 'assignedInvestigator', 'supervisor']);
-
+        $base = CriminalCaseOccurrenceBook::query();
         if ($internal !== null) {
-            $query->where('is_internal', $internal);
+            $base->where('is_internal', $internal);
         }
-
         if ($archived) {
-            $query->whereHas('criminalCase', fn ($q) => $q->where('status', 'Closed'));
+            $base->whereHas('criminalCase', fn ($q) => $q->where('status', 'Closed'));
         }
 
-        if ($request->filled('ob_number')) {
-            $query->where('ob_number', 'like', '%' . $request->ob_number . '%');
+        $stats = [
+            'draft' => (clone $base)
+                ->whereDoesntHave('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                ->whereNull('assigned_investigator_id')
+                ->count(),
+            'assigned' => (clone $base)
+                ->whereDoesntHave('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                ->whereNotNull('assigned_investigator_id')
+                ->whereNull('supervisor_acknowledged_at')
+                ->count(),
+            'active' => (clone $base)
+                ->whereDoesntHave('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                ->whereNotNull('supervisor_acknowledged_at')
+                ->count(),
+            'closed' => (clone $base)
+                ->whereHas('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                ->count(),
+        ];
+
+        $query = (clone $base)->with(['criminalCase', 'assignedInvestigator', 'supervisor'])->latest('ob_datetime');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ob_number', 'like', "%{$search}%")
+                  ->orWhereHas('criminalCase', fn ($c) => $c->where('case_number', 'like', "%{$search}%"));
+            });
         }
-        if ($request->filled('officer')) {
-            $query->where('assigned_investigator_id', $request->officer);
+
+        if ($request->filled('location')) {
+            $query->where('incident_location', 'like', '%' . $request->location . '%');
         }
+
         if ($request->filled('offence_type')) {
             $query->where('offence_nature', 'like', '%' . $request->offence_type . '%');
         }
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->priority);
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            switch ($request->status) {
+                case 'Draft':
+                    $query->whereDoesntHave('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                          ->whereNull('assigned_investigator_id');
+                    break;
+                case 'Assigned':
+                    $query->whereDoesntHave('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                          ->whereNotNull('assigned_investigator_id')
+                          ->whereNull('supervisor_acknowledged_at');
+                    break;
+                case 'Active':
+                    $query->whereDoesntHave('criminalCase', fn ($q) => $q->where('status', 'Closed'))
+                          ->whereNotNull('supervisor_acknowledged_at');
+                    break;
+                case 'Closed':
+                    $query->whereHas('criminalCase', fn ($q) => $q->where('status', 'Closed'));
+                    break;
+            }
         }
+
         if ($request->filled('from')) {
             $query->whereDate('ob_datetime', '>=', $request->from);
         }
@@ -63,14 +109,16 @@ class CriminalObController extends Controller
             $query->whereDate('ob_datetime', '<=', $request->to);
         }
 
-        $obs = $query->latest('ob_datetime')->paginate(15)->withQueryString();
-
-        $investigators = \App\Models\User::whereHas('group', function ($q) {
-            $q->whereHas('roles', fn ($r) => $r->where('name', 'Investigator'));
-        })->orderBy('name')->get();
+        $perPage = $this->resolvePerPage($request);
+        $obs = $query->paginate($perPage)->withQueryString();
 
         $view = $archived ? 'cid.cases.ob_archive' : 'cid.cases.ob_registry';
 
-        return view($view, ['obs' => $obs, 'investigators' => $investigators, 'internal' => $internal]);
+        return view($view, [
+            'obs'      => $obs,
+            'internal' => $internal,
+            'stats'    => $stats,
+            'statuses' => self::STATUSES,
+        ]);
     }
 }

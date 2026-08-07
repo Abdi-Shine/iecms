@@ -1265,7 +1265,7 @@
                     @if($canCourt)
                         <a href="{{ route('court.index') }}"
                             class="flex items-center gap-3 pl-12 pr-4 py-2 text-white/50 hover:text-white text-[13px] font-medium transition-all duration-200 {{ Route::is('court.index') ? 'text-white bg-white/5' : '' }}">
-                            <i class="bi bi-plus text-lg"></i> Institutions</a>
+                            <i class="bi bi-plus text-lg"></i> Judiciary Registration</a>
                     @endif
                     @if($canAccessLogin)
                         <a href="{{ route('employee.access-login') }}"

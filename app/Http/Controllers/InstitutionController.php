@@ -21,16 +21,22 @@ class InstitutionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:150|unique:institutions,name',
-            'slug' => 'required|string|max:100|alpha_dash|unique:institutions,slug',
-            'type' => 'required|in:court,ago,cid,corrections',
+            'name'       => 'required|string|max:150|unique:institutions,name',
+            'slug'       => 'required|string|max:100|alpha_dash|unique:institutions,slug',
+            'type'       => 'required|in:court,ago,cid,corrections',
+            'logo'       => 'nullable|image|max:2048',
+            'stamp'      => 'nullable|image|max:2048',
+            'letterhead' => 'nullable|mimes:jpg,jpeg,png,pdf|max:4096',
         ]);
 
         $institution = Institution::create([
-            'name'   => $request->name,
-            'slug'   => $request->slug,
-            'type'   => $request->type,
-            'status' => 'active',
+            'name'       => $request->name,
+            'slug'       => $request->slug,
+            'type'       => $request->type,
+            'status'     => 'active',
+            'logo'       => $request->hasFile('logo') ? $request->file('logo')->store('institutions/logos', 'public') : null,
+            'stamp'      => $request->hasFile('stamp') ? $request->file('stamp')->store('institutions/stamps', 'public') : null,
+            'letterhead' => $request->hasFile('letterhead') ? $request->file('letterhead')->store('institutions/letterheads', 'public') : null,
         ]);
 
         $adminRole = Role::where('name', 'Institution Admin')->first();
@@ -54,14 +60,31 @@ class InstitutionController extends Controller
     public function update(Request $request, Institution $institution)
     {
         $request->validate([
-            'name'   => 'required|string|max:150|unique:institutions,name,' . $institution->id,
-            'status' => 'required|in:active,inactive',
+            'name'       => 'required|string|max:150|unique:institutions,name,' . $institution->id,
+            'status'     => 'required|in:active,inactive',
+            'logo'       => 'nullable|image|max:2048',
+            'stamp'      => 'nullable|image|max:2048',
+            'letterhead' => 'nullable|mimes:jpg,jpeg,png,pdf|max:4096',
         ]);
 
-        $institution->update([
+        $data = [
             'name'   => $request->name,
             'status' => $request->status,
-        ]);
+        ];
+
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('institutions/logos', 'public');
+        }
+
+        if ($request->hasFile('stamp')) {
+            $data['stamp'] = $request->file('stamp')->store('institutions/stamps', 'public');
+        }
+
+        if ($request->hasFile('letterhead')) {
+            $data['letterhead'] = $request->file('letterhead')->store('institutions/letterheads', 'public');
+        }
+
+        $institution->update($data);
 
         return redirect()->route('institutions.index')->with('success', 'Institution updated successfully.');
     }

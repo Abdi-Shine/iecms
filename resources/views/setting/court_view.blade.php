@@ -1,5 +1,5 @@
 @extends('admin.admin_master')
-@section('page_title', 'Institutions')
+@section('page_title', 'Judiciary Registration')
 @section('admin_main_content')
 
 <div class="p-4 sm:p-6 w-full">
@@ -16,8 +16,8 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">Institution Management</h1>
-            <p class="text-sm text-neutral-500 mt-0.5">Register and manage all institutions across the justice system</p>
+            <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">Judiciary Registration</h1>
+            <p class="text-sm text-neutral-500 mt-0.5">Register and manage all courts and judiciary bodies across the justice system</p>
         </div>
         <div class="flex items-center gap-2" x-data="{ showImport: false, importFile: 'No file chosen' }">
             {{-- Export CSV --}}
@@ -35,7 +35,7 @@
             <a href="{{ route('court.create') }}"
                 class="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow transition hover:opacity-90"
                 style="background:#528CBE">
-                <i class="bi bi-building-add"></i> Add New Institution
+                <i class="bi bi-building-add"></i> Add New Court
             </a>
 
             {{-- Import Modal --}}
@@ -57,8 +57,8 @@
                                 <i class="bi bi-file-earmark-arrow-up" style="color:white;font-size:1.1rem"></i>
                             </div>
                             <div>
-                                <h2 style="color:white;font-size:1.05rem;font-weight:700;margin:0">Import Institutions</h2>
-                                <p style="color:rgba(255,255,255,.8);font-size:.75rem;margin:0">Upload a CSV file to bulk-add institutions</p>
+                                <h2 style="color:white;font-size:1.05rem;font-weight:700;margin:0">Import Courts</h2>
+                                <p style="color:rgba(255,255,255,.8);font-size:.75rem;margin:0">Upload a CSV file to bulk-add courts</p>
                             </div>
                         </div>
                         <button @click="showImport = false"
@@ -104,7 +104,7 @@
                                 <button type="submit"
                                     style="display:flex;align-items:center;gap:.5rem;padding:.6rem 1.75rem;font-size:.8rem;font-weight:700;color:white;background:#d97706;border:none;border-radius:.625rem;cursor:pointer;box-shadow:0 4px 14px rgba(217,119,6,.3)"
                                     onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
-                                    <i class="bi bi-upload"></i> Import Institutions
+                                    <i class="bi bi-upload"></i> Import Courts
                                 </button>
                             </div>
                         </form>
@@ -121,7 +121,7 @@
                 <i class="bi bi-building text-xl" style="color:#528CBE"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-neutral-400 uppercase tracking-widest">Total Institutions</p>
+                <p class="text-xs font-semibold text-neutral-400 uppercase tracking-widest">Total Courts</p>
                 <h3 class="text-3xl font-black text-neutral-800">{{ $stats['total'] }}</h3>
                 <p class="text-xs font-medium mt-0.5" style="color:#528CBE">All branches</p>
             </div>
@@ -151,7 +151,7 @@
                 <i class="bi bi-diagram-3 text-xl" style="color:#F0B43C"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-neutral-400 uppercase tracking-widest">Institution Types</p>
+                <p class="text-xs font-semibold text-neutral-400 uppercase tracking-widest">Court Types</p>
                 <h3 class="text-3xl font-black text-neutral-800">{{ $stats['types'] }}</h3>
                 <p class="text-xs font-medium mt-0.5" style="color:#F0B43C">Distinct categories</p>
             </div>
@@ -218,7 +218,7 @@
         <div class="px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <i class="bi bi-table text-sm" style="color:#528CBE"></i>
-                <span class="text-xs font-black uppercase tracking-[2px] text-neutral-500">Institution Registry</span>
+                <span class="text-xs font-black uppercase tracking-[2px] text-neutral-500">Judiciary Registry</span>
             </div>
             <span class="text-xs text-neutral-400 font-medium">{{ $courts->total() }} {{ Str::plural('record', $courts->total()) }}</span>
         </div>
@@ -297,11 +297,11 @@
                                         style="background:rgba(82,140,190,0.1)">
                                         <i class="bi bi-building text-2xl" style="color:#528CBE"></i>
                                     </div>
-                                    <p class="text-neutral-400 font-medium text-sm">No institutions found in the registry.</p>
+                                    <p class="text-neutral-400 font-medium text-sm">No courts found in the registry.</p>
                                     <a href="{{ route('court.create') }}"
                                         class="mt-1 px-4 py-2 text-xs font-semibold text-white rounded-lg transition hover:opacity-90"
                                         style="background:#528CBE">
-                                        Add First Institution
+                                        Add First Court
                                     </a>
                                 </div>
                             </td>

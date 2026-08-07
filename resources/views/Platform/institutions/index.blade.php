@@ -129,12 +129,13 @@
                 </button>
             </div>
 
-            <div style="padding:1.5rem 1.75rem">
-                <form action="{{ route('institutions.store') }}" method="POST">
+            <div style="padding:1.5rem 1.75rem" x-data="{ logoFile: 'No file chosen', stampFile: 'No file chosen', letterheadFile: 'No file chosen' }">
+                <form action="{{ route('institutions.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @php
                     $fi = 'width:100%;padding:.65rem .875rem;font-size:.85rem;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box';
                     $lb = 'display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem';
+                    $upload = 'display:block;border:2px dashed #d1d5db;border-radius:.75rem;padding:.85rem;text-align:center;cursor:pointer;background:#fafafa;transition:all .15s';
                     @endphp
                     <div style="display:grid;gap:1rem;margin-bottom:1.25rem">
                         <div>
@@ -153,6 +154,43 @@
                                 <option value="cid">Criminal Investigation Department</option>
                                 <option value="corrections">Correctional Services</option>
                             </select>
+                        </div>
+
+                        {{-- Logo + Stamp + Letterhead --}}
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
+                            <div>
+                                <label for="add_inst_logo" style="{{ $upload }}"
+                                    onmouseover="this.style.borderColor='#528CBE';this.style.background='#f0f7ff'"
+                                    onmouseout="this.style.borderColor='#d1d5db';this.style.background='#fafafa'">
+                                    <i class="bi bi-image" style="font-size:1.2rem;color:#9ca3af;display:block;margin-bottom:.25rem"></i>
+                                    <p style="font-size:.6rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:0;word-break:break-word"
+                                        x-text="logoFile === 'No file chosen' ? 'LOGO' : logoFile"></p>
+                                </label>
+                                <input type="file" id="add_inst_logo" name="logo" accept="image/*" class="sr-only"
+                                    @change="logoFile = $event.target.files[0]?.name || 'No file chosen'">
+                            </div>
+                            <div>
+                                <label for="add_inst_stamp" style="{{ $upload }}"
+                                    onmouseover="this.style.borderColor='#528CBE';this.style.background='#f0f7ff'"
+                                    onmouseout="this.style.borderColor='#d1d5db';this.style.background='#fafafa'">
+                                    <i class="bi bi-patch-check" style="font-size:1.2rem;color:#9ca3af;display:block;margin-bottom:.25rem"></i>
+                                    <p style="font-size:.6rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:0;word-break:break-word"
+                                        x-text="stampFile === 'No file chosen' ? 'STAMP' : stampFile"></p>
+                                </label>
+                                <input type="file" id="add_inst_stamp" name="stamp" accept="image/*" class="sr-only"
+                                    @change="stampFile = $event.target.files[0]?.name || 'No file chosen'">
+                            </div>
+                            <div>
+                                <label for="add_inst_letterhead" style="{{ $upload }}"
+                                    onmouseover="this.style.borderColor='#528CBE';this.style.background='#f0f7ff'"
+                                    onmouseout="this.style.borderColor='#d1d5db';this.style.background='#fafafa'">
+                                    <i class="bi bi-file-earmark-image" style="font-size:1.2rem;color:#9ca3af;display:block;margin-bottom:.25rem"></i>
+                                    <p style="font-size:.6rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:0;word-break:break-word"
+                                        x-text="letterheadFile === 'No file chosen' ? 'HEADER' : letterheadFile"></p>
+                                </label>
+                                <input type="file" id="add_inst_letterhead" name="letterhead" accept="image/*,application/pdf" class="sr-only"
+                                    @change="letterheadFile = $event.target.files[0]?.name || 'No file chosen'">
+                            </div>
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1.5px solid #f3f4f6">
@@ -194,8 +232,8 @@
                 </button>
             </div>
 
-            <div style="padding:1.5rem 1.75rem">
-                <form :action="`/institutions/${editInstitution.id}`" method="POST">
+            <div style="padding:1.5rem 1.75rem" x-data="{ logoFile: 'No file chosen', stampFile: 'No file chosen', letterheadFile: 'No file chosen' }">
+                <form :action="`/institutions/${editInstitution.id}`" method="POST" enctype="multipart/form-data">
                     @csrf @method('PUT')
                     @php $fi2 = 'width:100%;padding:.65rem .875rem;font-size:.85rem;border:1.5px solid #d1d5db;border-radius:.625rem;background:#fff;color:#111827;outline:none;box-sizing:border-box'; @endphp
                     <div style="display:grid;gap:1rem;margin-bottom:1.25rem">
@@ -209,6 +247,46 @@
                                 <option value="active"   :selected="editInstitution.status === 'active'">Active</option>
                                 <option value="inactive" :selected="editInstitution.status === 'inactive'">Inactive</option>
                             </select>
+                        </div>
+
+                        {{-- Logo + Stamp + Letterhead (optional — leave blank to keep current) --}}
+                        <div>
+                            <label style="{{ $lb }}">Branding <span style="font-weight:600;color:#9ca3af;text-transform:none;letter-spacing:normal">(leave blank to keep current)</span></label>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
+                                <div>
+                                    <label for="edit_inst_logo" style="{{ $upload }}"
+                                        onmouseover="this.style.borderColor='#F0B43C';this.style.background='#fffaf0'"
+                                        onmouseout="this.style.borderColor='#d1d5db';this.style.background='#fafafa'">
+                                        <i class="bi bi-image" style="font-size:1.2rem;color:#9ca3af;display:block;margin-bottom:.25rem"></i>
+                                        <p style="font-size:.6rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:0;word-break:break-word"
+                                            x-text="logoFile === 'No file chosen' ? 'LOGO' : logoFile"></p>
+                                    </label>
+                                    <input type="file" id="edit_inst_logo" name="logo" accept="image/*" class="sr-only"
+                                        @change="logoFile = $event.target.files[0]?.name || 'No file chosen'">
+                                </div>
+                                <div>
+                                    <label for="edit_inst_stamp" style="{{ $upload }}"
+                                        onmouseover="this.style.borderColor='#F0B43C';this.style.background='#fffaf0'"
+                                        onmouseout="this.style.borderColor='#d1d5db';this.style.background='#fafafa'">
+                                        <i class="bi bi-patch-check" style="font-size:1.2rem;color:#9ca3af;display:block;margin-bottom:.25rem"></i>
+                                        <p style="font-size:.6rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:0;word-break:break-word"
+                                            x-text="stampFile === 'No file chosen' ? 'STAMP' : stampFile"></p>
+                                    </label>
+                                    <input type="file" id="edit_inst_stamp" name="stamp" accept="image/*" class="sr-only"
+                                        @change="stampFile = $event.target.files[0]?.name || 'No file chosen'">
+                                </div>
+                                <div>
+                                    <label for="edit_inst_letterhead" style="{{ $upload }}"
+                                        onmouseover="this.style.borderColor='#F0B43C';this.style.background='#fffaf0'"
+                                        onmouseout="this.style.borderColor='#d1d5db';this.style.background='#fafafa'">
+                                        <i class="bi bi-file-earmark-image" style="font-size:1.2rem;color:#9ca3af;display:block;margin-bottom:.25rem"></i>
+                                        <p style="font-size:.6rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:0;word-break:break-word"
+                                            x-text="letterheadFile === 'No file chosen' ? 'HEADER' : letterheadFile"></p>
+                                    </label>
+                                    <input type="file" id="edit_inst_letterhead" name="letterhead" accept="image/*,application/pdf" class="sr-only"
+                                        @change="letterheadFile = $event.target.files[0]?.name || 'No file chosen'">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1.5px solid #f3f4f6">

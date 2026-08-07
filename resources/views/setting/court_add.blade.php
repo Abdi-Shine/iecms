@@ -1,5 +1,5 @@
 @extends('admin.admin_master')
-@section('page_title', 'Register New Institution')
+@section('page_title', 'Judiciary Registration')
 @section('admin_main_content')
 
 <div class="p-4 sm:p-6 w-full">
@@ -7,7 +7,7 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">Register New Institution</h1>
+            <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">Judiciary Registration</h1>
             <p class="text-sm text-neutral-500 mt-0.5">Fill in all required fields to add an institution</p>
         </div>
         <a href="{{ route('court.index') }}"
@@ -24,7 +24,7 @@
             <div style="width:38px;height:38px;background:rgba(255,255,255,0.15);border-radius:.75rem;display:flex;align-items:center;justify-content:center">
                 <i class="bi bi-building-add" style="color:white;font-size:1rem"></i>
             </div>
-            <h2 style="color:white;font-size:1rem;font-weight:700;margin:0">Institution Details</h2>
+            <h2 style="color:white;font-size:1rem;font-weight:700;margin:0">Court Details</h2>
         </div>
 
         <div class="p-6" x-data="{ logoFile: 'No file chosen', stampFile: 'No file chosen', letterheadFile: 'No file chosen' }">
@@ -132,7 +132,7 @@
                     </div>
                     <div>
                         <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">
-                            Institution Type <span style="color:#ef4444">*</span>
+                            Court Type <span style="color:#ef4444">*</span>
                         </label>
                         <div style="position:relative">
                             <select name="type" required
@@ -220,7 +220,7 @@
                     <button type="submit"
                         style="display:flex;align-items:center;gap:.5rem;padding:.6rem 1.75rem;font-size:.85rem;font-weight:700;color:white;background:#528CBE;border:none;border-radius:.625rem;cursor:pointer;box-shadow:0 4px 14px rgba(82,140,190,.4);transition:opacity .15s"
                         onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
-                        <i class="bi bi-check-circle-fill"></i> Register Institution
+                        <i class="bi bi-check-circle-fill"></i> Register Court
                     </button>
                 </div>
             </form>

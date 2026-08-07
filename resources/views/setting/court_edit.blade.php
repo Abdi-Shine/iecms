@@ -1,5 +1,5 @@
 @extends('admin.admin_master')
-@section('page_title', 'Edit Institution')
+@section('page_title', 'Edit Judiciary Registration')
 @section('admin_main_content')
 
 <div class="p-4 sm:p-6 w-full">
@@ -7,7 +7,7 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">Edit Institution</h1>
+            <h1 class="text-2xl font-bold text-neutral-800 tracking-tight">Edit Judiciary Registration</h1>
             <p class="text-sm text-neutral-500 mt-0.5">{{ $court->shortName }} — {{ $court->longName }}</p>
         </div>
         <a href="{{ route('court.index') }}"
@@ -24,7 +24,7 @@
             <div style="width:38px;height:38px;background:rgba(255,255,255,0.15);border-radius:.75rem;display:flex;align-items:center;justify-content:center">
                 <i class="bi bi-pencil-square" style="color:white;font-size:1rem"></i>
             </div>
-            <h2 style="color:white;font-size:1rem;font-weight:700;margin:0">Update Institution Details</h2>
+            <h2 style="color:white;font-size:1rem;font-weight:700;margin:0">Update Court Details</h2>
         </div>
 
         <div class="p-6" x-data="{ logoFile: 'No file chosen', stampFile: 'No file chosen', lhFile: 'No file chosen' }">
@@ -100,7 +100,7 @@
                 <div style="display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:1rem;margin-bottom:1rem">
                     <div>
                         <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">
-                            Institution Code
+                            Court Code
                             <span style="font-size:.55rem;color:#9ca3af;background:#f3f4f6;padding:.1rem .35rem;border-radius:.2rem;margin-left:.2rem;font-weight:700">LOCKED</span>
                         </label>
                         <div style="position:relative">
@@ -155,7 +155,7 @@
                     </div>
                     <div>
                         <label style="display:block;font-size:.68rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem">
-                            Institution Type <span style="color:#ef4444">*</span>
+                            Court Type <span style="color:#ef4444">*</span>
                         </label>
                         <div style="position:relative">
                             <select name="type" required

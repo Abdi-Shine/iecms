@@ -20,15 +20,13 @@
                     {{ $internal ? "Dhacdooyinka heer saldhig ah iyo dhacdooyinka shaqaalaha ee CID ka soo saartay gudaheeda" : 'Dhammaan diiwaanada buugga dhacdooyinka ee kiisaska CID' }}
                 </p>
             </div>
-            @if($internal)
-                <form action="{{ route('criminal-cases.store') }}" method="POST">
-                    @csrf
-                    <button type="submit"
-                        class="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow transition-all hover:opacity-90 bg-primary-400">
-                        <i class="bi bi-plus-lg"></i> Ku Dar OB Gudaha Cusub
-                    </button>
-                </form>
-            @endif
+            <form action="{{ route('criminal-cases.store') }}" method="POST">
+                @csrf
+                <button type="submit"
+                    class="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow transition-all hover:opacity-90 bg-primary-400">
+                    <i class="bi bi-plus-lg"></i> {{ $internal ? 'Ku Dar OB Gudaha Cusub' : 'Ku Dar Diiwaan OB Cusub' }}
+                </button>
+            </form>
         </div>
 
         {{-- KPI Cards --}}

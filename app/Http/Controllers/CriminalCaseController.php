@@ -130,6 +130,10 @@ class CriminalCaseController extends Controller
             'added_by' => $request->user()->name ?? 'Staff',
         ]);
 
+        if ($request->boolean('skip_to_ob')) {
+            return redirect()->route('criminal-cases.workflow.ob.form', $case->id);
+        }
+
         return redirect()->route('criminal-cases.workflow.arrest.form', $case->id);
     }
 

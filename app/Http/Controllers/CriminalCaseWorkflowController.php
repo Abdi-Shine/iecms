@@ -41,8 +41,8 @@ class CriminalCaseWorkflowController extends Controller
                 'key'         => 'occurrence_book',
                 'title'       => 'Occurrence Book',
                 'description' => 'Initial Report & Assignment',
-                'enabled'     => (bool) $case->arrest,
-                'route'       => $case->arrest ? route('criminal-cases.workflow.ob.form', $case->id) : null,
+                'enabled'     => true,
+                'route'       => route('criminal-cases.workflow.ob.form', $case->id),
                 'complete'    => $obComplete,
             ],
             [
@@ -144,11 +144,6 @@ class CriminalCaseWorkflowController extends Controller
     {
         $case = CriminalCase::with(['arrest', 'occurrenceBook'])->findOrFail($id);
 
-        if (!$case->arrest) {
-            return redirect()->route('criminal-cases.workflow.arrest.form', $case->id)
-                ->with('error', 'Complete the Arrest stage before the Occurrence Book.');
-        }
-
         $investigators = \App\Models\User::whereHas('group', function ($q) use ($case) {
             $q->whereHas('roles', fn ($r) => $r->where('name', 'Investigator'))
               ->where('institution_id', $case->institution_id);
@@ -160,10 +155,6 @@ class CriminalCaseWorkflowController extends Controller
     public function storeOb(Request $request, $id)
     {
         $case = CriminalCase::with('arrest')->findOrFail($id);
-
-        if (!$case->arrest) {
-            abort(422, 'Complete the Arrest stage before the Occurrence Book.');
-        }
 
         $data = $request->validate([
             'ob_datetime'               => 'required|date',
@@ -197,6 +188,7 @@ class CriminalCaseWorkflowController extends Controller
         }
 
         $case->update(['priority' => $data['priority']]);
+        $case->advanceStageTo('occurrence_book');
 
         return redirect()->route('criminal-cases.workflow.ob.form', $case->id)
             ->with('success', 'Occurrence Book entry saved.');

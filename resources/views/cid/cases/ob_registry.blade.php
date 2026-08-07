@@ -22,6 +22,7 @@
             </div>
             <form action="{{ route('criminal-cases.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="skip_to_ob" value="1">
                 <button type="submit"
                     class="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow transition-all hover:opacity-90 bg-primary-400">
                     <i class="bi bi-plus-lg"></i> {{ $internal ? 'Ku Dar OB Gudaha Cusub' : 'Ku Dar Diiwaan OB Cusub' }}

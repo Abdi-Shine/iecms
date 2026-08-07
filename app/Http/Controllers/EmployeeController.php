@@ -12,11 +12,52 @@ use Illuminate\Support\Facades\Mail;
 class EmployeeController extends Controller
 {
     /**
+     * Restrict an Employee query to the current user's institution.
+     * Super admins see every employee, unscoped. Uses employees.institution_id
+     * directly (not the linked User's institution) so staff who don't have
+     * login access yet — exactly who the Access Login page needs to find —
+     * still show up for their institution's admin.
+     */
+    private function scopeToInstitution($query): void
+    {
+        $user = auth()->user();
+
+        if (!$user || $user->is_super_admin) {
+            return;
+        }
+
+        if ($user->institution_id === null) {
+            $query->whereNull('institution_id');
+        } else {
+            $query->where('institution_id', $user->institution_id);
+        }
+    }
+
+    /**
+     * Guards direct show/edit/delete access to a single employee by ID —
+     * scopeToInstitution() only hides employees from listings, it doesn't
+     * stop a URL-guessed request for an out-of-institution employee.
+     */
+    private function authorizeEmployeeAccess(Employee $employee): void
+    {
+        $user = auth()->user();
+
+        if (!$user || $user->is_super_admin) {
+            return;
+        }
+
+        if ($employee->institution_id !== $user->institution_id) {
+            abort(403, 'You do not have access to this employee record.');
+        }
+    }
+
+    /**
      * Display a listing of the employees.
      */
     public function index(Request $request)
     {
         $query = Employee::query();
+        $this->scopeToInstitution($query);
 
         if ($request->filled('search')) {
             $query->where('EmpName', 'like', '%' . $request->search . '%')
@@ -109,6 +150,12 @@ class EmployeeController extends Controller
         $data['updatedBy'] = '';
         $data['updatedDate'] = '';
         $data['Dates'] = $data['Dates'] ?? date('Y-m-d');
+        // Institution admins' new staff inherit their institution; a super
+        // admin using this form is registering court staff historically,
+        // so default to the Courts institution rather than leaving it null
+        // (which would hide the employee from every institution admin).
+        $data['institution_id'] = auth()->user()->institution_id
+            ?? \App\Models\Institution::where('type', 'court')->value('id');
 
         \DB::transaction(function () use ($data) {
             $data['EmpID'] = $this->generateNextEmpId();
@@ -124,6 +171,7 @@ class EmployeeController extends Controller
     public function show(string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
         return view('setting.employee_show', compact('employee'));
     }
 
@@ -133,6 +181,7 @@ class EmployeeController extends Controller
     public function edit(string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
         $regions  = \App\Models\StateRegion::with(['cities' => function ($q) {
             $q->orderBy('city_name');
         }])->orderBy('state_name')->get();
@@ -145,7 +194,8 @@ class EmployeeController extends Controller
     public function update(Request $request, string $id)
     {
         $employee = Employee::findOrFail($id);
-        
+        $this->authorizeEmployeeAccess($employee);
+
         $request->validate([
             'EmpName'  => 'required',
             'Position' => 'required',
@@ -199,6 +249,7 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
         $employee->delete();
 
         return redirect()->back()->with('success', 'Employee removed from registry.');
@@ -210,6 +261,7 @@ class EmployeeController extends Controller
     public function accessLogin(Request $request)
     {
         $query = Employee::with(['court', 'user.group']);
+        $this->scopeToInstitution($query);
 
         if ($request->filled('search')) {
             $term = '%' . trim($request->search) . '%';
@@ -234,7 +286,9 @@ class EmployeeController extends Controller
         $employees = $query->orderBy('EmpName')->paginate($perPage)->withQueryString();
         $courts    = \App\Models\Court::orderBy('longName')->get();
 
-        $allEmployees = Employee::all();
+        $allEmployeesQuery = Employee::query();
+        $this->scopeToInstitution($allEmployeesQuery);
+        $allEmployees = $allEmployeesQuery->get();
         $stats = [
             'total'  => $allEmployees->count(),
             'active' => $allEmployees->where('islogin', '1')->count(),
@@ -246,6 +300,7 @@ class EmployeeController extends Controller
     public function accessLoginCreate(string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
         $roles    = \App\Models\Role::orderBy('display_name')->get();
         $groups   = \App\Models\Group::where('status', 'active')->orderBy('name')->get();
         return view('setting.access_login_add', compact('employee', 'roles', 'groups'));
@@ -254,6 +309,7 @@ class EmployeeController extends Controller
     public function accessLoginStore(Request $request, string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
 
         $request->validate([
             'system_username' => 'required|unique:users,email',
@@ -266,11 +322,12 @@ class EmployeeController extends Controller
         $username      = $request->input('system_username');
 
         User::create([
-            'name'     => $employee->EmpName,
-            'email'    => $username,
-            'password' => Hash::make($plainPassword),
-            'position' => $request->input('system_role'),
-            'group_id' => $request->input('group_id') ?: null,
+            'name'           => $employee->EmpName,
+            'email'          => $username,
+            'password'       => Hash::make($plainPassword),
+            'position'       => $request->input('system_role'),
+            'group_id'       => $request->input('group_id') ?: null,
+            'institution_id' => $employee->institution_id,
         ]);
 
         $employee->update([
@@ -352,6 +409,8 @@ class EmployeeController extends Controller
         $header  = fgetcsv($handle); // skip header row
         $imported = 0;
         $skipped  = 0;
+        $institutionId = auth()->user()->institution_id
+            ?? \App\Models\Institution::where('type', 'court')->value('id');
 
         while (($row = fgetcsv($handle)) !== false) {
             if (count($row) < 9) { $skipped++; continue; }
@@ -372,6 +431,7 @@ class EmployeeController extends Controller
                 'POB'         => $pob ?: 'Mogadishu',
                 'Position'    => $position ?: 'Staff',
                 'courtID'     => $courtID ?: '',
+                'institution_id' => $institutionId,
                 'status'      => in_array(strtolower($status), ['active', 'inactive']) ? strtolower($status) : 'active',
                 'islogin'     => '0',
                 'Dates'       => $dates ?: now()->toDateString(),
@@ -390,6 +450,7 @@ class EmployeeController extends Controller
     public function accessLoginEdit(string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
         $roles    = \App\Models\Role::orderBy('display_name')->get();
         $groups   = \App\Models\Group::where('status', 'active')->orderBy('name')->get();
         $user     = \App\Models\User::where('email', $employee->system_username)->first();
@@ -399,6 +460,7 @@ class EmployeeController extends Controller
     public function accessLoginUpdate(Request $request, string $id)
     {
         $employee = Employee::findOrFail($id);
+        $this->authorizeEmployeeAccess($employee);
 
         $request->validate([
             'system_username' => 'required|unique:users,email,' . optional(User::where('email', $employee->system_username)->first())->id,

@@ -50,6 +50,11 @@ class Employee extends Model
         return $this->belongsTo(Court::class, 'courtID', 'courtcode');
     }
 
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
+    }
+
     public function assignments()
     {
         return $this->hasMany(CivilCaseAssignment::class, 'employee_id', 'AID');

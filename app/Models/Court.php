@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Court extends Model
 {
-    protected $table      = 'courts';
+    protected $table      = 'judiciaries';
     protected $primaryKey = 'CAI';
     public    $timestamps = false;
     protected $guarded    = [];

@@ -20,14 +20,25 @@
     <!-- Brand -->
     @php
         $sidebarLogoUrl = null;
+        $sidebarLogoAlt = 'IECMS';
         try {
             $sidebarAuthUser = auth()->user();
-            $sidebarEmployee = $sidebarAuthUser?->employee
-                ?? \App\Models\Employee::where('email', $sidebarAuthUser?->email)->first()
-                ?? \App\Models\Employee::where('EmpName', $sidebarAuthUser?->name)->first();
-            $sidebarCourt = $sidebarEmployee?->court;
-            if ($sidebarCourt?->logo) {
-                $sidebarLogoUrl = asset('storage/' . $sidebarCourt->logo);
+
+            // Institution-scoped admins (CID, AGO, ...) have no Employee
+            // record — check their institution's own logo first.
+            $sidebarInstitution = $sidebarAuthUser?->institution;
+            if ($sidebarInstitution?->logo) {
+                $sidebarLogoUrl = asset('storage/' . $sidebarInstitution->logo);
+                $sidebarLogoAlt = $sidebarInstitution->name;
+            } else {
+                $sidebarEmployee = $sidebarAuthUser?->employee
+                    ?? \App\Models\Employee::where('email', $sidebarAuthUser?->email)->first()
+                    ?? \App\Models\Employee::where('EmpName', $sidebarAuthUser?->name)->first();
+                $sidebarCourt = $sidebarEmployee?->court;
+                if ($sidebarCourt?->logo) {
+                    $sidebarLogoUrl = asset('storage/' . $sidebarCourt->logo);
+                    $sidebarLogoAlt = $sidebarCourt->shortName;
+                }
             }
         } catch (\Throwable $e) {
             // DB not ready or migration pending — fall back to the default logo
@@ -37,7 +48,7 @@
         <div class="flex items-center gap-3">
             <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 shadow-lg bg-white p-1">
                 <img src="{{ $sidebarLogoUrl ?? asset('images/logo.png') }}"
-                    alt="{{ $sidebarCourt->shortName ?? 'IECMS' }} Logo" class="w-full h-full object-contain">
+                    alt="{{ $sidebarLogoAlt }} Logo" class="w-full h-full object-contain">
             </div>
             <div>
                 <h4 class="text-white text-lg font-bold tracking-tight">IECMS Portal</h4>

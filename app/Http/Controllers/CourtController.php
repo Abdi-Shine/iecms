@@ -44,7 +44,7 @@ class CourtController extends Controller
         $nextCode   = 'CRT' . str_pad($total + 1, 3, '0', STR_PAD_LEFT);
         $courtTypes = CourtType::where('status', 'active')->orderBy('name')->get();
 
-        return view('setting.court_view', compact('courts', 'stats', 'nextCode', 'courtTypes'));
+        return view('setting.judiciary_view', compact('courts', 'stats', 'nextCode', 'courtTypes'));
     }
 
     public function create()
@@ -53,14 +53,14 @@ class CourtController extends Controller
         $nextCode   = 'CRT' . str_pad($maxNum + 1, 3, '0', STR_PAD_LEFT);
         $courtTypes = CourtType::where('status', 'active')->orderBy('name')->get();
 
-        return view('setting.court_add', compact('nextCode', 'courtTypes'));
+        return view('setting.judiciary_add', compact('nextCode', 'courtTypes'));
     }
 
     public function edit(Court $court)
     {
         $courtTypes = CourtType::where('status', 'active')->orderBy('name')->get();
 
-        return view('setting.court_edit', compact('court', 'courtTypes'));
+        return view('setting.judiciary_edit', compact('court', 'courtTypes'));
     }
 
     public function store(Request $request)

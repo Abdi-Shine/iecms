@@ -1566,7 +1566,7 @@ textarea.ci { resize: vertical; min-height: 90px; }
  *   document_attachement, status_process, case_category, case_type, state_region,
  *   access_login_view, role_permission (matrix rows).
  *
- * Large size (.ci-lg): padding .6rem .9rem — used by role_view and court_view.
+ * Large size (.ci-lg): padding .6rem .9rem — used by role_view and judiciary_view.
  *
  * Compact size (.ci-sm): padding .4rem .7rem, font-size .78rem, border-radius .5rem
  *   — used by access_login_add and access_login_edit.
@@ -1598,7 +1598,7 @@ textarea.ci { resize: vertical; min-height: 90px; }
     color: #b0b7c3;
 }
 
-/* Large padding variant — role_view, court_view */
+/* Large padding variant — role_view, judiciary_view */
 .ci-lg {
     width: 100%;
     padding: .6rem .9rem;
